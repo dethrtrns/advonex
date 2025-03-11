@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+// import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -40,7 +40,7 @@ export default function Register() {
         name: values.name
       }));
       // Redirect to lawyer-specific registration
-      window.location.href = "/register/lawyer";
+      window.location.href = "/lawyer/register";
     } else {
       // Handle client registration
       console.log(values);

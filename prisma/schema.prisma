@@ -31,12 +31,12 @@ model User {
 
   role Role @default(CLIENT)
 
-  UserProfile userProfile?
+  // UserProfile userProfile?
   // lawyerProfile lawyerProfile?
   
   // consultations Consultation[] @ignore
   // lawyertype String
-  posts   Post[] @ignore
+  // posts   Post[] @ignore
   lawyerProfile lawyerProfile?
   createdAt DateTime @default(now())
   
@@ -46,21 +46,21 @@ enum Role {
   LAWYER
 }
 
-model userProfile {
-  id      String      @id @default(uuid())
-  user    User    @relation(fields: [userId], references: [id])
-  userId  String @unique
-  preferredLanguages String?
-  location String?
-  age Int?
-  imgUrl String?
+// model userProfile {
+//   id      String      @id @default(uuid())
+//   user    User    @relation(fields: [userId], references: [id])
+//   userId  String @unique
+//   preferredLanguages String?
+//   location String?
+//   age Int?
+//   imgUrl String?
 
-userRole Role @default(CLIENT)  
+// userRole Role @default(CLIENT)  
 
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+//   createdAt     DateTime  @default(now())
+//   updatedAt     DateTime  @updatedAt
   
-}
+// }
 
 
 model lawyerProfile {
@@ -159,15 +159,15 @@ model SpecializationOnProfile {
 
 
 
-model Post {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  title     String   @db.VarChar(255)
-  content   String?
-  published Boolean  @default(false)
-  author    User?     @relation(fields: [authorId], references: [id])
-  authorId  String?
+// model Post {
+//   id        Int      @id @default(autoincrement())
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+//   title     String   @db.VarChar(255)
+//   content   String?
+//   published Boolean  @default(false)
+//   author    User?     @relation(fields: [authorId], references: [id])
+//   authorId  String?
 
-  @@ignore
-}
+//   @@ignore
+// }

@@ -14,7 +14,7 @@ generator client {
 
 datasource db {
   provider  = "postgresql"
-  url       = env("DATABASE_URL")
+  url       = env("DIRECT_URL")
 }
 
 
@@ -37,7 +37,7 @@ model User {
  
   // consultations Consultation[] @ignore
   // lawyertype String
-  posts   Post[] @ignore
+  // posts   Post[] @ignore
   lawyerProfile lawyerProfile?
   createdAt DateTime @default(now())
  
@@ -176,16 +176,16 @@ userRole Role @default(CLIENT)
 
 
 
-model Post {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  title     String   @db.VarChar(255)
-  content   String?
-  published Boolean  @default(false)
-  author    User?     @relation(fields: [authorId], references: [id])
-  authorId  String?
+// model Post {
+//   id        Int      @id @default(autoincrement())
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+//   title     String   @db.VarChar(255)
+//   content   String?
+//   published Boolean  @default(false)
+//   author    User?     @relation(fields: [authorId], references: [id])
+//   authorId  String?
 
 
-  @@ignore
-}
+//   @@ignore
+// }

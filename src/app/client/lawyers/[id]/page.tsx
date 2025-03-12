@@ -1,7 +1,7 @@
-import { Button } from "@/components/ui/button";
+// import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { MapPin, Mail, Phone, Calendar, Star, MessageSquare, ExternalLink, Briefcase, GraduationCap } from "lucide-react";
-import Link from "next/link";
+import { MapPin, Mail, Phone, Star, Briefcase, GraduationCap } from "lucide-react";
+// import Link from "next/link";
 
 type LawyerProfile = {
   id: string;
@@ -71,91 +71,6 @@ const mockLawyerProfile: LawyerProfile = {
   ]
 }
 
-const mockLawyers: LawyerProfile[] = [
-  mockLawyerProfile,
-  {
-    id: "2",
-    name: "Michael Chen",
-    photo: "https://images.unsplash.com/photo-1556157382-97eda2d62296?q=80&w=1000&auto=format&fit=crop",
-    practiceAreas: ["Corporate Law", "Tax Law", "Business Formation"],
-    location: "San Francisco, CA",
-    rating: 4.9,
-    reviewCount: 84,
-    experience: 15,
-    email: "michael.chen@advonex.com",
-    phone: "(555) 234-5678",
-    bio: "Michael Chen is a distinguished corporate attorney with 15 years of experience in business law and tax matters. He has advised numerous startups and established companies on complex legal issues, mergers and acquisitions, and tax planning strategies.",
-    education: [
-      {
-        degree: "Juris Doctor",
-        institution: "Stanford Law School",
-        year: "2008"
-      },
-      {
-        degree: "Master of Laws in Taxation",
-        institution: "New York University",
-        year: "2009"
-      }
-    ],
-    reviews: [
-      {
-        id: "r1",
-        author: "David L.",
-        rating: 5,
-        comment: "Michael's expertise in corporate law was instrumental in our company's successful merger. His attention to detail and strategic advice were invaluable.",
-        date: "2024-02-10"
-      },
-      {
-        id: "r2",
-        author: "Jennifer P.",
-        rating: 4.8,
-        comment: "Excellent tax law knowledge and very responsive. Made complex tax matters easy to understand.",
-        date: "2024-01-20"
-      }
-    ]
-  },
-  {
-    id: "3",
-    name: "Maria Garcia",
-    photo: "https://images.unsplash.com/photo-1589386417686-0d34b5903d23?q=80&w=1000&auto=format&fit=crop",
-    practiceAreas: ["Immigration Law", "Civil Rights", "International Law"],
-    location: "Miami, FL",
-    rating: 4.8,
-    reviewCount: 108,
-    experience: 9,
-    email: "maria.garcia@advonex.com",
-    phone: "(555) 345-6789",
-    bio: "Maria Garcia specializes in immigration law and civil rights advocacy. With 9 years of experience, she has successfully represented clients in complex immigration cases and has a strong track record in protecting civil rights.",
-    education: [
-      {
-        degree: "Juris Doctor",
-        institution: "University of Miami School of Law",
-        year: "2014"
-      },
-      {
-        degree: "Bachelor of Arts in International Relations",
-        institution: "Georgetown University",
-        year: "2011"
-      }
-    ],
-    reviews: [
-      {
-        id: "r1",
-        author: "Carlos R.",
-        rating: 5,
-        comment: "Maria helped my family navigate a complex immigration case with great expertise and compassion. We are forever grateful for her dedication.",
-        date: "2024-02-05"
-      },
-      {
-        id: "r2",
-        author: "Ana M.",
-        rating: 4.7,
-        comment: "Excellent advocate for civil rights. Maria is knowledgeable, professional, and truly cares about her clients.",
-        date: "2024-01-15"
-      }
-    ]
-  }
-];
 
 export default function LawyerProfile() {
   return (

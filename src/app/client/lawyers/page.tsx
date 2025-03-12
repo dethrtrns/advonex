@@ -13,8 +13,7 @@ type Lawyer = {
   photo: string;
   practiceAreas: string[];
   location: string;
-  rating: number;
-  reviewCount: number;
+  consultFee: number;
   experience: number;
 };
 
@@ -25,8 +24,7 @@ const mockLawyers: Lawyer[] = [
     photo: "https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=1000&auto=format&fit=crop",
     practiceAreas: ["Civil Law", "Family Law"],
     location: "New York, NY",
-    rating: 4.8,
-    reviewCount: 127,
+    consultFee: 300,
     experience: 12
   },
   {
@@ -35,8 +33,7 @@ const mockLawyers: Lawyer[] = [
     photo: "https://images.unsplash.com/photo-1556157382-97eda2d62296?q=80&w=1000&auto=format&fit=crop",
     practiceAreas: ["Corporate Law", "Tax Law"],
     location: "San Francisco, CA",
-    rating: 4.9,
-    reviewCount: 84,
+    consultFee: 350,
     experience: 15
   },
   {
@@ -45,8 +42,7 @@ const mockLawyers: Lawyer[] = [
     photo: "https://images.unsplash.com/photo-1615109398623-88346a601842?q=80&w=1000&auto=format&fit=crop",
     practiceAreas: ["Criminal Law", "Civil Rights"],
     location: "Chicago, IL",
-    rating: 4.7,
-    reviewCount: 156,
+    consultFee: 275,
     experience: 8
   },
   {
@@ -55,8 +51,7 @@ const mockLawyers: Lawyer[] = [
     photo: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=1000&auto=format&fit=crop",
     practiceAreas: ["Employment Law", "Labor Relations"],
     location: "Boston, MA",
-    rating: 4.9,
-    reviewCount: 92,
+    consultFee: 325,
     experience: 10
   },
   {
@@ -65,8 +60,7 @@ const mockLawyers: Lawyer[] = [
     photo: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=1000&auto=format&fit=crop",
     practiceAreas: ["Real Estate Law", "Contract Law"],
     location: "Los Angeles, CA",
-    rating: 4.6,
-    reviewCount: 73,
+    consultFee: 400,
     experience: 14
   },
   {
@@ -75,8 +69,7 @@ const mockLawyers: Lawyer[] = [
     photo: "https://images.unsplash.com/photo-1589386417686-0d34b5903d23?q=80&w=1000&auto=format&fit=crop",
     practiceAreas: ["Immigration Law", "Civil Rights"],
     location: "Miami, FL",
-    rating: 4.8,
-    reviewCount: 108,
+    consultFee: 290,
     experience: 9
   }
 ];
@@ -161,8 +154,7 @@ useEffect(() => {
                   </div>
                   <div className="flex items-center justify-between pt-2">
                     <div className="flex items-center gap-2">
-                      <span className="text-sm font-medium">{lawyer.rating}/5.0</span>
-                      <span className="text-sm text-muted-foreground">({lawyer.reviewCount} reviews)</span>
+                      <span className="text-sm font-medium">${lawyer.consultFee}/hr</span>
                     </div>
                     <span className="text-sm text-muted-foreground">{lawyer.experience} years exp.</span>
                   </div>

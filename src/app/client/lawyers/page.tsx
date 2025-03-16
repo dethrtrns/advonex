@@ -6,97 +6,28 @@ import { Input } from "@/components/ui/input";
 import { Search, MapPin, Filter } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-
-type Lawyer = {
-  id: string;
-  name: string;
-  photo: string;
-  practiceAreas: string[];
-  location: string;
-  consultFee: number;
-  experience: number;
-};
-
-const mockLawyers: Lawyer[] = [
-  {
-    id: "1",
-    name: "Sarah Johnson",
-    photo: "https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=1000&auto=format&fit=crop",
-    practiceAreas: ["Civil Law", "Family Law"],
-    location: "New York, NY",
-    consultFee: 300,
-    experience: 12
-  },
-  {
-    id: "2",
-    name: "Michael Chen",
-    photo: "https://images.unsplash.com/photo-1556157382-97eda2d62296?q=80&w=1000&auto=format&fit=crop",
-    practiceAreas: ["Corporate Law", "Tax Law"],
-    location: "San Francisco, CA",
-    consultFee: 350,
-    experience: 15
-  },
-  {
-    id: "3",
-    name: "David Rodriguez",
-    photo: "https://images.unsplash.com/photo-1615109398623-88346a601842?q=80&w=1000&auto=format&fit=crop",
-    practiceAreas: ["Criminal Law", "Civil Rights"],
-    location: "Chicago, IL",
-    consultFee: 275,
-    experience: 8
-  },
-  {
-    id: "4",
-    name: "Emily Parker",
-    photo: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=1000&auto=format&fit=crop",
-    practiceAreas: ["Employment Law", "Labor Relations"],
-    location: "Boston, MA",
-    consultFee: 325,
-    experience: 10
-  },
-  {
-    id: "5",
-    name: "James Wilson",
-    photo: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=1000&auto=format&fit=crop",
-    practiceAreas: ["Real Estate Law", "Contract Law"],
-    location: "Los Angeles, CA",
-    consultFee: 400,
-    experience: 14
-  },
-  {
-    id: "6",
-    name: "Maria Garcia",
-    photo: "https://images.unsplash.com/photo-1589386417686-0d34b5903d23?q=80&w=1000&auto=format&fit=crop",
-    practiceAreas: ["Immigration Law", "Civil Rights"],
-    location: "Miami, FL",
-    consultFee: 290,
-    experience: 9
-  }
-];
+import { Lawyer, mockLawyersList } from "@/data/mockData";
 
 export default function LawyersDirectory() {
+  const [lawyers, setLawyers] = useState<Lawyer[]>([]);
+  // const [searchTerm, setSearchTerm] = useState('');
+  // const [location, setLocation] = useState('');
 
-const [lawyers, setLawyers] = useState<Lawyer[]>([]);
-// const [searchTerm, setSearchTerm] = useState('');
-// const [location, setLocation] = useState('');
+  useEffect(() => {
+    // Simulate API call delay
+    const fetchLawyers = async () => {
+      try {
+        // Simulating network delay
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        setLawyers(mockLawyersList);
+      } catch (error) {
+        console.error('Error fetching lawyers:', error);
+        // Handle error state if needed
+      }
+    };
 
-useEffect(() => {
-  // Simulate API call delay
-  const fetchLawyers = async () => {
-    try {
-      // Simulating network delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      setLawyers(mockLawyers);
-    } catch (error) {
-      console.error('Error fetching lawyers:', error);
-      // Handle error state if needed
-    }
-  };
-
-  fetchLawyers();
-}, []); // Empty dependency array means this effect runs once on mount
-
-
+    fetchLawyers();
+  }, []); // Empty dependency array means this effect runs once on mount
 
   return (
     <div className="space-y-6">

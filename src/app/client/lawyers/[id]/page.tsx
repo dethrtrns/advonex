@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { MapPin, Mail, Phone, Briefcase, GraduationCap, Calendar, MessageSquare, ArrowLeft, Loader } from "lucide-react";
+import { MapPin, Mail, Phone, Briefcase, GraduationCap, ArrowLeft, Loader } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
@@ -115,16 +115,6 @@ export default function LawyerProfile() {
             </div>
           </div>
 
-          <div className="flex flex-col gap-3 sm:flex-row">
-            <Button className="flex-1" size="lg">
-              <Calendar className="mr-2 h-4 w-4" />
-              Book Consultation
-            </Button>
-            <Button variant="outline" className="flex-1" size="lg">
-              <MessageSquare className="mr-2 h-4 w-4" />
-              Send Message
-            </Button>
-          </div>
         </div>
       </div>
 

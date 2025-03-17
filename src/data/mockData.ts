@@ -15,6 +15,7 @@ export type LawyerProfile = {
     institution: string;
     year: string;
   }>;
+  barId: string;
 };
 
 export type Lawyer = {
@@ -50,7 +51,8 @@ const mockLawyerProfile: LawyerProfile = {
       institution: "Yale University",
       year: "2008"
     }
-  ]
+  ],
+  barId: "NY12345678"
 };
 
 // Mock data for all lawyer profiles
@@ -78,7 +80,8 @@ export const mockLawyers: Record<string, LawyerProfile> = {
         institution: "UC Berkeley",
         year: "2005"
       }
-    ]
+    ],
+    barId: "CA87654321"
   },
   "3": {
     id: "3",
@@ -102,7 +105,8 @@ export const mockLawyers: Record<string, LawyerProfile> = {
         institution: "Northwestern University",
         year: "2012"
       }
-    ]
+    ],
+    barId: "IL98765432"
   },
   "4": {
     id: "4",
@@ -126,7 +130,8 @@ export const mockLawyers: Record<string, LawyerProfile> = {
         institution: "Northeastern University",
         year: "2010"
       }
-    ]
+    ],
+    barId: "MA98765432"
   },
   "5": {
     id: "5",
@@ -150,7 +155,8 @@ export const mockLawyers: Record<string, LawyerProfile> = {
         institution: "USC Marshall School of Business",
         year: "2006"
       }
-    ]
+    ],
+    barId: "CA98765432"
   },
   "6": {
     id: "6",
@@ -174,7 +180,8 @@ export const mockLawyers: Record<string, LawyerProfile> = {
         institution: "Florida International University",
         year: "2011"
       }
-    ]
+    ],
+    barId: "FL12345678"
   }
 };
 

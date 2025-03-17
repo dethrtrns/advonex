@@ -148,6 +148,22 @@ export default function LawyerProfile() {
         <p className="text-muted-foreground">{lawyer.bio}</p>
       </div>
 
+      {/* Bar ID Section */}
+      <div className="space-y-4">
+        <h2 className="text-2xl font-semibold">Bar Information</h2>
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center gap-3">
+              <Briefcase className="h-5 w-5 text-primary" />
+              <div>
+                <div className="text-sm font-medium">Bar ID</div>
+                <div className="text-sm text-muted-foreground">{lawyer.barId || "Not provided"}</div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
       {/* Education Section */}
       <div className="space-y-4">
         <h2 className="text-2xl font-semibold">Education</h2>

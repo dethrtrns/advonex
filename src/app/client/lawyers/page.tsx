@@ -84,10 +84,11 @@ export default function LawyersDirectory() {
                     ))}
                   </div>
                   <div className="flex items-center justify-between pt-2">
+                  <span className="text-sm text-muted-foreground">{lawyer.experience} years exp.</span>
                     <div className="flex items-center gap-2">
                       <span className="text-sm font-medium">${lawyer.consultFee}/hr</span>
                     </div>
-                    <span className="text-sm text-muted-foreground">{lawyer.experience} years exp.</span>
+                    
                   </div>
                 </div>
               </CardContent>

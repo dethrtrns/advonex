@@ -82,8 +82,9 @@ export default function LawyerProfile() {
       </Link>
       
       {/* Hero Section */}
-      <div className="flex flex-col gap-6 md:flex-row md:items-start">
-        <div className="relative aspect-square w-full max-w-sm overflow-hidden rounded-lg md:w-1/4">
+      <div className="flex gap-4 flex-row ">
+
+        <div className="relative aspect-square w-1/3 max-w-sm overflow-hidden rounded-lg md:w-1/4">
           {/* Replace Image component with standard img tag */}
           <img
             src={lawyer.photo}
@@ -104,7 +105,7 @@ export default function LawyerProfile() {
             {lawyer.practiceAreas.map((area) => (
               <span
                 key={area}
-                className="inline-flex items-center rounded-full bg-primary/10 px-3 py-1 text-sm font-medium text-primary"
+                className="inline-flex items-center rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary"
               >
                 {area}
               </span>
@@ -112,20 +113,21 @@ export default function LawyerProfile() {
           </div>
 
           <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2 text-primary">
-              <span className="text-lg font-bold">${lawyer.consultFee}</span>
-              <span className="text-sm text-muted-foreground">/hour</span>
-            </div>
             <div className="flex items-center gap-2 text-muted-foreground">
               <Briefcase className="h-4 w-4" />
               <span>{lawyer.experience} years experience</span>
             </div>
+            <div className="flex items-center gap-2 text-primary">
+              <span className="text-lg font-bold">${lawyer.consultFee}</span>
+              <span className="text-sm text-muted-foreground">/hour</span>
+            </div>
+            
           </div>
 
           {/* Add Contact Button */}
           <Dialog>
             <DialogTrigger asChild>
-              <Button className="mt-4">Contact Lawyer</Button>
+              <Button className="w-full md:w-1/3">Contact Lawyer</Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-md">
               <DialogHeader>

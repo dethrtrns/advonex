@@ -26,7 +26,8 @@ const formSchema = z.object({
 export function RegisterDialog() {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
-  const isLawyerRoute = pathname?.includes('/lawyer');
+  // specific check to avoid matching /client/lawyers
+  const isLawyerRoute = pathname?.startsWith('/lawyer');
 
   const form = useForm<z.infer<typeof formSchema>>({ 
     resolver: zodResolver(formSchema),
@@ -41,8 +42,17 @@ export function RegisterDialog() {
   useEffect(() => {
     if (isLawyerRoute) {
       form.setValue("type", "lawyer");
+    } else {
+      form.setValue("type", "client");
     }
   }, [isLawyerRoute, form]);
+
+  // route detection
+  useEffect(() => {
+    console.log("Current pathname:", pathname);
+    console.log("Is lawyer route:", isLawyerRoute);
+    console.log("Current user type:", form.getValues("type"));
+  }, [pathname, isLawyerRoute, form]);
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
@@ -74,6 +84,7 @@ export function RegisterDialog() {
     }
   };
 
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
@@ -90,7 +101,7 @@ export function RegisterDialog() {
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>User Name</FormLabel>
+                  <FormLabel>Full Name</FormLabel>
                   <FormControl>
                     <Input placeholder="John Doe" {...field} />
                   </FormControl>
@@ -111,23 +122,21 @@ export function RegisterDialog() {
                 </FormItem>
               )}
             />
-            {isLawyerRoute && (
-              <FormField
-                control={form.control}
-                name="type"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Account Type</FormLabel>
-                    <FormControl>
-                      <div className="text-sm text-gray-500">
-                        {field.value === "lawyer" ? "Lawyer" : "Client"}
-                      </div>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            )}
+            <FormField
+              control={form.control}
+              name="type"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Account Type</FormLabel>
+                  <FormControl>
+                    <div className="text-sm text-gray-500">
+                      {field.value === "lawyer" ? "Lawyer" : "Client"}
+                    </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <Button type="submit" className="w-full">Register</Button>
           </form>
         </Form>

@@ -9,6 +9,13 @@ import { useParams } from "next/navigation";
 import { mockLawyers } from "@/data/mockData";
 import type { LawyerProfile } from "@/data/mockData";
 // import { getLawyerProfile } from "@/services/lawyerService";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 export default function LawyerProfile() {
   const params = useParams();
@@ -115,32 +122,41 @@ export default function LawyerProfile() {
             </div>
           </div>
 
+          {/* Add Contact Button */}
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button className="mt-4">Contact Lawyer</Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-md">
+              <DialogHeader>
+                <DialogTitle>Contact {lawyer.name}</DialogTitle>
+              </DialogHeader>
+              <div className="grid gap-4 py-4">
+                <div className="flex items-center gap-3">
+                  <Mail className="h-5 w-5 text-muted-foreground" />
+                  <div>
+                    <div className="text-sm font-medium">Email</div>
+                    <a href={`mailto:${lawyer.email}`} className="text-sm text-muted-foreground hover:underline">
+                      {lawyer.email}
+                    </a>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <Phone className="h-5 w-5 text-muted-foreground" />
+                  <div>
+                    <div className="text-sm font-medium">Phone</div>
+                    <a href={`tel:${lawyer.phone}`} className="text-sm text-muted-foreground hover:underline">
+                      {lawyer.phone}
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
 
-      {/* Contact Information */}
-      <Card>
-        <CardContent className="grid gap-4 p-6 sm:grid-cols-2">
-          <div className="flex items-center gap-3">
-            <Mail className="h-5 w-5 text-muted-foreground" />
-            <div>
-              <div className="text-sm font-medium">Email</div>
-              <a href={`mailto:${lawyer.email}`} className="text-sm text-muted-foreground hover:underline">
-                {lawyer.email}
-              </a>
-            </div>
-          </div>
-          <div className="flex items-center gap-3">
-            <Phone className="h-5 w-5 text-muted-foreground" />
-            <div>
-              <div className="text-sm font-medium">Phone</div>
-              <a href={`tel:${lawyer.phone}`} className="text-sm text-muted-foreground hover:underline">
-                {lawyer.phone}
-              </a>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+      {/* Remove the standalone Contact Information card since it's now in the dialog */}
 
       {/* About Section */}
       <div className="space-y-4">

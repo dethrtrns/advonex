@@ -82,7 +82,7 @@ export default function LawyerProfile() {
       </Link>
       
       {/* Hero Section */}
-      <div className="flex gap-4 flex-row ">
+      <div className="flex gap-3 flex-row items-start ">
 
         <div className="relative aspect-square w-1/3 max-w-sm overflow-hidden rounded-lg md:w-1/4">
           {/* Replace Image component with standard img tag */}
@@ -93,8 +93,8 @@ export default function LawyerProfile() {
           />
         </div>
         <div className="flex-1 space-y-4">
-          <div className="space-y-2">
-            <h1 className="text-3xl font-bold">{lawyer.name}</h1>
+          <div>
+            <h1 className="text-2xl font-bold">{lawyer.name}</h1>
             <div className="flex items-center gap-2 text-muted-foreground">
               <MapPin className="h-4 w-4" />
               <span>{lawyer.location}</span>
@@ -112,7 +112,7 @@ export default function LawyerProfile() {
             ))}
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
             <div className="flex items-center gap-2 text-muted-foreground">
               <Briefcase className="h-4 w-4" />
               <span>{lawyer.experience} years experience</span>

@@ -1,6 +1,7 @@
 "use client"
 
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -29,6 +30,7 @@ const formSchema = z.object({
     .max(new Date().getFullYear(), "Graduation year cannot be in the future"),
   practiceCourt1: z.string().min(1, "At least one practice court is required"),
   practiceCourt2: z.string().optional(),
+  consultFee: z.number().min(0, "Consultation fee must be 0 or greater"),
 });
 
 export default function LawyerRegistration() {
@@ -72,6 +74,7 @@ export default function LawyerRegistration() {
         lawSchool: "",
         degree: "",
         graduationYear: new Date().getFullYear(),
+        consultFee: 0,
         practiceCourt1: "",
         practiceCourt2: "",
       };
@@ -91,30 +94,54 @@ export default function LawyerRegistration() {
   ];
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    // Fix function syntax
-    const transformedData = {
-      ...values,
-      practiceAreas: [values.practiceArea],
-      practiceCourts: {
-        primary: values.practiceCourt1,
-        secondary: values.practiceCourt2
-      },
-      education: {
-        institution: values.lawSchool,
-        degree: values.degree,
-        year: String(values.graduationYear)
-      }
-    };
-
     try {
       setIsSubmitting(true);
-      console.log("Submitting:", transformedData);
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      router.push("/");
+      
+      const transformedData = {
+        name: `${values.firstName} ${values.lastName}`,
+        email: values.email,
+        phone: values.phone,
+        barId: values.barNumber,
+        practiceAreas: [values.practiceArea],
+        experience: values.experience,
+        bio: values.bio,
+        consultFee: values.consultFee,
+        practiceCourts: {
+          primary: values.practiceCourt1,
+          secondary: values.practiceCourt2 || null
+        },
+        education: {
+          institution: values.lawSchool,
+          degree: values.degree,
+          year: String(values.graduationYear)
+        }
+      };
+
+      // In a real app, this would be an API call
+      const response = await fetch('/api/lawyer/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(transformedData)
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Failed to register');
+      }
+
+      // Clear registration data from localStorage
+      localStorage.removeItem('lawyerRegistration');
+      
+      // Show success message
+      toast.success('Profile created successfully!');
+      
+      // Redirect to dashboard
+      router.push('/lawyer/dashboard');
     } catch (error) {
-      console.error("Error submitting form:", error);
+      toast.error(error instanceof Error ? error.message : 'Failed to create profile. Please try again.');
+      console.error('Error submitting form:', error);
     } finally {
-      setIsSubmitting(false);
+      setIsSubmitting(false)
     }
   }
 
@@ -252,6 +279,51 @@ export default function LawyerRegistration() {
               />
               <FormField
                 control={form.control}
+                name="consultFee"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Consultation Fee ($/hr)</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        min="0"
+                        placeholder="Enter your hourly consultation fee"
+                        {...field}
+                        onChange={(e) => field.onChange(Number(e.target.value))}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="practiceCourt1"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Primary Court</FormLabel>
+                    <FormControl>
+                      <Input placeholder="e.g., Family Court" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="practiceCourt2"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Secondary Court (Optional)</FormLabel>
+                    <FormControl>
+                      <Input placeholder="e.g., Civil Court" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
                 name="bio"
                 render={({ field }) => (
                   <FormItem>
@@ -322,40 +394,6 @@ export default function LawyerRegistration() {
                   )}
                 />
               </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Practice Courts</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <FormField
-                control={form.control}
-                name="practiceCourt1"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Primary Court</FormLabel>
-                    <FormControl>
-                      <Input placeholder="e.g., Family Court" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="practiceCourt2"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Secondary Court (Optional)</FormLabel>
-                    <FormControl>
-                      <Input placeholder="e.g., Civil Court" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
             </CardContent>
           </Card>
 

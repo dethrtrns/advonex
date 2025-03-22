@@ -24,7 +24,9 @@ const formSchema = z.object({
   bio: z.string().min(50, "Bio must be at least 50 characters"),
   lawSchool: z.string().min(1, "Law school is required"),
   degree: z.string().min(1, "Degree is required"),
-  graduationYear: z.number().min(1900, "Invalid graduation year").max(new Date().getFullYear(), "Graduation year cannot be in the future"),
+  graduationYear: z.number()
+    .min(1900, "Invalid graduation year")
+    .max(new Date().getFullYear(), "Graduation year cannot be in the future"),
   practiceCourt1: z.string().min(1, "At least one practice court is required"),
   practiceCourt2: z.string().optional(),
 });
@@ -52,7 +54,9 @@ export default function LawyerRegistration() {
             bio: "",
             lawSchool: "",
             degree: "",
-            graduationYear: new Date().getFullYear()
+            graduationYear: new Date().getFullYear(),
+            practiceCourt1: "", 
+            practiceCourt2: "",
           };
         }
       }
@@ -87,13 +91,26 @@ export default function LawyerRegistration() {
   ];
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    // Fix function syntax
+    const transformedData = {
+      ...values,
+      practiceAreas: [values.practiceArea],
+      practiceCourts: {
+        primary: values.practiceCourt1,
+        secondary: values.practiceCourt2
+      },
+      education: {
+        institution: values.lawSchool,
+        degree: values.degree,
+        year: String(values.graduationYear)
+      }
+    };
+
     try {
       setIsSubmitting(true);
-      // TODO: Implement API call to submit form data
-      console.log(values);
-      // Simulate API call
+      console.log("Submitting:", transformedData);
       await new Promise(resolve => setTimeout(resolve, 2000));
-      router.push("/"); // Redirect to home page after successful submission
+      router.push("/");
     } catch (error) {
       console.error("Error submitting form:", error);
     } finally {

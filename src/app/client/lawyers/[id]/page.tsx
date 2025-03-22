@@ -185,20 +185,16 @@ export default function LawyerProfile() {
       {/* Education Section */}
       <div className="space-y-4">
         <h2 className="text-2xl font-semibold">Education</h2>
-        <div className="grid gap-4 sm:grid-cols-2">
-          {lawyer.education.map((edu) => (
-            <Card key={edu.institution}>
-              <CardContent className="flex items-start gap-4 p-6">
-                <GraduationCap className="h-5 w-5 text-primary" />
-                <div>
-                  <div className="font-medium">{edu.degree}</div>
-                  <div className="text-sm text-muted-foreground">{edu.institution}</div>
-                  <div className="text-sm text-muted-foreground">{edu.year}</div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+        <Card>
+          <CardContent className="flex items-start gap-4 p-6">
+            <GraduationCap className="h-5 w-5 text-primary" />
+            <div>
+              <div className="font-medium">{lawyer.education.degree}</div>
+              <div className="text-sm text-muted-foreground">{lawyer.education.institution}</div>
+              <div className="text-sm text-muted-foreground">{lawyer.education.year}</div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

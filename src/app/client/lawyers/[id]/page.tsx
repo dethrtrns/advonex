@@ -84,12 +84,12 @@ export default function LawyerProfile() {
       {/* Hero Section */}
       <div className="flex gap-3 flex-row items-start ">
 
-        <div className="relative aspect-square w-1/3 max-w-sm overflow-hidden rounded-lg md:w-1/4">
-          {/* Replace Image component with standard img tag */}
+        <div className="relative aspect-square w-1/3 max-w-sm overflow-hidden rounded-lg md:w-1/4 group">
           <img
             src={lawyer.photo}
             alt={lawyer.name}
-            className="object-cover w-full h-full"
+            className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-110"
+            loading="lazy"
           />
         </div>
         <div className="flex-1 space-y-4">
@@ -166,27 +166,12 @@ export default function LawyerProfile() {
         <p className="text-muted-foreground">{lawyer.bio}</p>
       </div>
 
-      {/* Bar ID Section */}
-      <div className="space-y-4">
-        <h2 className="text-2xl font-semibold">Bar Information</h2>
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center gap-3">
-              <Briefcase className="h-5 w-5 text-primary" />
-              <div>
-                <div className="text-sm font-medium">Bar ID</div>
-                <div className="text-sm text-muted-foreground">{lawyer.barId || "Not provided"}</div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
 
-      {/* Practice Courts Section */}
-      <div className="space-y-4">
+   {/* Practice Courts Section */}
+   <div className="space-y-4">
         <h2 className="text-2xl font-semibold">Practice Courts</h2>
         <Card>
-          <CardContent className="p-6">
+          <CardContent className="">
             <div className="space-y-3">
               <div className="flex items-center gap-3">
                 <Briefcase className="h-5 w-5 text-primary" />
@@ -209,11 +194,27 @@ export default function LawyerProfile() {
         </Card>
       </div>
 
+      {/* Bar ID Section */}
+      <div className="space-y-4">
+        <h2 className="text-2xl font-semibold">Bar Information</h2>
+        <Card>
+          <CardContent className="">
+            <div className="flex items-center gap-3">
+              <Briefcase className="h-5 w-5 text-primary" />
+              <div>
+                <div className="text-sm font-medium">Bar ID</div>
+                <div className="text-sm text-muted-foreground">{lawyer.barId || "Not provided"}</div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
       {/* Education Section */}
       <div className="space-y-4">
         <h2 className="text-2xl font-semibold">Education</h2>
         <Card>
-          <CardContent className="flex items-start gap-4 p-6">
+          <CardContent className="flex items-start gap-4 ">
             <GraduationCap className="h-5 w-5 text-primary" />
             <div>
               <div className="font-medium">{lawyer.education.degree}</div>

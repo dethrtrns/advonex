@@ -24,7 +24,9 @@ const formSchema = z.object({
   bio: z.string().min(50, "Bio must be at least 50 characters"),
   lawSchool: z.string().min(1, "Law school is required"),
   degree: z.string().min(1, "Degree is required"),
-  graduationYear: z.number().min(1900, "Invalid graduation year").max(new Date().getFullYear(), "Graduation year cannot be in the future")
+  graduationYear: z.number().min(1900, "Invalid graduation year").max(new Date().getFullYear(), "Graduation year cannot be in the future"),
+  practiceCourt1: z.string().min(1, "At least one practice court is required"),
+  practiceCourt2: z.string().optional(),
 });
 
 export default function LawyerRegistration() {
@@ -65,7 +67,9 @@ export default function LawyerRegistration() {
         bio: "",
         lawSchool: "",
         degree: "",
-        graduationYear: new Date().getFullYear()
+        graduationYear: new Date().getFullYear(),
+        practiceCourt1: "",
+        practiceCourt2: "",
       };
     })()
   });
@@ -301,6 +305,40 @@ export default function LawyerRegistration() {
                   )}
                 />
               </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Practice Courts</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <FormField
+                control={form.control}
+                name="practiceCourt1"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Primary Court</FormLabel>
+                    <FormControl>
+                      <Input placeholder="e.g., Family Court" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="practiceCourt2"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Secondary Court (Optional)</FormLabel>
+                    <FormControl>
+                      <Input placeholder="e.g., Civil Court" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </CardContent>
           </Card>
 

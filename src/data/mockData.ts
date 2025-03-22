@@ -16,6 +16,10 @@ export type LawyerProfile = {
     year: string;
   };
   barId: string;
+  practiceCourts: {
+    primary: string;
+    secondary?: string;
+  };
 };
 
 export type Lawyer = {
@@ -45,7 +49,11 @@ const mockLawyerProfile: LawyerProfile = {
     institution: "Harvard Law School",
     year: "2011"
   },
-  barId: "NY12345678"
+  barId: "NY12345678",
+  practiceCourts: {
+    primary: "New York Supreme Court",
+    secondary: "New York Family Court"
+  }
 };
 
 // Mock data for all lawyer profiles
@@ -67,7 +75,11 @@ export const mockLawyers: Record<string, LawyerProfile> = {
       institution: "Stanford Law School",
       year: "2008"
     },
-    barId: "CA87654321"
+    barId: "CA87654321",
+  practiceCourts: {
+    primary: "California Superior Court",
+    secondary: "U.S. District Court, Northern District of California"
+  }
   },
   "3": {
     id: "3",
@@ -85,7 +97,11 @@ export const mockLawyers: Record<string, LawyerProfile> = {
       institution: "University of Chicago Law School",
       year: "2015"
     },
-    barId: "IL98765432"
+    barId: "IL98765432",
+  practiceCourts: {
+    primary: "Illinois Circuit Court",
+    secondary: "U.S. District Court, Northern District of Illinois"
+  }
   },
   "4": {
     id: "4",
@@ -103,7 +119,11 @@ export const mockLawyers: Record<string, LawyerProfile> = {
       institution: "Boston University School of Law",
       year: "2013"
     },
-    barId: "MA98765432"
+    barId: "MA98765432",
+  practiceCourts: {
+    primary: "Massachusetts Superior Court",
+    secondary: "Massachusetts District Court"
+  }
   },
   "5": {
     id: "5",
@@ -121,7 +141,11 @@ export const mockLawyers: Record<string, LawyerProfile> = {
       institution: "UCLA School of Law",
       year: "2009"
     },
-    barId: "CA98765432"
+    barId: "CA98765432",
+  practiceCourts: {
+    primary: "California Superior Court",
+    secondary: "California Court of Appeal"
+  }
   },
   "6": {
     id: "6",
@@ -139,7 +163,11 @@ export const mockLawyers: Record<string, LawyerProfile> = {
       institution: "University of Miami School of Law",
       year: "2014"
     },
-    barId: "FL12345678"
+    barId: "FL12345678",
+  practiceCourts: {
+    primary: "Florida Circuit Court",
+    secondary: "U.S. Immigration Court"
+  }
   }
 };
 

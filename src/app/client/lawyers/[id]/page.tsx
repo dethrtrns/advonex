@@ -182,6 +182,33 @@ export default function LawyerProfile() {
         </Card>
       </div>
 
+      {/* Practice Courts Section */}
+      <div className="space-y-4">
+        <h2 className="text-2xl font-semibold">Practice Courts</h2>
+        <Card>
+          <CardContent className="p-6">
+            <div className="space-y-3">
+              <div className="flex items-center gap-3">
+                <Briefcase className="h-5 w-5 text-primary" />
+                <div>
+                  <div className="text-sm font-medium">Primary Court</div>
+                  <div className="text-sm text-muted-foreground">{lawyer.practiceCourts?.primary || "Not provided"}</div>
+                </div>
+              </div>
+              {lawyer.practiceCourts?.secondary && (
+                <div className="flex items-center gap-3">
+                  <Briefcase className="h-5 w-5 text-primary" />
+                  <div>
+                    <div className="text-sm font-medium">Secondary Court</div>
+                    <div className="text-sm text-muted-foreground">{lawyer.practiceCourts.secondary}</div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
       {/* Education Section */}
       <div className="space-y-4">
         <h2 className="text-2xl font-semibold">Education</h2>

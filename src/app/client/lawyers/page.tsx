@@ -3,7 +3,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, MapPin, Filter } from "lucide-react";
+import { Search, MapPin, Filter, Briefcase } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Lawyer, mockLawyersList } from "@/data/mockData";
@@ -72,6 +72,10 @@ export default function LawyersDirectory() {
                   <div className="flex items-center gap-1 text-sm text-muted-foreground">
                     <MapPin className="h-4 w-4" />
                     {lawyer.location}
+                  </div>
+                  <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                    <Briefcase className="h-4 w-4" />
+                    {lawyer.practiceCourts?.primary || "Not provided"}
                   </div>
                   <div className="flex flex-wrap gap-2">
                     {lawyer.practiceAreas.map((area) => (

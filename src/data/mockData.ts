@@ -27,6 +27,10 @@ export type Lawyer = {
   name: string;
   photo: string;
   practiceAreas: string[];
+  practiceCourts: {
+    primary: string;
+    secondary?: string;
+  };
   location: string;
   consultFee: number;
   experience: number;

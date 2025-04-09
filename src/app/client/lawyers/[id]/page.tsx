@@ -8,6 +8,8 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { mockLawyers } from "@/data/mockData";
 import type { LawyerProfile } from "@/data/mockData";
+import { AspectRatio } from "@radix-ui/react-aspect-ratio";
+
 // import { getLawyerProfile } from "@/services/lawyerService";
 import {
   Dialog,
@@ -84,13 +86,14 @@ export default function LawyerProfile() {
       {/* Hero Section */}
       <div className="flex gap-3 flex-row items-start ">
 
-        <div className="relative aspect-square w-1/3 max-w-sm overflow-hidden rounded-lg md:w-1/4 group">
-          <img
+        <div className="relative w-1/3 max-w-sm overflow-hidden rounded-lg md:w-1/4 group">
+        <AspectRatio className="sm" ratio={9/13}> <img
             src={lawyer.photo}
             alt={lawyer.name}
             className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-110"
             loading="lazy"
           />
+          </AspectRatio>
         </div>
         <div className="flex-1 space-y-4">
           <div>
@@ -124,10 +127,14 @@ export default function LawyerProfile() {
             
           </div>
 
-          {/* Add Contact Button */}
+         
+        </div>
+      </div>
+ {/* Add Contact Button */}
+ <span className="flex w-full justify-center md:justify-start">
           <Dialog>
             <DialogTrigger asChild>
-              <Button className="w-full md:w-1/3">Contact Lawyer</Button>
+              <Button className="w-3/4 md:w-1/3">Contact Lawyer</Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-md">
               <DialogHeader>
@@ -155,9 +162,7 @@ export default function LawyerProfile() {
               </div>
             </DialogContent>
           </Dialog>
-        </div>
-      </div>
-
+          </span>
       {/* Remove the standalone Contact Information card since it's now in the dialog */}
 
       {/* About Section */}

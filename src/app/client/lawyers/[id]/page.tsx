@@ -6,18 +6,10 @@ import { MapPin, Mail, Phone, Briefcase, GraduationCap, ArrowLeft, Loader } from
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import { mockLawyers } from "@/data/mockData";
-import type { LawyerProfile } from "@/data/mockData";
+import { getLawyerProfile, type LawyerProfile } from "@/services/lawyerService";
 import { AspectRatio } from "@radix-ui/react-aspect-ratio";
-
-// import { getLawyerProfile } from "@/services/lawyerService";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@radix-ui/react-dialog";
+import { DialogHeader } from "@/components/ui/dialog";
 
 export default function LawyerProfile() {
   const params = useParams();
@@ -33,20 +25,11 @@ export default function LawyerProfile() {
       setError(null);
       
       try {
-        // Simulate API call delay
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        
-        // In a real app, this would be an API call
-        const profile = mockLawyers[lawyerId];
-        
-        if (!profile) {
-          throw new Error("Lawyer not found");
-        }
-        
+        const profile = await getLawyerProfile(lawyerId);
         setLawyer(profile);
       } catch (err) {
         console.error("Error fetching lawyer profile:", err);
-        setError("Could not load lawyer profile. Please try again later.");
+        setError("Could not load lawyer profile. Please try a different lawyer.");
       } finally {
         setIsLoading(false);
       }
@@ -182,15 +165,15 @@ export default function LawyerProfile() {
                 <Briefcase className="h-5 w-5 text-primary" />
                 <div>
                   <div className="text-sm font-medium">Primary Court</div>
-                  <div className="text-sm text-muted-foreground">{lawyer.practiceCourts?.primary || "Not provided"}</div>
+                  <div className="text-sm text-muted-foreground">{lawyer.practiceCourt?.primary || "Not provided"}</div>
                 </div>
               </div>
-              {lawyer.practiceCourts?.secondary && (
+              {lawyer.practiceCourt?.secondary && (
                 <div className="flex items-center gap-3">
                   <Briefcase className="h-5 w-5 text-primary" />
                   <div>
                     <div className="text-sm font-medium">Secondary Court</div>
-                    <div className="text-sm text-muted-foreground">{lawyer.practiceCourts.secondary}</div>
+                    <div className="text-sm text-muted-foreground">{lawyer.practiceCourt.secondary}</div>
                   </div>
                 </div>
               )}

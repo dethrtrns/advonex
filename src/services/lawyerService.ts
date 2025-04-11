@@ -1,25 +1,74 @@
-import { LawyerProfile, mockLawyers, mockLawyersList } from "@/data/mockData";
+export interface Lawyer {
+  id: string;
+  name: string;
+  photo: string;
+  practiceAreas: string[];
+  location: string;
+  experience: number;
+  consultFee: number;
+  practiceCourt: {
+    id: string,
+    primary: string
+    secondary: string,
+    lawyerId: string
+  }
+}
 
-// In a real application, these functions would make API calls
-// For now, they use the mock data
+interface ApiResponse {
+  success: boolean;
+  data: Lawyer[];
+}
 
-export async function getLawyersList() {
-  // Simulate API delay
-  await new Promise(resolve => setTimeout(resolve, 1000));
-  return mockLawyersList;
+export async function getLawyersList(): Promise<Lawyer[]> {
+  try {
+    const response = await fetch('http://192.168.0.178:3003/api/lawyers');
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    const result: ApiResponse = await response.json();
+    return result.data;
+  } catch (error) {
+    console.error('Error fetching lawyers:', error);
+    throw error;
+  }
+}
+
+// Add this interface and function to your existing service file
+export interface LawyerProfile {
+  id: string;
+  name: string;
+  photo: string;
+  practiceAreas: string[];
+  location: string;
+  experience: number;
+  consultFee: number;
+  email: string;
+  phone: string;
+  bio: string;
+  education: {
+    degree: string;
+    institution: string;
+    year: string;
+  };
+  practiceCourt: {
+      id: string,
+      primary: string
+      secondary: string,
+      lawyerId: string
+    }
+  barId?: string;
 }
 
 export async function getLawyerProfile(id: string): Promise<LawyerProfile> {
-  // Simulate API delay
-  await new Promise(resolve => setTimeout(resolve, 1000));
-  
-  const lawyer = mockLawyers[id];
-  if (!lawyer) {
-    throw new Error("Lawyer not found");
+  try {
+    const response = await fetch(`http://192.168.0.178:3003/api/lawyers/${id}`);
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    const result = await response.json();
+    return result.data;
+  } catch (error) {
+    console.error('Error fetching lawyer profile:', error);
+    throw error;
   }
-  
-  return lawyer;
 }
-
-// Later, you can replace these implementations with actual API calls
-// without changing the components that use these functions

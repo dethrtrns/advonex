@@ -6,28 +6,24 @@ import { Input } from "@/components/ui/input";
 import { Search, MapPin, Filter, Briefcase } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { Lawyer, mockLawyersList } from "@/data/mockData";
+import { getLawyersList, type Lawyer } from "@/services/lawyerService";  // Update import to use service types
 
 export default function LawyersDirectory() {
   const [lawyers, setLawyers] = useState<Lawyer[]>([]);
-  // const [searchTerm, setSearchTerm] = useState('');
-  // const [location, setLocation] = useState('');
 
   useEffect(() => {
-    // Simulate API call delay
     const fetchLawyers = async () => {
       try {
-        // Simulating network delay
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        setLawyers(mockLawyersList);
+        const lawyersData = await getLawyersList();
+        setLawyers(lawyersData);
       } catch (error) {
         console.error('Error fetching lawyers:', error);
-        // Handle error state if needed
+        setLawyers([]);
       }
     };
 
     fetchLawyers();
-  }, []); // Empty dependency array means this effect runs once on mount
+  }, []);
 
   return (
     <div className="space-y-6">
@@ -73,10 +69,11 @@ export default function LawyersDirectory() {
                     <MapPin className="h-4 w-4" />
                     {lawyer.location}
                   </div>
-                  <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                  {/* Optional practice court  */}
+                 { lawyer.practiceCourt?<div className="flex items-center gap-1 text-sm text-muted-foreground">
                     <Briefcase className="h-4 w-4" />
-                    {lawyer.practiceCourts?.primary || "Not provided"}
-                  </div>
+                    { lawyer.practiceCourt.primary || "Not provided by the API yet"}
+                  </div>:null}
                   <div className="flex flex-wrap gap-2">
                     {lawyer.practiceAreas.map((area) => (
                       <span

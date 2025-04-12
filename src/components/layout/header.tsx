@@ -10,7 +10,7 @@ export function Header() {
   return (
     <header className="fixed top-0 left-0 right-0 z-50 h-16 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container h-full flex items-center justify-between">
-        <div className="flex items-center gap-6">
+        <div className="flex items-center px-4 gap-6">
           <Link href="/" className="text-xl font-bold">Advonex</Link>
           <NavigationMenu className="hidden md:flex">
             <NavigationMenuList>

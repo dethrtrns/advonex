@@ -86,7 +86,7 @@ export default function LawyerProfile() {
       {/* Hero Section */}
       <div className="flex gap-3 flex-row items-start ">
 
-        <div className="relative w-1/3 max-w-sm overflow-hidden rounded-lg md:w-1/4 group">
+        <div className="relative w-1/3 max-w-sm overflow-hidden rounded-lg md:w-1/6 group">
         <AspectRatio className="sm" ratio={9/13}> <img
             src={lawyer.photo}
             alt={lawyer.name}

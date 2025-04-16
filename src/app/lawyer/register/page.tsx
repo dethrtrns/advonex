@@ -12,13 +12,15 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const formSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
   lastName: z.string().min(1, "Last name is required"),
   email: z.string().email("Invalid email address"),
   phone: z.string().min(10, "Phone number must be at least 10 digits"),
+  state: z.string().min(1, "State is required"),
+  city: z.string().min(1, "City is required"),
   barNumber: z.string().min(1, "Bar number is required"),
   practiceArea: z.string().min(1, "Practice area is required"),
   experience: z.number().min(0, "Years of experience must be 0 or greater"),
@@ -33,9 +35,43 @@ const formSchema = z.object({
   consultFee: z.number().min(0, "Consultation fee must be 0 or greater"),
 });
 
+// Indian states and cities data
+const indianLocations = {
+  "Andhra Pradesh": ["Visakhapatnam", "Vijayawada", "Guntur", "Nellore", "Kurnool"],
+  "Arunachal Pradesh": ["Itanagar", "Naharlagun", "Pasighat", "Tawang", "Ziro"],
+  "Assam": ["Guwahati", "Silchar", "Dibrugarh", "Jorhat", "Nagaon"],
+  "Bihar": ["Patna", "Gaya", "Muzaffarpur", "Bhagalpur", "Darbhanga"],
+  "Chhattisgarh": ["Raipur", "Bhilai", "Bilaspur", "Korba", "Durg"],
+  "Goa": ["Panaji", "Margao", "Vasco da Gama", "Mapusa", "Ponda"],
+  "Gujarat": ["Ahmedabad", "Surat", "Vadodara", "Rajkot", "Gandhinagar"],
+  "Haryana": ["Faridabad", "Gurgaon", "Panipat", "Ambala", "Karnal"],
+  "Himachal Pradesh": ["Shimla", "Dharamshala", "Mandi", "Solan", "Kullu"],
+  "Jharkhand": ["Ranchi", "Jamshedpur", "Dhanbad", "Bokaro", "Hazaribagh"],
+  "Karnataka": ["Bangalore", "Mysore", "Hubli", "Mangalore", "Belgaum"],
+  "Kerala": ["Thiruvananthapuram", "Kochi", "Kozhikode", "Thrissur", "Kollam"],
+  "Madhya Pradesh": ["Indore", "Bhopal", "Jabalpur", "Gwalior", "Ujjain"],
+  "Maharashtra": ["Mumbai", "Pune", "Nagpur", "Thane", "Nashik"],
+  "Manipur": ["Imphal", "Thoubal", "Bishnupur", "Churachandpur", "Ukhrul"],
+  "Meghalaya": ["Shillong", "Tura", "Jowai", "Nongpoh", "Williamnagar"],
+  "Mizoram": ["Aizawl", "Lunglei", "Champhai", "Serchhip", "Kolasib"],
+  "Nagaland": ["Kohima", "Dimapur", "Mokokchung", "Tuensang", "Wokha"],
+  "Odisha": ["Bhubaneswar", "Cuttack", "Rourkela", "Berhampur", "Sambalpur"],
+  "Punjab": ["Ludhiana", "Amritsar", "Jalandhar", "Patiala", "Bathinda"],
+  "Rajasthan": ["Jaipur", "Jodhpur", "Udaipur", "Kota", "Ajmer"],
+  "Sikkim": ["Gangtok", "Namchi", "Mangan", "Gyalshing", "Ravangla"],
+  "Tamil Nadu": ["Chennai", "Coimbatore", "Madurai", "Tiruchirappalli", "Salem"],
+  "Telangana": ["Hyderabad", "Warangal", "Nizamabad", "Karimnagar", "Khammam"],
+  "Tripura": ["Agartala", "Udaipur", "Dharmanagar", "Kailashahar", "Belonia"],
+  "Uttar Pradesh": ["Lucknow", "Kanpur", "Agra", "Varanasi", "Allahabad"],
+  "Uttarakhand": ["Dehradun", "Haridwar", "Roorkee", "Haldwani", "Rudrapur"],
+  "West Bengal": ["Kolkata", "Howrah", "Durgapur", "Asansol", "Siliguri"],
+  "Delhi": ["New Delhi", "Delhi", "Noida", "Gurgaon", "Faridabad"],
+};
+
 export default function LawyerRegistration() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [cities, setCities] = useState<string[]>([]);
 
   const form = useForm<z.infer<typeof formSchema>>({    
     resolver: zodResolver(formSchema),
@@ -50,6 +86,8 @@ export default function LawyerRegistration() {
             lastName: lastNameParts.join(" "),
             email,
             phone: "",
+            state: "",
+            city: "",
             barNumber: "",
             practiceArea: "",
             experience: 0,
@@ -67,6 +105,8 @@ export default function LawyerRegistration() {
         lastName: "",
         email: "",
         phone: "",
+        state: "",
+        city: "",
         barNumber: "",
         practiceArea: "",
         experience: 0,
@@ -80,6 +120,15 @@ export default function LawyerRegistration() {
       };
     })()
   });
+
+  // Update cities when state changes
+  const selectedState = form.watch("state");
+  useEffect(() => {
+    if (selectedState) {
+      setCities(indianLocations[selectedState as keyof typeof indianLocations] || []);
+      form.setValue("city", ""); // Reset city when state changes
+    }
+  }, [selectedState, form]);
 
   const practiceAreas = [
     "Civil Law",
@@ -101,6 +150,7 @@ export default function LawyerRegistration() {
         name: `${values.firstName} ${values.lastName}`,
         email: values.email,
         phone: values.phone,
+        location: `${values.city}, ${values.state}`,
         barId: values.barNumber,
         practiceAreas: [values.practiceArea],
         experience: values.experience,
@@ -213,6 +263,62 @@ export default function LawyerRegistration() {
                   </FormItem>
                 )}
               />
+              
+              {/* Location Fields - State and City */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="state"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>State</FormLabel>
+                      <Select onValueChange={field.onChange} value={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select your state" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {Object.keys(indianLocations).map((state) => (
+                            <SelectItem key={state} value={state}>
+                              {state}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="city"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>City</FormLabel>
+                      <Select 
+                        onValueChange={field.onChange} 
+                        value={field.value}
+                        disabled={!selectedState}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder={selectedState ? "Select your city" : "Select a state first"} />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {cities.map((city) => (
+                            <SelectItem key={city} value={city}>
+                              {city}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
             </CardContent>
           </Card>
 

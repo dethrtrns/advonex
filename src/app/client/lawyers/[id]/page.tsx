@@ -212,6 +212,88 @@ export default function LawyerProfile() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Services Section as Footer */}
+      <div className="mt-12 pt-6 pb-6 border-t">
+        <div className="flex flex-wrap gap-2 justify-center">
+          {lawyer.practiceAreas.flatMap(area => {
+            const mockServices = getMockServicesForArea(area);
+            return mockServices.map((service, index) => (
+              <span
+                key={`${area}-${index}`}
+                className="inline-flex items-center rounded-full bg-muted px-3 py-1 text-xs font-medium text-muted-foreground"
+              >
+                {service}
+              </span>
+            ));
+          })}
+        </div>
+      </div>
     </div>
   );
+}
+
+// Helper function to generate mock services based on practice area
+function getMockServicesForArea(area: string): string[] {
+  const serviceMap: Record<string, string[]> = {
+    "Civil Law": [
+      "Divorce Proceedings", 
+      "Child Custody", 
+      "Property Disputes", 
+      "Contract Review", 
+      "Civil Litigation"
+    ],
+    "Corporate Law": [
+      "Business Formation", 
+      "Contract Drafting", 
+      "Regulatory Compliance", 
+      "Mergers & Acquisitions", 
+      "Corporate Governance"
+    ],
+    "Criminal Law": [
+      "Criminal Defense", 
+      "DUI Defense", 
+      "White Collar Crime", 
+      "Juvenile Defense", 
+      "Appeals"
+    ],
+    "Employment Law": [
+      "Workplace Discrimination", 
+      "Wrongful Termination", 
+      "Employment Contracts", 
+      "Harassment Claims", 
+      "Wage Disputes"
+    ],
+    "Family Law": [
+      "Divorce", 
+      "Child Support", 
+      "Adoption", 
+      "Prenuptial Agreements", 
+      "Domestic Violence"
+    ],
+    "Real Estate Law": [
+      "Property Transactions", 
+      "Landlord-Tenant Disputes", 
+      "Zoning Issues", 
+      "Title Searches", 
+      "Foreclosures"
+    ],
+    "Immigration Law": [
+      "Visa Applications", 
+      "Green Card Processing", 
+      "Deportation Defense", 
+      "Citizenship", 
+      "Asylum"
+    ],
+    "Intellectual Property": [
+      "Patent Filing", 
+      "Trademark Registration", 
+      "Copyright Protection", 
+      "IP Litigation", 
+      "Licensing Agreements"
+    ]
+  };
+  
+  // Return services for the given area, or a subset of random services if area not found
+  return serviceMap[area] || ["Legal Consultation", "Document Review", "Legal Representation"];
 }

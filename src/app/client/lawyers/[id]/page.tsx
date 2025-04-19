@@ -70,12 +70,26 @@ export default function LawyerProfile() {
       <div className="flex gap-3 flex-row items-start ">
 
         <div className="relative w-1/3 max-w-sm overflow-hidden rounded-lg md:w-1/6 group">
-        <AspectRatio className="sm" ratio={9/13}> <img
-            src={lawyer.photo}
-            alt={lawyer.name}
-            className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-110"
-            loading="lazy"
-          />
+          <AspectRatio className="sm" ratio={9/13}>
+            {lawyer.photo ? (
+              <img
+                src={lawyer.photo}
+                alt={lawyer.name}
+                className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-110"
+                loading="lazy"
+                onError={(e) => {
+                  e.currentTarget.style.display = 'none';
+                  document.getElementById(`initials-${lawyerId}`)?.style.removeProperty('display');
+                }}
+              />
+            ) : (
+              <div 
+                id={`initials-${lawyerId}`}
+                className="flex items-center justify-center w-full h-full bg-primary/10 text-primary font-bold text-4xl"
+              >
+                {getInitials(lawyer.name)}
+              </div>
+            )}
           </AspectRatio>
         </div>
         <div className="flex-1 space-y-4">
@@ -231,6 +245,16 @@ export default function LawyerProfile() {
       </div>
     </div>
   );
+}
+
+// Helper function to generate initials from a name
+function getInitials(name: string): string {
+  return name
+    .split(' ')
+    .map(part => part[0])
+    .join('')
+    .toUpperCase()
+    .substring(0, 2); // Limit to first two initials
 }
 
 // Helper function to generate mock services based on practice area

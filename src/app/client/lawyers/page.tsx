@@ -56,12 +56,25 @@ export default function LawyersDirectory() {
             <Link href={`/client/lawyers/${lawyer.id}`} className="block">
               <CardContent className="p-0 flex">
                 <div className="w-1/3 aspect-square relative overflow-hidden group">
-                  <img
-                    src={lawyer.photo}
-                    alt={lawyer.name}
-                    className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-110"
-                    loading="lazy"
-                  />
+                  {lawyer.photo ? (
+                    <img
+                      src={lawyer.photo}
+                      alt={lawyer.name}
+                      className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-110"
+                      loading="lazy"
+                      onError={(e) => {
+                        e.currentTarget.style.display = 'none';
+                        document.getElementById(`initials-${lawyer.id}`)?.style.removeProperty('display');
+                      }}
+                    />
+                  ) : (
+                    <div 
+                      id={`initials-${lawyer.id}`}
+                      className="flex items-center justify-center w-full h-full bg-primary/10 text-primary font-bold text-2xl"
+                    >
+                      {getInitials(lawyer.name)}
+                    </div>
+                  )}
                 </div>
                 <div className="flex-1 p-4 space-y-2">
                   <h3 className="font-semibold text-lg">{lawyer.name}</h3>
@@ -99,4 +112,14 @@ export default function LawyersDirectory() {
       </div>
     </div>
   );
+}
+
+// Helper function to generate initials from a name
+function getInitials(name: string): string {
+  return name
+    .split(' ')
+    .map(part => part[0])
+    .join('')
+    .toUpperCase()
+    .substring(0, 2); // Limit to first two initials
 }

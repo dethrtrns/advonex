@@ -21,7 +21,7 @@ interface ApiResponse {
 
 export async function getLawyersList(): Promise<Lawyer[]> {
   try {
-    const response = await fetch('http://192.168.0.178:3003/api/lawyers');
+    const response = await fetch('https://handsome-creativity-staging.up.railway.app/api/lawyers');
     if (!response.ok) {
       throw new Error('Network response was not ok');
     }
@@ -61,7 +61,7 @@ export interface LawyerProfile {
 
 export async function getLawyerProfile(id: string): Promise<LawyerProfile> {
   try {
-    const response = await fetch(`http://192.168.0.178:3003/api/lawyers/${id}`);
+    const response = await fetch(`https://handsome-creativity-staging.up.railway.app/api/lawyers/${id}`);
     if (!response.ok) {
       throw new Error('Network response was not ok');
     }

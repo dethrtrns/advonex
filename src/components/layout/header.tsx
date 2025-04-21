@@ -3,13 +3,14 @@ import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetClose } from "@/com
 import { Button } from "@/components/ui/button";
 import { Menu } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { RegisterDialog } from "@/components/auth/register-dialog";
 import Link from "next/link";
 
 export function Header() {
   return (
     <header className="fixed top-0 left-0 right-0 z-50 h-16 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container h-full flex items-center justify-between">
-        <div className="flex items-center gap-6">
+        <div className="flex items-center px-4 gap-6">
           <Link href="/" className="text-xl font-bold">Advonex</Link>
           <NavigationMenu className="hidden md:flex">
             <NavigationMenuList>
@@ -26,13 +27,14 @@ export function Header() {
         <div className="flex items-center gap-4">
           <div className="hidden md:flex items-center gap-4">         
             <ThemeToggle />
-            <Button asChild>
+            <RegisterDialog />
+            {/* <Button asChild>
               <Link href="#">Sign In</Link>
-            </Button>
+            </Button> */}
           </div>
           <Button variant="outline" asChild>
               <Link href="/lawyer" className="flex items-center gap-2">
-                <span>I'm a Lawyer</span>
+                <span>Im a Lawyer</span>
               </Link>
           </Button>
           <Sheet>
@@ -51,9 +53,7 @@ export function Header() {
                   <Link href="#" className="px-4 py-2">Practice Areas</Link>
                 </SheetClose>
                 <SheetClose asChild>
-                  <Button asChild>
-                    <Link href="#">Sign In</Link>
-                  </Button>
+                <RegisterDialog />
                 </SheetClose>
               </nav>
             </SheetContent>

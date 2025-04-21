@@ -13,14 +13,14 @@ export default function ClientLandingPage() {
 
   return (
     <div className="flex flex-col gap-8 py-4">
-      <section className="text-center md:text-left">
+      <section className="text-center ">
         
-        <h1 className="text-4xl font-bold tracking-tight mb-4">
-          Find the Right Lawyer<br />
-          For Your Legal Needs
+        <h1 className="text-4xl font-bold tracking-tight mt-12 mb-4">
+          Your Next Lawyer<br />
+          Might Be Next Level
         </h1>
         <p className="text-lg text-muted-foreground mb-6">
-          Connect with qualified legal professionals across various practice areas
+          Legal professionals across various practice areas
         </p>
         <Button size="lg" asChild>
           <Link href="/client/lawyers" className="gap-2">

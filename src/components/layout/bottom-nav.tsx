@@ -21,7 +21,7 @@ export function BottomNav() {
           <li>
             <Link href="#" className="flex flex-col items-center gap-1 text-muted-foreground hover:text-foreground transition-colors">
               <BookMarked className="h-5 w-5" />
-              <span className="text-xs">Saved</span>
+              <span className="text-xs">About</span>
             </Link>
           </li>
           <li>

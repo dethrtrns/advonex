@@ -169,8 +169,8 @@ export default function LawyerRegistration() {
 
       console.log("Submitting data:", transformedData);
 
-      // In a real app, this would be an API call
-      const response = await fetch("http://192.168.0.178:3003/api/lawyers", {
+      // Use environment variable for the API URL
+      const response = await fetch(`${process.env.BASE_BACKEND_URL}/api/lawyers`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(transformedData)

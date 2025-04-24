@@ -156,7 +156,7 @@ export default function LawyerRegistration() {
         experience: values.experience,
         bio: values.bio,
         consultFee: values.consultFee,
-        practiceCourts: {
+        practiceCourt: {
           primary: values.practiceCourt1,
           secondary: values.practiceCourt2 || null
         },
@@ -167,16 +167,29 @@ export default function LawyerRegistration() {
         }
       };
 
+      console.log("Submitting data:", transformedData);
+
       // In a real app, this would be an API call
-      const response = await fetch('/api/lawyer/register', {
+      const response = await fetch("http://192.168.0.178:3003/api/lawyers", {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(transformedData)
       });
 
+      const responseData = await response.text();
+      console.log("Response status:", response.status);
+      console.log("Response data:", responseData);
+
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || 'Failed to register');
+        let errorMessage = 'Failed to register';
+        try {
+          const errorData = JSON.parse(responseData);
+          errorMessage = errorData.message || errorMessage;
+        } catch (e) {
+          // If response is not JSON, use the text response or status
+          errorMessage = responseData || `Server error: ${response.status}`;
+        }
+        throw new Error(errorMessage);
       }
 
       // Clear registration data from localStorage

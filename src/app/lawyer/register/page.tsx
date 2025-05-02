@@ -170,9 +170,7 @@ export default function LawyerRegistration() {
       console.log("Submitting data:", transformedData);
 
       // Use environment variable for the API URL
-
       const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_BACKEND_URL}/api/lawyers`, {
-      
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(transformedData)

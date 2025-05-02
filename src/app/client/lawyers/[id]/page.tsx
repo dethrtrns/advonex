@@ -7,7 +7,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { getLawyerProfile, type LawyerProfile } from "@/services/lawyerService";
-import { AspectRatio } from "@radix-ui/react-aspect-ratio";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Dialog, DialogContent, DialogTitle,  DialogTrigger ,DialogHeader } from "@/components/ui/dialog";
 
 export default function LawyerProfile() {

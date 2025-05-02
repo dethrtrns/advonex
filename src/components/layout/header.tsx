@@ -1,3 +1,4 @@
+'use client'
 import { NavigationMenu, NavigationMenuItem, NavigationMenuList } from "@/components/ui/navigation-menu";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetClose } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
@@ -5,8 +6,10 @@ import { Menu } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { RegisterDialog } from "@/components/auth/register-dialog";
 import Link from "next/link";
+import { isLawyerRoute } from "@/lib/checkLawyerRoute";
 
 export function Header() {
+  const checkLawyer = isLawyerRoute();
   return (
     <header className="fixed top-0 left-0 right-0 z-50 h-16 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container h-full flex items-center justify-between">
@@ -32,11 +35,20 @@ export function Header() {
               <Link href="#">Sign In</Link>
             </Button> */}
           </div>
+         
+          { (checkLawyer === true) ? (
           <Button variant="outline" asChild>
-              <Link href="/lawyer" className="flex items-center gap-2">
-                <span>Im a Lawyer</span>
+              <Link href="/client" className="flex items-center gap-2">
+                <span>I'm Not a Lawyer</span>
               </Link>
-          </Button>
+          </Button>) :
+                   
+            (<Button variant="outline" asChild>
+            <Link href="/lawyer" className="flex items-center gap-2">
+              <span>I'm a Lawyer</span>
+           </Link>
+       </Button> )
+          }
           <Sheet>
             <SheetTrigger asChild className="md:hidden">
               <Button variant="ghost" size="icon">

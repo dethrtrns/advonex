@@ -169,8 +169,8 @@ export default function LawyerRegistration() {
 
       console.log("Submitting data:", transformedData);
 
-      // In a real app, this would be an API call
-      const response = await fetch("http://192.168.0.178:3003/api/lawyers", {
+      // Use environment variable for the API URL
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_BACKEND_URL}/api/lawyers`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(transformedData)
@@ -198,8 +198,8 @@ export default function LawyerRegistration() {
       // Show success message
       toast.success('Profile created successfully!');
       
-      // Redirect to dashboard
-      router.push('/lawyer/dashboard');
+      // Redirect to Listing Page
+      router.push('/client/lawyers');
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'Failed to create profile. Please try again.');
       console.error('Error submitting form:', error);

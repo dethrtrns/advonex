@@ -8,8 +8,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { getLawyerProfile, type LawyerProfile } from "@/services/lawyerService";
 import { AspectRatio } from "@radix-ui/react-aspect-ratio";
-import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@radix-ui/react-dialog";
-import { DialogHeader } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle,  DialogTrigger ,DialogHeader } from "@/components/ui/dialog";
 
 export default function LawyerProfile() {
   const params = useParams();
@@ -127,7 +126,7 @@ export default function LawyerProfile() {
          
         </div>
       </div>
- {/* Add Contact Button */}
+ {/* Contact Button */}
  <span className="flex w-full justify-center md:justify-start">
           <Dialog>
             <DialogTrigger asChild>
@@ -160,9 +159,7 @@ export default function LawyerProfile() {
             </DialogContent>
           </Dialog>
           </span>
-      {/* Remove the standalone Contact Information card since it's now in the dialog */}
 
-      {/* About Section */}
       <div className="space-y-4">
         <h2 className="text-2xl font-semibold">About</h2>
         <p className="text-muted-foreground">{lawyer.bio}</p>

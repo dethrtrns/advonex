@@ -15,7 +15,7 @@ import { Loader, MapPin, Mail, Phone, Briefcase, GraduationCap } from "lucide-re
 import { toast } from "sonner";
 import { indianLocations } from "@/data/indianLocations/locations";
 import { practiceAreas } from "@/data/pacticeAreas/pacticeAreas";
-
+import { ImageUpload } from "@/components/ui/image-upload";
 
 const formSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
@@ -201,7 +201,7 @@ export default function LawyerDashboard() {
       {isEditing ? (
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <Card>
+            {/* <Card>
               <CardHeader>
                 <CardTitle>Profile Photo</CardTitle>
               </CardHeader>
@@ -229,7 +229,33 @@ export default function LawyerDashboard() {
                   </div>
                 )}
               </CardContent>
-            </Card>
+            </Card> */}
+
+             {/* Image Upload section */}
+          
+    <FormField
+           control={form.control}
+           name="photo"
+           render={({ field }) => (
+          <FormItem>
+            <FormLabel>Profile Picture</FormLabel>
+            <FormControl>
+          <div className="flex">
+            <input type="hidden" {...field} />
+          <ImageUpload 
+            buttonText="Upload Profile Picture"
+            onUploadComplete={(imageUrl) => {
+              field.onChange(imageUrl);
+              console.log("Image URL updated:", imageUrl);
+            }}
+            name={`${form.watch("firstName")} ${form.watch("lastName")} `}
+          />
+        </div>
+      </FormControl>
+      <FormMessage />
+      </FormItem>
+      )}
+    />
 
             <Card>
               <CardHeader>

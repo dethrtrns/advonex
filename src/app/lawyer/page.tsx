@@ -38,7 +38,7 @@ export default function LawyerLanding() {
           Join our network of distinguished legal professionals and connect with clients who need your expertise
         </p>
         <Button size="lg" asChild>
-          <Link href="/lawyer/register" className="gap-2">
+          <Link href="/lawyer/dashboard" className="gap-2">
             Join Advonex Today
           </Link>
         </Button>

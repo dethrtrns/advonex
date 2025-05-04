@@ -20,6 +20,8 @@ import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp
 import PhoneInput, { isValidPhoneNumber } from 'react-phone-number-input'; // Import PhoneInput and validator
 import 'react-phone-number-input/style.css'; // Import default styles
 import { sendOtp, verifyOtp } from "@/services/authService/authService"; // Import the service functions
+import { RadioGroup } from "../ui/radio-group";
+import { RadioGroupItem } from "../ui/radio-group";
 
 // Update schema to use the validator from react-phone-number-input
 const formSchema = z.object({
@@ -154,7 +156,8 @@ export function RegisterDialog() {
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
 
-            {!otpSent ? (
+            {/* Phone Number Field (Only if OTP not sent) */}
+            {!otpSent && (
               <FormField
                 control={form.control}
                 name="phone"
@@ -162,7 +165,6 @@ export function RegisterDialog() {
                   <FormItem>
                     <FormLabel>Phone Number</FormLabel>
                     <FormControl>
-                      {/* Use PhoneInput component */}
                       <PhoneInput
                         placeholder="Enter phone number"
                         value={field.value}
@@ -178,8 +180,11 @@ export function RegisterDialog() {
                   </FormItem>
                 )}
               />
-            ) : (
-              <FormField
+            )}
+
+            {/* OTP Field (Only if OTP sent) */}
+            {otpSent && (
+               <FormField
                 control={form.control}
                 name="otp"
                 render={({ field }) => (
@@ -206,22 +211,57 @@ export function RegisterDialog() {
               />
             )}
 
-            {/* Account Type (Hidden or Display Only) */}
-            <FormField
-              control={form.control}
-              name="role" // Changed from 'type' to 'role'
-              render={({ field }) => (
+            {/* Account Type Selection (Always visible before OTP is sent) */}
+            {!otpSent && ( // Show role selection only before OTP is sent
+              <FormField
+                control={form.control}
+                name="role"
+                render={({ field }) => (
+                  <FormItem className="space-y-3">
+                    <FormLabel>Account Type</FormLabel>
+                    <FormControl>
+                      <RadioGroup
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                        className="flex space-x-4" // Arrange options horizontally
+                        disabled={otpSent} // Disable after OTP is sent
+                      >
+                        <FormItem className="flex items-center space-x-2 space-y-0">
+                          <FormControl>
+                            <RadioGroupItem value="client" />
+                          </FormControl>
+                          <FormLabel className="font-normal">
+                            Client
+                          </FormLabel>
+                        </FormItem>
+                        <FormItem className="flex items-center space-x-2 space-y-0">
+                          <FormControl>
+                            <RadioGroupItem value="lawyer" />
+                          </FormControl>
+                          <FormLabel className="font-normal">
+                            Lawyer
+                          </FormLabel>
+                        </FormItem>
+                      </RadioGroup>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
+
+             {/* Display selected role if OTP has been sent */}
+             {otpSent && (
                 <FormItem>
                   <FormLabel>Account Type</FormLabel>
-                  <FormControl>
-                    <div className="text-sm font-medium text-gray-700 dark:text-gray-300 p-2 border rounded-md bg-gray-50 dark:bg-gray-800">
-                      {field.value === "lawyer" ? "Lawyer" : "Client"}
-                    </div>
-                  </FormControl>
+                  <div className="text-sm font-medium text-gray-700 dark:text-gray-300 p-2 border rounded-md bg-gray-50 dark:bg-gray-800">
+                    {form.getValues("role") === "lawyer" ? "Lawyer" : "Client"}
+                  </div>
                 </FormItem>
-              )}
-            />
-            <Button type="submit" className="w-full">
+             )}
+
+
+            <Button type="submit" className="w-full" disabled={otpSent && !form.watch('otp')}>
               {otpSent ? "Verify OTP & Sign In" : "Send OTP"}
             </Button>
 

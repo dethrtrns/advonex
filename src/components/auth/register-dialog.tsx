@@ -29,8 +29,13 @@ const formSchema = z.object({
 });
 
 export function RegisterDialog() {
+  // State logic: 
+  // - open: Dialog open or not, set true when 'sign in/up' btn click
+  // otpSent: set true after 'verify otp' btn is clicked
+  // resendCooldown: Timer for resend OTP
+  // canResend: 'resend otp' btn state, set true when resendCooldown is 0
   const [open, setOpen] = useState(false);
-  const [otpSent, setOtpSent] = useState(false);
+  const [otpSent, setOtpSent] = useState(false); 
   const [resendCooldown, setResendCooldown] = useState(0); // Timer state
   const [canResend, setCanResend] = useState(false); // Button availability state
   const pathname = usePathname();
@@ -101,27 +106,30 @@ export function RegisterDialog() {
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     if (!otpSent) {
-      await handleSendOtp(values.phone, values.role); // Changed from 'type' to 'role'
+      await handleSendOtp(values.phone, values.role);
     } else {
       try {
+        // Make sure otp is a string before passing it
+        if (!values.otp) {
+          toast.error("Please enter the OTP code");
+          return;
+        }
+        
         const data = await verifyOtp({
           phone: values.phone,
-          otp: values.otp,
-          role: values.role // This is already correct
+          otp: values.otp, // Now we're sure this is a string
+          role: values.role
         });
 
-        // toast.success is already called in the service function
+        // Show token in alert for testing purposes
+        alert(`Access Token: ${data.accessToken}\n\nRefresh Token: ${data.refreshToken}`);
 
-        if (data.token) {
-          localStorage.setItem("authToken", data.token);
-        } else {
-           console.warn("No JWT token received from verify-otp endpoint");
-        }
+        // toast.success is already called in the service function
 
         setOpen(false); // Close the dialog
 
         // Handle redirection
-        if (values.role === "lawyer") { // Changed from 'type' to 'role'
+        if (values.role === "lawyer") {
           window.location.href = "/lawyer/dashboard";
         } else {
           window.location.href = "/";

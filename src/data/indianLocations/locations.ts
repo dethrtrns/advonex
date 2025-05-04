@@ -1,6 +1,12 @@
-export let indianLocations = {
+// Define the type for the indianLocations object
+export type IndianLocations = {
+  [state: string]: string[];
+};
+
+// Export the indianLocations object with the correct type
+export const indianLocations: IndianLocations = {
   "Andhra Pradesh": ["Visakhapatnam", "Vijayawada", "Guntur", "Nellore"],
-  "Arunachal Pradesh": ["Itanagar", "Naharlagun"],
+  "Arunachal Pradesh": ["Itanagar", "Naharlagun", "Pasighat"],
   "Assam": ["Guwahati", "Silchar", "Dibrugarh"],
   "Bihar": ["Patna", "Gaya", "Muzaffarpur"],
   "Chhattisgarh": ["Raipur", "Bhilai", "Bilaspur"],

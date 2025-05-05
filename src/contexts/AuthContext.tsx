@@ -12,13 +12,24 @@ type User = {
 };
 
 // Define the auth context type
+// This context manages the global authentication state
+// It handles token storage, user information, and automatic token refresh
+
+// Key features:
+// 1. Stores user information (id, role)
+// 2. Tracks authentication state (isLoading, isAuthenticated)
+// 3. Provides logout functionality
+// 4. Handles automatic token refresh before expiry
+
+// The context exposes these values to the entire application:
 type AuthContextType = {
-  user: User | null;
-  isLoading: boolean;
-  isAuthenticated: boolean;
-  logout: () => void;
+  user: User | null;         // Current user info or null if not authenticated
+  isLoading: boolean;        // Whether auth state is being determined
+  isAuthenticated: boolean;  // Whether user is authenticated
+  logout: () => void;        // Function to log out
 };
 
+// The useAuth() hook provides easy access to this context
 // Create the context with default values
 const AuthContext = createContext<AuthContextType>({
   user: null,

@@ -191,7 +191,7 @@ export default function LawyerDashboard() {
 
   return (
     <div className="space-y-8">
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center mt-8">
         <h1 className="text-3xl font-bold">My Profile</h1>
         <Button onClick={() => setIsEditing(!isEditing)}>
           {isEditing ? "Cancel" : "Edit Profile"}
@@ -564,9 +564,9 @@ export default function LawyerDashboard() {
       ) : (
         <div className="space-y-6">
           <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center gap-6">
-                <div className="relative w-32 h-32 overflow-hidden rounded-lg">
+            <CardContent className="p-2 pt-0 ">
+              <div className="sm:items-center gap-6 md:flex items-center justify-start gap-16">
+                <div className="relative sm:w-full h-90 md:w-72 h-90 overflow-hidden rounded-lg">
                   {lawyer.photo ? (
                     <img
                       src={lawyer.photo}
@@ -574,11 +574,12 @@ export default function LawyerDashboard() {
                       className="object-cover w-full h-full"
                     />
                   ) : (
-                    <div className="flex items-center justify-center w-full h-full bg-primary/10 text-primary font-bold text-4xl">
+                    <div className="flex items-center justify-center w-full h-full bg-primary/10 text-primary font-bold text-4xl sm: flex items-right justify-right">
                       {lawyer.name.split(' ').map(part => part[0]).join('').toUpperCase()}
                     </div>
                   )}
                 </div>
+                <div className="flex items-center justify-center gap-4 mt-4 md:flex-col items-start justify-start gap-4 ">
                 <div className="flex-1">
                   <h2 className="text-2xl font-semibold">{lawyer.name}</h2>
                   <div className="flex items-center gap-2 text-muted-foreground mt-1">
@@ -600,6 +601,7 @@ export default function LawyerDashboard() {
                   <div className="text-sm text-muted-foreground">Consultation Fee</div>
                   <div className="text-2xl font-bold text-primary">${lawyer.consultFee}/hr</div>
                 </div>
+              </div>
               </div>
             </CardContent>
           </Card>

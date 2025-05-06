@@ -104,10 +104,10 @@ export default function LawyerProfile() {
             
               {lawyer.practiceAreas.map((area) => (
                 <span
-                  key={area.id}
+                  key={area.practiceArea.id}
                   className="inline-flex items-center rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary"
                 >
-                  {area.name}
+                  {area.practiceArea.name}
                 </span>
               ))}
           </div>
@@ -185,8 +185,9 @@ export default function LawyerProfile() {
                   <Briefcase className="h-5 w-5 text-primary" />
                   <div>
                     <div className="text-sm font-medium">Secondary Court</div>
-                    // Watchout for the API res interface
-                    <div className="text-sm text-muted-foreground">{lawyer.practiceCourts?.map(court => court.name).join(', ')}</div>
+                    {/* ++++++++++ Watchout for the API res interface+++++++++ */}
+                    {/* ++++++++++ Watchout for the API res interface+++++++++ */}
+                    <div className="text-sm text-muted-foreground">{lawyer.practiceCourts?.map(court => court.practiceCourt.name).join(', ')}</div>
                   </div>
                 </div>
               )}

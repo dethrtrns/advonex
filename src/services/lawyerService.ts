@@ -4,6 +4,8 @@ import { toast } from "sonner";
 export interface NamedEntity {
   id: string;
   name: string;
+  description?: string;
+  location?: string;
 }
 
 export interface Service extends NamedEntity {
@@ -20,6 +22,21 @@ export interface Education {
   lawyerProfileId: string;
 }
 
+export interface PracticeCourts {
+  practiceCourt: {
+    id: string;
+    name: string;
+    location?: string;
+  }
+}
+export interface practiceAreas {
+  practiceArea: {
+    id: string;
+    name: string;
+    description?: string;
+  }
+}
+
 export interface Lawyer {
   id: string;
   name: string; 
@@ -31,9 +48,9 @@ export interface Lawyer {
   barId: string;
   isVerified: boolean;
   specialization: NamedEntity;
-  practiceAreas: NamedEntity[];
+  practiceAreas: practiceAreas[];
   primaryCourt: NamedEntity;
-  practiceCourts: NamedEntity[];
+  practiceCourts: PracticeCourts[];
   education: Education;
   services: Service[];
   createdAt: string;

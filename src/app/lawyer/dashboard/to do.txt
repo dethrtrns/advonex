@@ -1,2 +1,4 @@
 UI fixes:
-dashboard page-- Top header margin, Prof pic Size, Default img=> fetch db ? setImage : Fallback; 
+dashboard page-- 
+Done: Top header margin, Prof pic Size, 
+to do: Default img=> fetch db ? setImage : Fallback; 

@@ -6,16 +6,15 @@ import { MapPin, Mail, Phone, Briefcase, GraduationCap, ArrowLeft, Loader } from
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import { getLawyerProfile, type LawyerProfile } from "@/services/lawyerService";
-import { AspectRatio } from "@radix-ui/react-aspect-ratio";
-import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@radix-ui/react-dialog";
-import { DialogHeader } from "@/components/ui/dialog";
+import { getLawyerProfile, type Lawyer } from "@/services/lawyerService";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
+import { Dialog, DialogContent, DialogTitle,  DialogTrigger ,DialogHeader } from "@/components/ui/dialog";
 
 export default function LawyerProfile() {
   const params = useParams();
   const lawyerId = params.id as string;
   
-  const [lawyer, setLawyer] = useState<LawyerProfile | null>(null);
+  const [lawyer, setLawyer] = useState<Lawyer | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -102,14 +101,15 @@ export default function LawyerProfile() {
           </div>
 
           <div className="flex flex-wrap gap-2">
-            {lawyer.practiceAreas.map((area) => (
-              <span
-                key={area}
-                className="inline-flex items-center rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary"
-              >
-                {area}
-              </span>
-            ))}
+            
+              {lawyer.practiceAreas.map((area) => (
+                <span
+                  key={area.practiceArea.id}
+                  className="inline-flex items-center rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary"
+                >
+                  {area.practiceArea.name}
+                </span>
+              ))}
           </div>
 
           <div className="flex items-center gap-2">
@@ -127,7 +127,7 @@ export default function LawyerProfile() {
          
         </div>
       </div>
- {/* Add Contact Button */}
+ {/* Contact Button */}
  <span className="flex w-full justify-center md:justify-start">
           <Dialog>
             <DialogTrigger asChild>
@@ -160,9 +160,7 @@ export default function LawyerProfile() {
             </DialogContent>
           </Dialog>
           </span>
-      {/* Remove the standalone Contact Information card since it's now in the dialog */}
 
-      {/* About Section */}
       <div className="space-y-4">
         <h2 className="text-2xl font-semibold">About</h2>
         <p className="text-muted-foreground">{lawyer.bio}</p>
@@ -179,15 +177,17 @@ export default function LawyerProfile() {
                 <Briefcase className="h-5 w-5 text-primary" />
                 <div>
                   <div className="text-sm font-medium">Primary Court</div>
-                  <div className="text-sm text-muted-foreground">{lawyer.practiceCourt?.primary || "Not provided"}</div>
+                  <div className="text-sm text-muted-foreground">{lawyer.primaryCourt?.name || "Not provided"}</div>
                 </div>
               </div>
-              {lawyer.practiceCourt?.secondary && (
+              {lawyer.practiceCourts && (
                 <div className="flex items-center gap-3">
                   <Briefcase className="h-5 w-5 text-primary" />
                   <div>
                     <div className="text-sm font-medium">Secondary Court</div>
-                    <div className="text-sm text-muted-foreground">{lawyer.practiceCourt.secondary}</div>
+                    {/* ++++++++++ Watchout for the API res interface+++++++++ */}
+                    {/* ++++++++++ Watchout for the API res interface+++++++++ */}
+                    <div className="text-sm text-muted-foreground">{lawyer.practiceCourts?.map(court => court.practiceCourt.name).join(', ')}</div>
                   </div>
                 </div>
               )}
@@ -219,16 +219,16 @@ export default function LawyerProfile() {
           <CardContent className="flex items-start gap-4 ">
             <GraduationCap className="h-5 w-5 text-primary" />
             <div>
-              <div className="font-medium">{lawyer.education.degree}</div>
-              <div className="text-sm text-muted-foreground">{lawyer.education.institution}</div>
-              <div className="text-sm text-muted-foreground">{lawyer.education.year}</div>
+              <div className="font-medium">{lawyer.education?.degree}</div>
+              <div className="text-sm text-muted-foreground">{lawyer.education?.institution}</div>
+              <div className="text-sm text-muted-foreground">{lawyer.education?.year}</div>
             </div>
           </CardContent>
         </Card>
       </div>
 
       {/* Services Section as Footer */}
-      <div className="mt-12 pt-6 pb-6 border-t">
+      {/* <div className="mt-12 pt-6 pb-6 border-t">
         <div className="flex flex-wrap gap-2 justify-center">
           {lawyer.practiceAreas.flatMap(area => {
             const mockServices = getMockServicesForArea(area);
@@ -242,7 +242,7 @@ export default function LawyerProfile() {
             ));
           })}
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }
@@ -257,67 +257,3 @@ function getInitials(name: string): string {
     .substring(0, 2); // Limit to first two initials
 }
 
-// Helper function to generate mock services based on practice area
-function getMockServicesForArea(area: string): string[] {
-  const serviceMap: Record<string, string[]> = {
-    "Civil Law": [
-      "Divorce Proceedings", 
-      "Child Custody", 
-      "Property Disputes", 
-      "Contract Review", 
-      "Civil Litigation"
-    ],
-    "Corporate Law": [
-      "Business Formation", 
-      "Contract Drafting", 
-      "Regulatory Compliance", 
-      "Mergers & Acquisitions", 
-      "Corporate Governance"
-    ],
-    "Criminal Law": [
-      "Criminal Defense", 
-      "DUI Defense", 
-      "White Collar Crime", 
-      "Juvenile Defense", 
-      "Appeals"
-    ],
-    "Employment Law": [
-      "Workplace Discrimination", 
-      "Wrongful Termination", 
-      "Employment Contracts", 
-      "Harassment Claims", 
-      "Wage Disputes"
-    ],
-    "Family Law": [
-      "Divorce", 
-      "Child Support", 
-      "Adoption", 
-      "Prenuptial Agreements", 
-      "Domestic Violence"
-    ],
-    "Real Estate Law": [
-      "Property Transactions", 
-      "Landlord-Tenant Disputes", 
-      "Zoning Issues", 
-      "Title Searches", 
-      "Foreclosures"
-    ],
-    "Immigration Law": [
-      "Visa Applications", 
-      "Green Card Processing", 
-      "Deportation Defense", 
-      "Citizenship", 
-      "Asylum"
-    ],
-    "Intellectual Property": [
-      "Patent Filing", 
-      "Trademark Registration", 
-      "Copyright Protection", 
-      "IP Litigation", 
-      "Licensing Agreements"
-    ]
-  };
-  
-  // Return services for the given area, or a subset of random services if area not found
-  return serviceMap[area] || ["Legal Consultation", "Document Review", "Legal Representation"];
-}

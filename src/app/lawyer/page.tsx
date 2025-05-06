@@ -67,7 +67,7 @@ export default function LawyerLanding() {
           Join our growing network of legal professionals and start connecting with clients today.
         </p>
         <Button size="lg" asChild>
-          <Link href="/register?type=lawyer">
+          <Link href="/lawyer/register">
             Create Your Profile
           </Link>
         </Button>

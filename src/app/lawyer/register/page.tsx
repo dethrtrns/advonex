@@ -13,11 +13,13 @@ import * as z from "zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
+import { ImageUpload } from "@/components/ui/image-upload";
 
 const formSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
   lastName: z.string().min(1, "Last name is required"),
   email: z.string().email("Invalid email address"),
+  imageUrl: z.string(),
   phone: z.string().min(10, "Phone number must be at least 10 digits"),
   state: z.string().min(1, "State is required"),
   city: z.string().min(1, "City is required"),
@@ -104,6 +106,7 @@ export default function LawyerRegistration() {
         firstName: "",
         lastName: "",
         email: "",
+        imageUrl: "",
         phone: "",
         state: "",
         city: "",
@@ -156,7 +159,7 @@ export default function LawyerRegistration() {
         experience: values.experience,
         bio: values.bio,
         consultFee: values.consultFee,
-        practiceCourts: {
+        practiceCourt: {
           primary: values.practiceCourt1,
           secondary: values.practiceCourt2 || null
         },
@@ -167,16 +170,29 @@ export default function LawyerRegistration() {
         }
       };
 
-      // In a real app, this would be an API call
-      const response = await fetch('/api/lawyer/register', {
+      console.log("Submitting data:", transformedData);
+
+      // Use environment variable for the API URL
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_BACKEND_URL}/api/lawyers`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(transformedData)
       });
 
+      const responseData = await response.text();
+      console.log("Response status:", response.status);
+      console.log("Response data:", responseData);
+
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || 'Failed to register');
+        let errorMessage = 'Failed to register';
+        try {
+          const errorData = JSON.parse(responseData);
+          errorMessage = errorData.message || errorMessage;
+        } catch (e) {
+          // If response is not JSON, use the text response or status
+          errorMessage = responseData || `Server error: ${response.status}`;
+        }
+        throw new Error(errorMessage);
       }
 
       // Clear registration data from localStorage
@@ -185,8 +201,8 @@ export default function LawyerRegistration() {
       // Show success message
       toast.success('Profile created successfully!');
       
-      // Redirect to dashboard
-      router.push('/lawyer/dashboard');
+      // Redirect to Listing Page
+      router.push('/client/lawyers');
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'Failed to create profile. Please try again.');
       console.error('Error submitting form:', error);
@@ -201,15 +217,48 @@ export default function LawyerRegistration() {
         <h1 className="text-3xl font-bold mb-2">Join Our Legal Network</h1>
         <p className="text-muted-foreground">Create your professional profile and start connecting with clients</p>
       </div>
-
+    
+      {/* <div>
+      <ImageUpload 
+  onUploadComplete={(imageUrl) => console.log(imageUrl)} 
+  buttonText="Upload Profile Picture"
+/>
+      </div> */}
+     
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+
           <Card>
             <CardHeader>
               <CardTitle>Personal Information</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                {/* Image Upload section */}
+              <FormField
+  control={form.control}
+  name="imageUrl"
+  render={({ field }) => (
+    <FormItem>
+      <FormLabel>Profile Picture</FormLabel>
+      <FormControl>
+        <div className="flex">
+          <input type="hidden" {...field} />
+          <ImageUpload 
+            buttonText="Upload Profile Picture"
+            onUploadComplete={(imageUrl) => {
+              field.onChange(imageUrl);
+              console.log("Image URL updated:", imageUrl);
+            }}
+            name={`${form.watch("firstName")} ${form.watch("lastName")} `}
+          />
+        </div>
+      </FormControl>
+      <FormMessage />
+    </FormItem>
+  )}
+/>
                 <FormField
                   control={form.control}
                   name="firstName"

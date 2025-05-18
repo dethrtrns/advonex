@@ -88,7 +88,7 @@ export default function LawyersDirectory() {
                         id={`initials-${lawyer.id}`}
                         className="flex items-center justify-center w-full h-full bg-primary/10 text-primary font-bold text-2xl"
                       >
-                      {getInitials(lawyer.name)}
+                      {getInitials(lawyer?.name)}
                       </div>
                     )}
                   </div>
@@ -140,6 +140,7 @@ export default function LawyersDirectory() {
 
 // Helper function to generate initials from a name
 function getInitials(name: string): string {
+  if (!name) return 'IMG';
   return name
     .split(' ')
     .map(part => part[0])

@@ -2,36 +2,36 @@ import { toast } from "sonner";
 
 // Define nested interfaces for better type safety
 export interface NamedEntity {
-  id: string;
+  id?: string;
   name: string;
   description?: string;
   location?: string;
 }
 
 export interface Service extends NamedEntity {
-  description: string;
+  description?: string;
 }
 
 export interface Education {
-  id: string;
+  id?: string;
   degree: string;
   institution: string;
   year: number;
-  createdAt: string;
-  updatedAt: string;
-  lawyerProfileId: string;
+  createdAt?: string;
+  updatedAt?: string;
+  lawyerProfileId?: string;
 }
 
 export interface PracticeCourts {
   practiceCourt: {
-    id: string;
+    id?: string;
     name: string;
     location?: string;
   }
 }
 export interface practiceAreas {
   practiceArea: {
-    id: string;
+    id?: string;
     name: string;
     description?: string;
   }

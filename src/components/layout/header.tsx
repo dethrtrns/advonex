@@ -2,14 +2,48 @@
 import { NavigationMenu, NavigationMenuItem, NavigationMenuList } from "@/components/ui/navigation-menu";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetClose } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import { Menu } from "lucide-react";
+import { Menu, TypeOutline } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { RegisterDialog } from "@/components/auth/register-dialog";
 import Link from "next/link";
 import { isLawyerRoute } from "@/lib/checkLawyerRoute";
+import { useAuth } from "@/contexts/AuthContext";
+import { getAccessToken } from "@/contexts/AuthContext";
+import { jwtDecode } from "jwt-decode";
+// import { isAuthenticated, logout, getAccessToken } from "@/services/authService/authService";
+
+// const authenticatedUser = isAuthenticated();
+// const logoutUser = () => {
+//   logout();
+// }
+
 
 export function Header() {
+
+  const {isAuthenticated, logout, user} = useAuth();
+
+  let accessToken = getAccessToken();
+
+if(accessToken){
+  let decodedToken= jwtDecode<any>(accessToken);
+  const id = decodedToken.sub; 
+  const jwtData = decodedToken;
+  const role = decodedToken.roles[0];
+  
+console.log(`User  ${isAuthenticated} by AuthContext`);
+console.log(`User with ID: ${id} and role: ${role}`);
+console.log(`decodedToken: ${JSON.stringify(jwtData)}`);
+console.log(`User from decodedToken by authContext: ${user}`);
+console.log(`User profileId from decodedToken by authContext: ${user?.profileId}`);
+
+
+
+}
+
+
+
   const checkLawyer = isLawyerRoute();
+
   return (
     <header className="fixed top-0 left-0 right-0 z-50 h-16 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container h-full flex items-center justify-between">
@@ -30,11 +64,11 @@ export function Header() {
         <div className="flex items-center gap-4">
           <div className="hidden md:flex items-center gap-4">         
             <ThemeToggle />
+            { (user !== null) ? <div> <button onClick={logout}> Logout</button></div> :
             <RegisterDialog />
-            {/* <Button asChild>
-              <Link href="#">Sign In</Link>
-            </Button> */}
+            }
           </div>
+         <button  onClick={logout}> Logout</button>
          
           { (checkLawyer === true) ? (
           <Button variant="outline" asChild>

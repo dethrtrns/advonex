@@ -14,8 +14,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PhoneAuth } from "./phone-auth";
 import { EmailAuth } from "./email-auth";
 
-import { isAuthenticated, logout, getAccessToken } from "@/services/authService/authService";
-
 
 
 export function RegisterDialog() {

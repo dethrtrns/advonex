@@ -248,7 +248,8 @@ export default function LawyerProfile() {
 }
 
 // Helper function to generate initials from a name
-function getInitials(name: string): string {
+function getInitials(name: string): string | null {
+  if (!name) return 'IMG';
   return name
     .split(' ')
     .map(part => part[0])

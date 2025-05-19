@@ -105,9 +105,10 @@ export default function LawyersDirectory() {
                         {lawyer.primaryCourt.name}
                       </div>
                     )}
-                    <div className="flex flex-wrap gap-2">
+
+<div className="flex flex-wrap gap-2">
                        {/* ++++++++++++++Watchout for the API res structure+++++++++++++++++++++ */}
-                      {lawyer.practiceAreas.map((area) => (
+                      {lawyer.practiceAreas.slice(0, 1).map((area) => (
                         <span
                           key={area.practiceArea.id}
                           className="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary"
@@ -116,6 +117,7 @@ export default function LawyersDirectory() {
                         </span>
                       ))}
                     </div>
+                   
                     <div className="flex items-center justify-between pt-2">
                       <span className="text-sm text-muted-foreground">{lawyer.experience} years exp.</span>
                       <div className="flex items-center gap-2">

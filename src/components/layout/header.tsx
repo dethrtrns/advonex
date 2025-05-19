@@ -30,11 +30,16 @@ if(accessToken){
   const jwtData = decodedToken;
   const role = decodedToken.roles[0];
   
+console.log(`Data provided by AuthContext`);
+
 console.log(`User  ${isAuthenticated} by AuthContext`);
-console.log(`User with ID: ${id} and role: ${role}`);
-console.log(`decodedToken: ${JSON.stringify(jwtData)}`);
-console.log(`User from decodedToken by authContext: ${user}`);
 console.log(`User profileId from decodedToken by authContext: ${user?.profileId}`);
+console.log(`+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++`);
+console.log(`Directly Decoded Token in Header`);
+console.log(`User with ID: ${id} and role: ${role}`);
+console.log(`User from decodedToken by authContext: ${user}`);
+console.log(`decodedToken: ${JSON.stringify(jwtData)}`);
+console.log(`+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++`);
 
 
 

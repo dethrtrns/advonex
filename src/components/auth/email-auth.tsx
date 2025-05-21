@@ -25,7 +25,7 @@ const emailFormSchema = z.object({
 
 type EmailAuthProps = {
   defaultRole: "lawyer" | "client";
-  onAuthSuccess: (data: any, role: string) => void;
+  onAuthSuccess: (data: any, roles: string[]) => void;
 };
 
 export function EmailAuth({ defaultRole, onAuthSuccess }: EmailAuthProps) {
@@ -98,7 +98,11 @@ export function EmailAuth({ defaultRole, onAuthSuccess }: EmailAuthProps) {
         });
 
         // Handle successful authentication
-        // onAuthSuccess(data, values.role);
+        if (!data.data.user) {
+          console.log("User does not have any role");
+          return; // Exit the function if user is not found
+        }
+        onAuthSuccess(data, data.data.user?.roles);
         // Redirect based on role
         if (data.data.user?.roles.includes("LAWYER")) {
           window.location.href = `/lawyer`;

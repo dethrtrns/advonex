@@ -30,7 +30,7 @@ export function RegisterDialog() {
   };
 
   // Common function to handle successful authentication
-  const handleAuthSuccess = (data: any, role: string) => {
+  const handleAuthSuccess = (data: any, roles: string[]) => {
     // Show token in alert for testing purposes
     console.log("OTP verified successfully");
     alert(`Access Token: ${data.accessToken}\n\nRefresh Token: ${data.refreshToken}`);
@@ -38,7 +38,7 @@ export function RegisterDialog() {
     setOpen(false); // Close the dialog
 
     // Handle redirection
-    if (role === "lawyer") {
+    if (roles.includes("LAWYER")) {
       window.location.href = "/lawyer/dashboard";
     } else {
       window.location.href = "/";
@@ -63,7 +63,7 @@ export function RegisterDialog() {
         <Tabs defaultValue="email" className="w-full" onValueChange={(value: string) => handleAuthMethodChange(value as 'phone' | 'email')}>
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger className="font-bold tracking-wide" value="email">EMAIL</TabsTrigger>
-            <TabsTrigger className="font-bold tracking-wide" value="phone">PHONE</TabsTrigger>
+            {/* <TabsTrigger className="font-bold tracking-wide" value="phone">PHONE</TabsTrigger> */}
           </TabsList>
           <div className="h-8"></div>
           <TabsContent value="phone">

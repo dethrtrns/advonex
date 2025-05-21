@@ -23,7 +23,7 @@ const phoneFormSchema = z.object({
 
 type PhoneAuthProps = {
   defaultRole: "lawyer" | "client";
-  onAuthSuccess: (data: any, role: string) => void;
+  onAuthSuccess: (data: any, roles: string[]) => void;
 };
 
 export function PhoneAuth({ defaultRole, onAuthSuccess }: PhoneAuthProps) {
@@ -87,9 +87,14 @@ export function PhoneAuth({ defaultRole, onAuthSuccess }: PhoneAuthProps) {
           otp: values.otp,
           role: values.role
         });
-
+// Additional checks for data and roles
+        if(!data.data.user?.roles){
+          console.log("User roles not found ");
+          alert("Verification failed, please try again");
+          setCanResend(true);
+           return;}
         // Handle successful authentication
-        onAuthSuccess(data, values.role);
+        onAuthSuccess(data, data.data.user.roles);
       } catch (error) {
         // Error is already handled by the service function's toast
       }

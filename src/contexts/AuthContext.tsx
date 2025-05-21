@@ -25,7 +25,7 @@ type User = {
 // The context exposes these values to the entire application:
 type AuthContextType = {
   user: User | null;         // Current user info from JWT
-  isLoading: boolean;        // Whether auth state is being determined
+  isAuthenticating: boolean;        // Whether auth state is being determined
   isAuthenticated: boolean;  // Whether user is authenticated
   logout: () => void;        // Function to log out
 };
@@ -50,7 +50,7 @@ export function getAccessToken(): string | null {
 // Create the context with default values
 const AuthContext = createContext<AuthContextType>({
   user: null,
-  isLoading: true,
+  isAuthenticating: true,
   isAuthenticated: false,
   logout: () => {},
 });
@@ -61,7 +61,7 @@ export const useAuth = () => useContext(AuthContext);
 // Provider component
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isAuthenticating, setisAuthenticating] = useState(true);
 
   // Function to extract user info from token
   const getUserFromToken = (token: string): User | null => {
@@ -140,7 +140,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       } catch (error) {
         console.error('Auth initialization error:', error);
       } finally {
-        setIsLoading(false);
+        setisAuthenticating(false);
       }
     };
     
@@ -155,10 +155,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const value = {
     user,
-    isLoading,
+    isAuthenticating,
     isAuthenticated: !!getAccessToken(), // Check based on token existence
     logout: handleLogout,
   };
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={value}>
+      {isAuthenticating ? (
+        // Show a loading indicator while auth state is being determined
+        <div className="flex justify-center items-center min-h-screen">
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
+        </div>
+      ) : (
+        children
+      )}
+    </AuthContext.Provider>
+  );
 }

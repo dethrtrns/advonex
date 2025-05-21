@@ -16,8 +16,6 @@ import { toast } from "sonner";
 import { indianLocations } from "@/data/indianLocations/locations";
 import { practiceAreas } from "@/data/pacticeAreas/pacticeAreas";
 import { ImageUpload } from "@/components/ui/image-upload";
-import { isAuthenticated, logout } from "@/services/authService/authService";
-import { jwtDecode } from "jwt-decode";
 import { useAuth, getAccessToken } from "@/contexts/AuthContext";
 
 
@@ -54,17 +52,20 @@ export default function LawyerDashboard() {
 
   const {user} = useAuth();
   const profileId = user?.profileId as string | null;
-  
+ 
   // Add more detailed logging
+  
   console.log('User object:', user);
   console.log('Profile ID:', profileId);
   console.log('User authenticated:', !!user);
   
-  if (!user) {
-    console.error("User not authenticated by Dashboard");
+  if (!profileId) {
+    console.log("User not authenticated by Dashboard");
+    alert("User not authenticated");
+    window.location.href = "/";
     // Consider adding a loading state or redirect here
   }
-
+  
  
 
   

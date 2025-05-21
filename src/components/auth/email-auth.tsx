@@ -80,7 +80,7 @@ export function EmailAuth({ defaultRole, onAuthSuccess }: EmailAuthProps) {
   // Handle email form submission
   const onEmailSubmit = async (values: z.infer<typeof emailFormSchema>) => {
     // Reset the OTP field explicitly when switching to OTP view
-    // emailForm.resetField("otp");
+    emailForm.resetField("otp");
 
     if (!otpSent) {
       await handleSendEmailOtp(values.email, values.role);

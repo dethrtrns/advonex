@@ -23,7 +23,7 @@ const formSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
   lastName: z.string().min(1, "Last name is required"),
   email: z.string().email("Invalid email address"),
-  phone: z.string().min(10, "Phone number must be at least 10 digits"),
+  phone: z.string().min(10, "Phone number must be at least 10 digits").optional(),
   state: z.string().min(1, "State is required"),
   city: z.string().min(1, "City is required"),
   barNumber: z.string().min(1, "Bar number is required"),
@@ -163,47 +163,41 @@ export default function LawyerDashboard() {
 
     setIsSubmitting(true); // Set submitting state
     try {
-      // Transform form data to match API structure (similar to registration)
+      // Transform form data to match API structure (UpdateLawyer interface: Different from lawyer interface)
       const transformedData = {
         name: `${values.firstName} ${values.lastName}`,
-        email: values.email,
-        phone: values.phone,
-        location: `${values.city}, ${values.state}`, // Combine city and state
+        // phone: values.phone,
+        location: `${values.city}, ${values.state}`, 
         barId: values.barNumber,
-        practiceArea: [{ // Changed from practiceArea to practiceAreas to match the interface
-          practiceArea: {
-            name: values.practiceArea,
-            // id and description are missing but likely handled by the API
-          }
-        }],
+        // practiceArea: [{ 
+        //   practiceArea: {
+        //     name: values.practiceArea,
+        //   }
+        // }],
         experience: values.experience,
         bio: values.bio,
         consultFee: values.consultFee,
-        primaryCourt: { // Changed from practiceCourt.primary to primaryCourt object structure
-          name: values.primaryCourt,
-          // id is missing but likely handled by the API
-        },
-        practiceCourts: values.practiceCourts ? [{ // Changed to array of PracticeCourts objects
-          practiceCourt: {
-            name: values.practiceCourts
-            // id and location are missing but likely handled by the API
-          }
-        }] : [],
+        specialization: values.practiceArea,
+        primaryCourt:  values.primaryCourt,
+        
+        // practiceCourts: values.practiceCourts ? [{
+        //   practiceCourt: {
+        //     name: values.practiceCourts
+        //   }
+        // }] : [],
         education: {
           // id, createdAt, updatedAt, and lawyerProfileId are missing but likely handled by the API
           institution: values.lawSchool,
           degree: values.degree,
           year: Number(values.graduationYear) // Changed from String to Number to match the interface
         },
-        photo: values.photo || lawyer.photo // Keep existing photo if not updated
-        // Note: specialization, isVerified, services, createdAt, and updatedAt are missing
-        // but likely handled by the API or not required for updates
+        photo: values.photo ? values.photo : lawyer.photo,
       };
 
       console.log("Updating profile with:", transformedData);
 
       // Call the service function
-      const updatedProfile = await updateLawyerProfile(lawyer.id, transformedData);
+      const updatedProfile = await updateLawyerProfile(transformedData);
 
       setLawyer(updatedProfile); // Update local state with the response from API
       form.reset(values); // Reset form with current values to prevent dirty state
@@ -348,7 +342,9 @@ export default function LawyerDashboard() {
                     </FormItem>
                   )}
                 />
-                <FormField
+                 {/* Phone Number Field */}
+
+                {/* <FormField
                   control={form.control}
                   name="phone"
                   render={({ field }) => (
@@ -360,7 +356,8 @@ export default function LawyerDashboard() {
                       <FormMessage />
                     </FormItem>
                   )}
-                />
+                /> */}
+
                 {/* Location Fields - State and City */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <FormField
@@ -648,7 +645,7 @@ export default function LawyerDashboard() {
                     </div>
                     <div>
                       <div className="text-sm text-muted-foreground">Practice Area</div>
-                      <div className="font-medium">{lawyer.practiceAreas[0]?.practiceArea.name}</div>
+                      <div className="font-medium">{lawyer.specialization.name}</div>
                     </div>
                     <div>
                       <div className="text-sm text-muted-foreground">Consultation Fee</div>

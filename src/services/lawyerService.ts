@@ -4,8 +4,6 @@ import { toast } from "sonner";
 export interface NamedEntity {
   id?: string;
   name: string;
-  description?: string;
-  location?: string;
 }
 
 export interface Service extends NamedEntity {
@@ -35,6 +33,24 @@ export interface practiceAreas {
     name: string;
     description?: string;
   }
+}
+
+
+export interface UpdateLawyer {
+  name: string; 
+  photo: string;
+  location: string;
+  experience: number;
+  bio: string;
+  consultFee: number;
+  barId: string;
+  specialization: string;
+ 
+  primaryCourt: string;
+  education: Education;
+  services: Service[];
+ 
+ 
 }
 
 export interface Lawyer {
@@ -99,14 +115,14 @@ export async function getLawyerProfile(id: string): Promise<Lawyer> {
   }
 }
 
-export async function updateLawyerProfile(id: string, data: Partial<Lawyer>): Promise<Lawyer> {
+export async function updateLawyerProfile(data: Partial<UpdateLawyer>): Promise<Lawyer> {
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_BACKEND_URL}/api/lawyers/${id}`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_BACKEND_URL}/profiles/lawyer`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
         // Add Authorization header if needed
-        // 'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+        'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
       },
       body: JSON.stringify(data)
     });

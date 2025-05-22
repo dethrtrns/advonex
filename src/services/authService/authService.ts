@@ -174,7 +174,7 @@ export async function verifyEmailOtp(params: VerifyEmailOtpParams): Promise<Auth
     
 
     toast.success('Authentication successful!');
-    return otpVerifyResponse.data;
+    return otpVerifyResponse;
   } catch (error) {
     console.error('Error verifying email OTP:', error);
     toast.error(error instanceof Error ? error.message : 'Failed to verify OTP');

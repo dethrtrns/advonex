@@ -30,17 +30,39 @@ export function RegisterDialog() {
   };
 
   // Common function to handle successful authentication
-  const handleAuthSuccess = (data: any, roles: string[]) => {
-    // Show token in alert for testing purposes
-    console.log("OTP verified successfully");
-    alert(`Access Token: ${data.accessToken}\n\nRefresh Token: ${data.refreshToken}`);
+  const handleAuthSuccess = (authData: any, userRoles: string[] | undefined) => {
+    console.log("handleAuthSuccess triggered.");
+    console.log("Received authData:", JSON.stringify(authData, null, 2));
+    console.log("Received userRoles:", userRoles);
+
+    // Attempt to get tokens for the alert
+    const accessToken = authData?.accessToken;
+    const refreshToken = authData?.refreshToken;
+
+    if (accessToken && refreshToken) {
+      alert(`Authentication Successful!\nAccess Token: ${accessToken}\nRefresh Token: ${refreshToken}`);
+    } else {
+      console.warn("Token information incomplete. authData:", authData);
+      alert("Authentication Successful! (Token info might be partial or missing in alert)");
+    }
 
     setOpen(false); // Close the dialog
 
-    // Handle redirection
-    if (roles.includes("LAWYER")) {
+    // Robust check for roles and redirection
+    let isLawyer = false;
+    if (Array.isArray(userRoles)) {
+      // Check for "LAWYER" case-insensitively
+      isLawyer = userRoles.some(role => typeof role === 'string' && role.toUpperCase() === "LAWYER");
+      console.log(`Role check: Is Lawyer? ${isLawyer}. Roles provided: ${userRoles.join(', ')}`);
+    } else {
+      console.log("User roles are undefined or not an array. Defaulting redirection.");
+    }
+
+    if (isLawyer) {
+      console.log("Redirecting to /lawyer/dashboard");
       window.location.href = "/lawyer/dashboard";
     } else {
+      console.log("Redirecting to / (default, client, or no specific lawyer role found)");
       window.location.href = "/";
     }
   };

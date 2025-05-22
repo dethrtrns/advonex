@@ -98,17 +98,17 @@ export function EmailAuth({ defaultRole, onAuthSuccess }: EmailAuthProps) {
         });
 
         // Handle successful authentication
-        if (!data.data.user) {
+        if (!data.data.user?.roles) {
           console.log("User does not have any role");
-          return; // Exit the function if user is not found
+          return console.log('roles not found, fx returned!'); // Exit the function if user is not found
         }
         onAuthSuccess(data, data.data.user?.roles);
-        // Redirect based on role
-        if (data.data.user?.roles.includes("LAWYER")) {
-          window.location.href = `/lawyer`;
-        } else {
-          window.location.href = `/`;
-        }
+        // REMOVE REDUNDANT REDIRECTION LOGIC
+        // if (data.data.user?.roles.includes("LAWYER")) {
+        //   window.location.href = `/lawyer`;
+        // } else {
+        //   window.location.href = `/`;
+        // }
        
         console.log(`email OTP verification Successful: ${data.data.user}`);
 

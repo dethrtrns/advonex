@@ -98,14 +98,14 @@ export function EmailAuth({ defaultRole, onAuthSuccess }: EmailAuthProps) {
         });
 
         // Handle successful authentication
-        if (!data.data.user?.roles) {
-          console.log("User does not have any role");
-          return console.log('roles not found, fx returned!'); // Exit the function if user is not found
-        }
-        onAuthSuccess(data, data.data.user?.roles);
+        // if (!data.data.user?.roles) {
+        //   console.log("User does not have any role");
+        //   return console.log('roles not found, fx returned!'); // Exit the function if user is not found
+        // }
+        // onAuthSuccess(data, data.data.user?.roles);
         // REMOVE REDUNDANT REDIRECTION LOGIC
         // if (data.data.user?.roles.includes("LAWYER")) {
-        //   window.location.href = `/lawyer`;
+          window.location.href = `/`;
         // } else {
         //   window.location.href = `/`;
         // }

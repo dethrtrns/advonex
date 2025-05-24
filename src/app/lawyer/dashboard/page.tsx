@@ -288,6 +288,7 @@ export default function LawyerDashboard() {
               console.log("Image URL updated:", imageUrl);
             }}
             name={`${form.watch("firstName")} ${form.watch("lastName")} `}
+            photo={lawyer.photo}
           />
         </div>
       </FormControl>
@@ -624,21 +625,23 @@ export default function LawyerDashboard() {
               <CardTitle>Profile Overview</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="flex items-center space-x-4">
-                {lawyer.photo && (
-                  <img
+              <div className="flex-col justify-center align-center sm:flex flex-row items-center justify-items-start gap-8 ">
+            {lawyer.photo && (
+                  <div className="flex"><img
                     src={lawyer.photo}
                     alt={lawyer.name}
-                    className="h-20 w-20 rounded-full object-cover"
-                  />
+                    className="h-28 w-28 rounded-full object-cover sm:rounded-lg w-32 h-32"
+                  /></div>
                 )}
+              <div className="flex items-center space-x-4 justify-center md:justify-start ">
+               
                 <div>
-                  <h2 className="text-2xl font-bold">{lawyer.name}</h2>
+                  <h2 className="text-2xl font-bold mt-4">{lawyer.name}</h2>
                   <div className="flex items-center text-sm text-muted-foreground">
                     <MapPin className="mr-1 h-4 w-4" />
                     {lawyer.location}
                   </div>
-                  <div className="mt-2 flex items-center space-x-4">
+                  <div className="mt-4 flex items-center space-x-4">
                     <div>
                       <div className="text-sm text-muted-foreground">Bar ID</div>
                       <div className="font-medium">{lawyer.barId}</div>
@@ -647,12 +650,14 @@ export default function LawyerDashboard() {
                       <div className="text-sm text-muted-foreground">Practice Area</div>
                       <div className="font-medium">{lawyer.specialization.name}</div>
                     </div>
-                    <div>
-                      <div className="text-sm text-muted-foreground">Consultation Fee</div>
+                    
+                  </div>
+                  <div>
+                      <div className="text-sm text-muted-foreground mt-4">Consultation Fee</div>
                       <div className="text-2xl font-bold text-primary">${lawyer.consultFee}/hr</div>
                     </div>
                   </div>
-                  </div>
+              </div>
               </div>
             </CardContent>
           </Card>

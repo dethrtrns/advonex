@@ -21,29 +21,31 @@ import { jwtDecode } from "jwt-decode";
 export function Header() {
 
   const {isAuthenticated, logout, user} = useAuth();
+// For testing purposes
+//   let accessToken = getAccessToken();
 
-  let accessToken = getAccessToken();
+console.log(`User with roles:  ${user?.roles} by AuthContext`);
 
-if(accessToken){
-  let decodedToken= jwtDecode<any>(accessToken);
-  const id = decodedToken.sub; 
-  const jwtData = decodedToken;
-  const role = decodedToken.roles[0];
+// if(accessToken){
+//   let decodedToken= jwtDecode<any>(accessToken);
+//   const id = decodedToken.sub; 
+//   const jwtData = decodedToken;
+//   const role = decodedToken.roles[0];
   
-console.log(`Data provided by AuthContext`);
+// console.log(`Data provided by AuthContext`);
 
-console.log(`User  ${isAuthenticated} by AuthContext`);
-console.log(`User profileId from decodedToken by authContext: ${user?.profileId}`);
-console.log(`+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++`);
-console.log(`Directly Decoded Token in Header`);
-console.log(`User with ID: ${id} and role: ${role}`);
-console.log(`User from decodedToken by authContext: ${user}`);
-console.log(`decodedToken: ${JSON.stringify(jwtData)}`);
-console.log(`+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++`);
+// console.log(`User  ${isAuthenticated} by AuthContext`);
+// console.log(`User profileId from decodedToken by authContext: ${user?.profileId}`);
+// console.log(`+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++`);
+// console.log(`Directly Decoded Token in Header`);
+// console.log(`User with ID: ${id} and role: ${role}`);
+// console.log(`User from decodedToken by authContext: ${user}`);
+// console.log(`decodedToken: ${JSON.stringify(jwtData)}`);
+// console.log(`+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++`);
 
 
 
-}
+// }
 
 
 
@@ -69,17 +71,18 @@ console.log(`+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         <div className="flex items-center gap-4">
           <div className="hidden md:flex items-center gap-4">         
             <ThemeToggle />
-            { (user !== null) ? <div> <button onClick={logout}> Logout</button></div> :
+            { (user) ? <div> <button onClick={logout}> Logout</button></div> :
             <RegisterDialog />
             }
           </div>
-         <button  onClick={logout}> Logout</button>
+  
          
           { (checkLawyer === true) ? (
           <Button variant="outline" asChild>
-              <Link href="/client" className="flex items-center gap-2">
+             { (!user) ? <Link href="/client" className="flex items-center gap-2">
                 <span>I'm Not a Lawyer</span>
-              </Link>
+              </Link> : <Link href="/lawyer/dashboard" className="flex items-center gap-2">
+              <span>My Dashboard</span> </Link>}
           </Button>) :
                    
             (<Button variant="outline" asChild>

@@ -1,9 +1,10 @@
 "use client"
 
-import { useState, useRef } from "react"
+import { useState, useRef, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
 import { useFormContext } from "react-hook-form"
+import { uploadLawyerImage } from "@/services/lawyerService"
 
 interface ImageUploadProps {
   onUploadComplete?: (imageUrl: string) => void
@@ -11,7 +12,8 @@ interface ImageUploadProps {
   buttonText?: string
   acceptedFileTypes?: string
   maxSizeMB?: number
-  name?: string // Add field name for form integration
+  name?: string
+  photo?: string // Add field name for form integration
 }
 
 // Helper function to generate initials from a name
@@ -33,6 +35,7 @@ export function ImageUpload({
   acceptedFileTypes = "image/jpeg, image/png, image/jpg",
   maxSizeMB = 5,
   name,
+  photo
 }: ImageUploadProps) {
   const [isUploading, setIsUploading] = useState(false)
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
@@ -47,6 +50,13 @@ export function ImageUpload({
       return null;
     }
   })();
+
+  // Use useEffect to handle the photo prop
+  useEffect(() => {
+    if (formContext && photo) {
+      setPreviewUrl(photo);
+    }
+  }, [formContext, photo]);
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -95,31 +105,25 @@ export function ImageUpload({
       formData.append("image", selectedFile)
 
       // Call the API endpoint
-      const response = await fetch("/api/images/upload", {
-        method: "POST",
-        body: formData,
-      })
-
-      if (!response.ok) {
-        throw new Error(`Upload failed: ${response.status}`)
-      }
-
-      const data = await response.json()
-      toast.success("Image uploaded successfully!")
+      const data = await uploadLawyerImage(selectedFile)
       
+      if (!data.data?.imageUrl) {
+        toast.error("Failed to upload image. Please try again.")
+        return
+      }
       // Call the callback with the image URL
       if (onUploadComplete) {
-        onUploadComplete(data.imageUrl)
+        onUploadComplete(data.data?.imageUrl)
       }
       
       // If we have a form context and a field name, update the form value
-      if (formContext && name) {
-        formContext.setValue(name, data.imageUrl);
+      if (formContext && photo) {
+        formContext.setValue(photo, data.data.imageUrl);
       }
       
       // Reset the component state
       setSelectedFile(null)
-      setPreviewUrl('https://img.freepik.com/free-vector/illustration-businessman_53876-5856.jpg?ga=GA1.1.1514780181.1745920449&semt=ais_hybrid&w=740')
+      setPreviewUrl(data.data.imageUrl ? data.data.imageUrl : 'https://img.freepik.com/free-vector/illustration-businessman_53876-5856.jpg?ga=GA1.1.1514780181.1745920449&semt=ais_hybrid&w=740')
       if (fileInputRef.current) {
         fileInputRef.current.value = ""
       }

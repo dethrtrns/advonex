@@ -81,6 +81,14 @@ interface ApiResponse {
   data: Lawyer[];
 }
 
+interface UploadImageResponse {
+  success: boolean;
+  data?: {
+    imageUrl: string;
+    publicId: string;
+  };
+}
+
 export async function getLawyersList(): Promise<Lawyer[]> {
   try {
     const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_BACKEND_URL}/lawyers/search`);
@@ -139,4 +147,37 @@ export async function updateLawyerProfile(data: Partial<UpdateLawyer>): Promise<
     toast.error(error instanceof Error ? error.message : 'An unknown error occurred during profile update.');
     throw error;
   }
+}
+
+export async function uploadLawyerImage(file: File): Promise<Partial<UploadImageResponse>> {
+  try {
+    // console.log('file: >>>>>', file);
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_BACKEND_URL}/upload/profile-pic/lawyer`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+      },
+      body: formData
+    });
+
+    console.log('final respone img upload: ', response);
+    const responseData = await response.json();
+    if (!response.ok) {
+      throw new Error(responseData.message || 'Failed to upload image');
+    }
+
+   toast.success('Image uploaded successfully');
+   console.log(responseData); 
+    return responseData;
+  }
+  catch (error) {
+    console.error('Error uploading image:', error);
+    toast.error(error instanceof Error? error.message : 'An unknown error occurred during image upload.');
+    throw error;
+  }
+ 
 }

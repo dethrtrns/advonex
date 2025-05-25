@@ -164,7 +164,7 @@ export async function uploadLawyerImage(file: File): Promise<Partial<UploadImage
       body: formData
     });
 
-    console.log('final respone img upload: ', response);
+
     const responseData = await response.json();
     if (!response.ok) {
       throw new Error(responseData.message || 'Failed to upload image');

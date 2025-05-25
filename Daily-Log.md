@@ -14,6 +14,7 @@ What Have I Done?
 
 
 What's Next?
+> Continue working on dashboard responsiveness design
 > Continue working on update form for lawyer
 - Multi-select field: practice areas and courts
 - Review and debug
@@ -23,3 +24,13 @@ What's Next?
 
 Insights:
 Design: start with mobile first, then larger devices(sm or md).
+
+
+24/05/2023:
+What Have I Done?
+> Reviewed and debugged the dashboard: mvp update form is working for now with image upload.
+> CSS trial and error: for dashboard responsiveness.
+> Fixed responsiveness issue for dashboard: fixed by adding flex-row/col.
+What's Next?
+
+Insights:

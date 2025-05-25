@@ -17,6 +17,7 @@ export default function LawyersDirectory() {
       try {
         setIsLoading(true); // Set loading state before fetch
         const lawyersData = await getLawyersList();
+        
         setLawyers(lawyersData);
       } catch (error) {
         console.error('Error fetching lawyers:', error);

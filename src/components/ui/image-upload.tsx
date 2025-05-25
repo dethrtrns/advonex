@@ -104,6 +104,12 @@ export function ImageUpload({
       const formData = new FormData()
       formData.append("image", selectedFile)
 
+      // Add logic to check if the selectedFile is a File object
+      if (!(selectedFile instanceof File)) {
+        toast.error("Invalid file type. Please select an image file.")
+        return
+      }
+
       // Call the API endpoint
       const data = await uploadLawyerImage(selectedFile)
       

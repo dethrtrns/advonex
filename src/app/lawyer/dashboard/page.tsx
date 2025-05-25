@@ -330,7 +330,8 @@ export default function LawyerDashboard() {
                     )}
                   />
                 </div>
-                <FormField
+                {/* Email Field */}
+                {/* <FormField
                   control={form.control}
                   name="email"
                   render={({ field }) => (
@@ -342,7 +343,7 @@ export default function LawyerDashboard() {
                       <FormMessage />
                     </FormItem>
                   )}
-                />
+                /> */}
                  {/* Phone Number Field */}
 
                 {/* <FormField
@@ -625,18 +626,18 @@ export default function LawyerDashboard() {
               <CardTitle>Profile Overview</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="flex-col justify-center align-center sm:flex flex-row items-center justify-items-start gap-8 ">
+              <div className="flex flex-col items-center justify-center sm:flex-row items-center justify-start gap-8 ">
             {lawyer.photo && (
-                  <div className="flex"><img
+                  <div className=""><img
                     src={lawyer.photo}
                     alt={lawyer.name}
-                    className="h-28 w-28 rounded-full object-cover sm:rounded-lg w-32 h-32"
+                    className="h-46 w-46 rounded-lg object-cover"
                   /></div>
                 )}
-              <div className="flex items-center space-x-4 justify-center md:justify-start ">
+              <div className="">
                
                 <div>
-                  <h2 className="text-2xl font-bold mt-4">{lawyer.name}</h2>
+                  <h2 className="text-2xl font-bold">{lawyer.name}</h2>
                   <div className="flex items-center text-sm text-muted-foreground">
                     <MapPin className="mr-1 h-4 w-4" />
                     {lawyer.location}

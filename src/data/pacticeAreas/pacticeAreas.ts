@@ -8,6 +8,7 @@ export let practiceAreas = [
     "Intellectual Property Law",
     "Labor Law",
     "Tax Law",
-    "Real Estate Law"
+    "Real Estate Law",
+    "Consumer Protection Law",
   ];
 

@@ -1,14 +1,15 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { refreshTokens, getAccessToken, logout } from '@/services/authService/authService';
-import { jwtDecode } from 'jwt-decode'; // You'll need to install this package
+import { refreshTokens, logout, getCurrentUserFromToken } from '@/services/authService/authService';
+import { jwtDecode } from 'jwt-decode';
 
-// Define the user type
+// Define the user type based on JWT structure
 type User = {
   id: string;
-  role: 'LAWYER' | 'CLIENT';
-  // Add other user properties as needed
+  roles: string[];
+  email?: string;
+  profileId?: string;
 };
 
 // Define the auth context type
@@ -23,17 +24,33 @@ type User = {
 
 // The context exposes these values to the entire application:
 type AuthContextType = {
-  user: User | null;         // Current user info or null if not authenticated
-  isLoading: boolean;        // Whether auth state is being determined
+  user: User | null;         // Current user info from JWT
+  isAuthenticating: boolean;        // Whether auth state is being determined
   isAuthenticated: boolean;  // Whether user is authenticated
   logout: () => void;        // Function to log out
 };
+
+// Function to get the current access token
+export function getAccessToken(): string | null {
+  if (typeof window === 'undefined') {
+    console.log('Not in a browser environment');
+    return null;
+  }
+  
+  let accessToken = localStorage.getItem('accessToken');
+
+  if (!accessToken) {
+    console.log('No access token available');
+    return null;
+  }
+  return accessToken;
+}
 
 // The useAuth() hook provides easy access to this context
 // Create the context with default values
 const AuthContext = createContext<AuthContextType>({
   user: null,
-  isLoading: true,
+  isAuthenticating: true,
   isAuthenticated: false,
   logout: () => {},
 });
@@ -44,17 +61,20 @@ export const useAuth = () => useContext(AuthContext);
 // Provider component
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isAuthenticating, setisAuthenticating] = useState(true);
 
   // Function to extract user info from token
   const getUserFromToken = (token: string): User | null => {
     try {
       const decoded = jwtDecode<any>(token);
-      return {
+      const userInfoFromToken =   {
         id: decoded.sub,
-        role: decoded.role,
-        // Map other user properties from token claims
+        roles: [decoded.roles], // Handle both formats
+        email: decoded?.email,
+        profileId: decoded?.profileId
       };
+      setUser(userInfoFromToken);
+      return userInfoFromToken; // Return the user objec
     } catch (error) {
       console.error('Error decoding token:', error);
       return null;
@@ -70,29 +90,45 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         
         // If no token in memory but refresh token exists, try to refresh
         if (!token && localStorage.getItem('refreshToken')) {
-          const authData = await refreshTokens();
-          token = authData.accessToken;
+          try {
+            const authData = await refreshTokens();
+            token = authData.data.accessToken;
+          } catch (error) {
+            console.error('Failed to refresh token:', error);
+          }
         }
         
         if (token) {
           // Extract user info from token
-          const userInfo = getUserFromToken(token);
-          setUser(userInfo);
+           getUserFromToken(token);
+         console.log(`Token present by AuthContext`);
           
           // Setup proactive token refresh
           const decoded = jwtDecode<{ exp: number }>(token);
-          const expiryTime = decoded.exp * 1000; // Convert to milliseconds
-          const currentTime = Date.now();
-          const timeUntilExpiry = expiryTime - currentTime;
+          const expiryTime = decoded.exp * 1000; // Convert to milliseconds (JWT exp is in seconds since epoch)
+          const currentTime = Date.now(); // Current time in milliseconds since epoch
+          const timeUntilExpiry = expiryTime - currentTime; // Time left until token expires in milliseconds
           
-          // Refresh 1 minute before expiry
-          const refreshTime = Math.max(0, timeUntilExpiry - 60000);
+          // Log token expiry information for debugging
+          console.log('Token expiry details:', {
+            expiryTimestamp: decoded.exp,
+            expiryDate: new Date(expiryTime).toISOString(),
+            currentDate: new Date(currentTime).toISOString(),
+            timeUntilExpiryMs: timeUntilExpiry,
+            timeUntilExpiryMinutes: Math.floor(timeUntilExpiry / (60 * 1000))
+          });
+          
+          // Refresh 15 minutes before expiry to ensure continuous session
+          const refreshTime = Math.max(0, timeUntilExpiry - 15 * 60 * 1000);
+          console.log(`Token will be refreshed in ${Math.floor(refreshTime / (60 * 1000))} minutes`);
           
           const refreshTimer = setTimeout(async () => {
             try {
+              console.log('Refreshing token before expiry...');
               const newAuthData = await refreshTokens();
-              const newUserInfo = getUserFromToken(newAuthData.accessToken);
+              const newUserInfo = getUserFromToken(newAuthData.data.accessToken);
               setUser(newUserInfo);
+              console.log('Token refreshed successfully');
             } catch (error) {
               console.error('Failed to refresh token:', error);
               setUser(null);
@@ -104,7 +140,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       } catch (error) {
         console.error('Auth initialization error:', error);
       } finally {
-        setIsLoading(false);
+        setisAuthenticating(false);
       }
     };
     
@@ -119,10 +155,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const value = {
     user,
-    isLoading,
-    isAuthenticated: !!user,
+    isAuthenticating,
+    isAuthenticated: !!getAccessToken(), // Check based on token existence
     logout: handleLogout,
   };
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={value}>
+      {isAuthenticating ? (
+        // Show a loading indicator while auth state is being determined
+        <div className="flex justify-center items-center min-h-screen">
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
+        </div>
+      ) : (
+        children
+      )}
+    </AuthContext.Provider>
+  );
 }

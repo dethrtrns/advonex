@@ -10,18 +10,20 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useEffect, useState } from "react";
-import { LawyerProfile, getLawyerProfile, updateLawyerProfile } from "@/services/lawyerService"; // Import updateLawyerProfile
+import { Lawyer, getLawyerProfile, updateLawyerProfile } from "@/services/lawyerService"; // Import updateLawyerProfile
 import { Loader, MapPin, Mail, Phone, Briefcase, GraduationCap } from "lucide-react";
 import { toast } from "sonner";
 import { indianLocations } from "@/data/indianLocations/locations";
 import { practiceAreas } from "@/data/pacticeAreas/pacticeAreas";
 import { ImageUpload } from "@/components/ui/image-upload";
+import { useAuth } from "@/contexts/AuthContext";
+
 
 const formSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
   lastName: z.string().min(1, "Last name is required"),
   email: z.string().email("Invalid email address"),
-  phone: z.string().min(10, "Phone number must be at least 10 digits"),
+  phone: z.string().min(10, "Phone number must be at least 10 digits").optional(),
   state: z.string().min(1, "State is required"),
   city: z.string().min(1, "City is required"),
   barNumber: z.string().min(1, "Bar number is required"),
@@ -33,8 +35,8 @@ const formSchema = z.object({
   graduationYear: z.number()
     .min(1900, "Invalid graduation year")
     .max(new Date().getFullYear(), "Graduation year cannot be in the future"),
-  practiceCourt1: z.string().min(1, "At least one practice court is required"),
-  practiceCourt2: z.string().optional(),
+  primaryCourt: z.string().min(1, "At least one practice court is required"),
+  practiceCourts: z.string().optional(),
   consultFee: z.number().min(0, "Consultation fee must be 0 or greater"),
   photo: z.string().optional(),
 });
@@ -42,28 +44,47 @@ const formSchema = z.object({
 
 
 export default function LawyerDashboard() {
-  const [lawyer, setLawyer] = useState<LawyerProfile | null>(null);
+  const [lawyer, setLawyer] = useState<Lawyer | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false); // Add submitting state
   const [cities, setCities] = useState<string[]>([]);
+
+  const {user} = useAuth();
+  const profileId = user?.profileId as string | null;
+ 
+  // Add more detailed logging
+  
+  console.log('User object:', user);
+  console.log('Profile ID:', profileId);
+  console.log('User authenticated:', !!user);
+  
+  if (!profileId) {
+    console.log("User not authenticated by Dashboard");
+    alert("User not authenticated");
+    window.location.href = "/";
+    // Consider adding a loading state or redirect here
+  }
+  
+ 
+
   
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      firstName: "",  // Fix: removed undefined firstName variable
-      lastName: "",   // Fix: removed undefined lastNameParts variable
+      firstName: "",  
+      lastName: "",   
       email: "",
       phone: "",
       state: "",
       city: "",
       barNumber: "",  // Fix: changed barId to barNumber to match schema
-      practiceArea: "",
+      practiceArea: "" ,
       experience: 0,
       bio: "",
       consultFee: 0,
-      practiceCourt1: "",
-      practiceCourt2: "",
+      practiceCourts: "",
+      primaryCourt: "",
       lawSchool: "",  // Fix: changed institution to lawSchool
       degree: "",
       graduationYear: 0,  // Fix: changed year to graduationYear
@@ -82,13 +103,24 @@ export default function LawyerDashboard() {
    }, [selectedState, form]);
 
   useEffect(() => {
-    const fetchProfile = async () => {
+
+    const fetchProfile = async (profileId: string | null) => {
       try {
-        const profile = await getLawyerProfile("c80d08f0-1f23-4420-bcc9-e2572e5cd6df");
+       
+        if (user?.profileId) {
+          console.log(`Current Authenticated User with ProfileId: ${user.profileId}  `);
+        }
+        {
+          console.log(`Hardcoded Profile Id: 550e8400-e29b-41d4-a716-446655440030 `);
+        }
+        const profile = await getLawyerProfile( (profileId) ? profileId : '550e8400-e29b-41d4-a716-446655440030');
+        
         setLawyer(profile);
         
         // Split name into first and last name
-        const nameParts = profile.name.split(' ');
+        const profileName = profile?.name ? profile.name : '' ;
+       
+        const nameParts = profileName.split(' ');
         const firstName = nameParts[0];
         const lastName = nameParts.slice(1).join(' ');
         
@@ -100,22 +132,23 @@ export default function LawyerDashboard() {
           lastName,
           email: profile.email,
           phone: profile.phone,
-          state: profile.location || "", // Set state first
-          city: profile.location, // Set city
-          barNumber: profile.barId || "",
-          practiceArea: profile.practiceAreas[0]?.toLowerCase().replace(/ /g, "-") || "", // Match value format
+          state: profile.location?.split(', ')[1] || '', // Extract state from location
+          city: profile.location?.split(', ')[0] || '', // Extract city from location
+          barNumber: profile.barId || '',
+          practiceArea: profile.practiceAreas[0]?.practiceArea.name.toLowerCase().replace(/ /g, '-') || '', // Use practiceArea.name
           experience: profile.experience || 0,
-          bio: profile.bio || "",
+          bio: profile.bio || '',
           consultFee: profile.consultFee || 0,
-          practiceCourt1: profile.practiceCourt?.primary || "",
-          practiceCourt2: profile.practiceCourt?.secondary || "",
-          lawSchool: profile.education.institution || "",
-          degree: profile.education.degree || "",
-          graduationYear: parseInt(profile.education.year) || 0, // Default to 0 or handle invalid parse
-          photo: profile.photo || "",
+          primaryCourt: profile.primaryCourt?.name || '', // Use primaryCourt.name
+          practiceCourts: profile.practiceCourts?.[0]?.practiceCourt.name || '', // Use first practiceCourt name
+          lawSchool: profile.education?.institution || '',
+          degree: profile.education?.degree || '',
+          graduationYear: profile.education?.year || 0, // year is already a number in the interface
+          photo: profile.photo || ''
         });
 
       } catch (error) {
+        
         console.error("Error fetching profile:", error);
         toast.error("Failed to load profile");
       } finally {
@@ -123,7 +156,7 @@ export default function LawyerDashboard() {
       }
     };
 
-    fetchProfile();
+    fetchProfile(profileId);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form.reset]); // Depend on form.reset to ensure it runs once on mount
 
@@ -132,33 +165,41 @@ export default function LawyerDashboard() {
 
     setIsSubmitting(true); // Set submitting state
     try {
-      // Transform form data to match API structure (similar to registration)
+      // Transform form data to match API structure (UpdateLawyer interface: Different from lawyer interface)
       const transformedData = {
-        name: `${values.firstName} ${values.lastName}` ,
-        email: values.email,
-        phone: values.phone,
-        location: `${values.city}, ${values.state}`, // Combine city and state
+        name: `${values.firstName} ${values.lastName}`,
+        // phone: values.phone,
+        location: `${values.city}, ${values.state}`, 
         barId: values.barNumber,
-        practiceAreas: [values.practiceArea], // Assuming single practice area update for now
+        // practiceArea: [{ 
+        //   practiceArea: {
+        //     name: values.practiceArea,
+        //   }
+        // }],
         experience: values.experience,
         bio: values.bio,
         consultFee: values.consultFee,
-        practiceCourt: {
-          primary: values.practiceCourt1,
-          secondary: values.practiceCourt2 || null,
-        },
+        specialization: values.practiceArea,
+        primaryCourt:  values.primaryCourt,
+        
+        // practiceCourts: values.practiceCourts ? [{
+        //   practiceCourt: {
+        //     name: values.practiceCourts
+        //   }
+        // }] : [],
         education: {
+          // id, createdAt, updatedAt, and lawyerProfileId are missing but likely handled by the API
           institution: values.lawSchool,
           degree: values.degree,
-          year: String(values.graduationYear)
+          year: Number(values.graduationYear) // Changed from String to Number to match the interface
         },
-        photo: values.photo || lawyer.photo // Keep existing photo if not updated
+        photo: values.photo ? values.photo : lawyer.photo,
       };
 
       console.log("Updating profile with:", transformedData);
 
       // Call the service function
-      const updatedProfile = await updateLawyerProfile(lawyer.id, transformedData);
+      const updatedProfile = await updateLawyerProfile(transformedData);
 
       setLawyer(updatedProfile); // Update local state with the response from API
       form.reset(values); // Reset form with current values to prevent dirty state
@@ -249,6 +290,7 @@ export default function LawyerDashboard() {
               console.log("Image URL updated:", imageUrl);
             }}
             name={`${form.watch("firstName")} ${form.watch("lastName")} `}
+            photo={lawyer.photo}
           />
         </div>
       </FormControl>
@@ -290,7 +332,8 @@ export default function LawyerDashboard() {
                     )}
                   />
                 </div>
-                <FormField
+                {/* Email Field */}
+                {/* <FormField
                   control={form.control}
                   name="email"
                   render={({ field }) => (
@@ -302,8 +345,10 @@ export default function LawyerDashboard() {
                       <FormMessage />
                     </FormItem>
                   )}
-                />
-                <FormField
+                /> */}
+                 {/* Phone Number Field */}
+
+                {/* <FormField
                   control={form.control}
                   name="phone"
                   render={({ field }) => (
@@ -315,7 +360,8 @@ export default function LawyerDashboard() {
                       <FormMessage />
                     </FormItem>
                   )}
-                />
+                /> */}
+
                 {/* Location Fields - State and City */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <FormField
@@ -457,7 +503,7 @@ export default function LawyerDashboard() {
                 />
                 <FormField
                   control={form.control}
-                  name="practiceCourt1"
+                  name="primaryCourt"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Primary Court</FormLabel>
@@ -470,7 +516,7 @@ export default function LawyerDashboard() {
                 />
                 <FormField
                   control={form.control}
-                  name="practiceCourt2"
+                  name="practiceCourts"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Secondary Court (Optional)</FormLabel>
@@ -527,7 +573,7 @@ export default function LawyerDashboard() {
                       <FormItem>
                         <FormLabel>Degree</FormLabel>
                         <FormControl>
-                          <Input placeholder="e.g., Juris Doctor" {...field} />
+                          <Input placeholder="e.g., Juris Doctor (J.D.)" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -543,6 +589,7 @@ export default function LawyerDashboard() {
                           <Input
                             type="number"
                             min="1900"
+                            max={new Date().getFullYear()}
                             placeholder="Enter graduation year"
                             {...field}
                             onChange={(e) => field.onChange(Number(e.target.value))}
@@ -556,51 +603,63 @@ export default function LawyerDashboard() {
               </CardContent>
             </Card>
 
-            <div className="flex justify-end gap-4">
-              <Button type="submit">Save Changes</Button>
+            <div className="flex justify-end space-x-4">
+              <Button
+                type="submit"
+                disabled={isSubmitting}
+                className="w-full md:w-auto"
+              >
+                {isSubmitting ? (
+                  <>
+                    <Loader className="mr-2 h-4 w-4 animate-spin" />
+                    Saving...
+                  </>
+                ) : (
+                  'Save Changes'
+                )}
+              </Button>
             </div>
           </form>
         </Form>
       ) : (
         <div className="space-y-6">
           <Card>
-            <CardContent className="p-2 pt-0 ">
-              <div className="sm:items-center gap-6 md:flex items-center justify-start gap-16">
-                <div className="relative sm:w-full h-90 md:w-72 h-90 overflow-hidden rounded-lg">
-                  {lawyer.photo ? (
-                    <img
-                      src={lawyer.photo}
-                      alt={lawyer.name}
-                      className="object-cover w-full h-full"
-                    />
-                  ) : (
-                    <div className="flex items-center justify-center w-full h-full bg-primary/10 text-primary font-bold text-4xl sm: flex items-right justify-right">
-                      {lawyer.name.split(' ').map(part => part[0]).join('').toUpperCase()}
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle>Profile Overview</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex flex-col items-center justify-center sm:flex-row items-center justify-start gap-8 ">
+            {lawyer.photo && (
+                  <div className=""><img
+                    src={lawyer.photo}
+                    alt={lawyer.name}
+                    className="h-46 w-46 rounded-lg object-cover"
+                  /></div>
+                )}
+              <div className="">
+               
+                <div>
+                  <h2 className="text-2xl font-bold">{lawyer.name}</h2>
+                  <div className="flex items-center text-sm text-muted-foreground">
+                    <MapPin className="mr-1 h-4 w-4" />
+                    {lawyer.location}
+                  </div>
+                  <div className="mt-4 flex items-center space-x-4">
+                    <div>
+                      <div className="text-sm text-muted-foreground">Bar ID</div>
+                      <div className="font-medium">{lawyer.barId}</div>
                     </div>
-                  )}
-                </div>
-                <div className="flex items-center justify-center gap-4 mt-4 md:flex-col items-start justify-start gap-4 ">
-                <div className="flex-1">
-                  <h2 className="text-2xl font-semibold">{lawyer.name}</h2>
-                  <div className="flex items-center gap-2 text-muted-foreground mt-1">
-                    <MapPin className="h-4 w-4" />
-                    <span>{lawyer.location}</span>
+                    <div>
+                      <div className="text-sm text-muted-foreground">Practice Area</div>
+                      <div className="font-medium">{lawyer.specialization?.name}</div>
+                    </div>
+                    
                   </div>
-                  <div className="flex flex-wrap gap-2 mt-2">
-                    {lawyer.practiceAreas.map((area) => (
-                      <span
-                        key={area}
-                        className="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary"
-                      >
-                        {area}
-                      </span>
-                    ))}
+                  <div>
+                      <div className="text-sm text-muted-foreground mt-4">Consultation Fee</div>
+                      <div className="text-2xl font-bold text-primary">${lawyer.consultFee}/hr</div>
+                    </div>
                   </div>
-                </div>
-                <div className="text-right">
-                  <div className="text-sm text-muted-foreground">Consultation Fee</div>
-                  <div className="text-2xl font-bold text-primary">${lawyer.consultFee}/hr</div>
-                </div>
               </div>
               </div>
             </CardContent>
@@ -646,9 +705,9 @@ export default function LawyerDashboard() {
                   <div>
                     <div className="text-sm font-medium">Education</div>
                     <div className="text-sm text-muted-foreground">
-                      {lawyer.education.degree} - {lawyer.education.institution}
+                      {lawyer.education?.degree} - {lawyer.education?.institution}
                     </div>
-                    <div className="text-sm text-muted-foreground">Class of {lawyer.education.year}</div>
+                    <div className="text-sm text-muted-foreground">Class of {lawyer.education?.year}</div>
                   </div>
                 </div>
               </CardContent>

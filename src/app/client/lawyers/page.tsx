@@ -17,6 +17,7 @@ export default function LawyersDirectory() {
       try {
         setIsLoading(true); // Set loading state before fetch
         const lawyersData = await getLawyersList();
+        
         setLawyers(lawyersData);
       } catch (error) {
         console.error('Error fetching lawyers:', error);
@@ -88,7 +89,7 @@ export default function LawyersDirectory() {
                         id={`initials-${lawyer.id}`}
                         className="flex items-center justify-center w-full h-full bg-primary/10 text-primary font-bold text-2xl"
                       >
-                      {getInitials(lawyer.name)}
+                      {getInitials(lawyer?.name)}
                       </div>
                     )}
                   </div>
@@ -105,9 +106,10 @@ export default function LawyersDirectory() {
                         {lawyer.primaryCourt.name}
                       </div>
                     )}
-                    <div className="flex flex-wrap gap-2">
+
+<div className="flex flex-wrap gap-2">
                        {/* ++++++++++++++Watchout for the API res structure+++++++++++++++++++++ */}
-                      {lawyer.practiceAreas.map((area) => (
+                      {lawyer.practiceAreas.slice(0, 1).map((area) => (
                         <span
                           key={area.practiceArea.id}
                           className="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary"
@@ -116,6 +118,7 @@ export default function LawyersDirectory() {
                         </span>
                       ))}
                     </div>
+                   
                     <div className="flex items-center justify-between pt-2">
                       <span className="text-sm text-muted-foreground">{lawyer.experience} years exp.</span>
                       <div className="flex items-center gap-2">
@@ -140,6 +143,7 @@ export default function LawyersDirectory() {
 
 // Helper function to generate initials from a name
 function getInitials(name: string): string {
+  if (!name) return 'IMG';
   return name
     .split(' ')
     .map(part => part[0])

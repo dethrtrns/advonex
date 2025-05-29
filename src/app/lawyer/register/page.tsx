@@ -190,6 +190,7 @@ export default function LawyerRegistration() {
           errorMessage = errorData.message || errorMessage;
         } catch (e) {
           // If response is not JSON, use the text response or status
+          console.error('Error parsing response:', e);
           errorMessage = responseData || `Server error: ${response.status}`;
         }
         throw new Error(errorMessage);

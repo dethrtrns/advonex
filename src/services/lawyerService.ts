@@ -2,39 +2,55 @@ import { toast } from "sonner";
 
 // Define nested interfaces for better type safety
 export interface NamedEntity {
-  id: string;
-  name: string;
-  description?: string;
-  location?: string;
+  id?: string;
+  name?: string;
 }
 
 export interface Service extends NamedEntity {
-  description: string;
+  description?: string;
 }
 
 export interface Education {
-  id: string;
-  degree: string;
-  institution: string;
+  id?: string;
+  degree?: string;
+  institution?: string;
   year: number;
-  createdAt: string;
-  updatedAt: string;
-  lawyerProfileId: string;
+  createdAt?: string;
+  updatedAt?: string;
+  lawyerProfileId?: string;
 }
 
 export interface PracticeCourts {
   practiceCourt: {
-    id: string;
+    id?: string;
     name: string;
     location?: string;
   }
 }
 export interface practiceAreas {
   practiceArea: {
-    id: string;
+    id?: string;
     name: string;
     description?: string;
   }
+}
+
+
+export interface UpdateLawyer {
+  name: string; 
+  photo: string;
+  location: string;
+  experience: number;
+  bio: string;
+  consultFee: number;
+  barId: string;
+  specialization: string;
+ 
+  primaryCourt: string;
+  education?: Education;
+  services: Service[];
+ 
+ 
 }
 
 export interface Lawyer {
@@ -45,13 +61,13 @@ export interface Lawyer {
   experience: number;
   bio: string;
   consultFee: number;
-  barId: string;
+  barId?: string;
   isVerified: boolean;
-  specialization: NamedEntity;
+  specialization?: NamedEntity;
   practiceAreas: practiceAreas[];
   primaryCourt: NamedEntity;
   practiceCourts: PracticeCourts[];
-  education: Education;
+  education?: Education;
   services: Service[];
   createdAt: string;
   updatedAt: string;
@@ -63,6 +79,14 @@ export interface Lawyer {
 interface ApiResponse {
   success: boolean;
   data: Lawyer[];
+}
+
+interface UploadImageResponse {
+  success: boolean;
+  data?: {
+    imageUrl: string;
+    publicId: string;
+  };
 }
 
 export async function getLawyersList(): Promise<Lawyer[]> {
@@ -99,14 +123,14 @@ export async function getLawyerProfile(id: string): Promise<Lawyer> {
   }
 }
 
-export async function updateLawyerProfile(id: string, data: Partial<Lawyer>): Promise<Lawyer> {
+export async function updateLawyerProfile(data: Partial<UpdateLawyer>): Promise<Lawyer> {
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_BACKEND_URL}/api/lawyers/${id}`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_BACKEND_URL}/profiles/lawyer`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
         // Add Authorization header if needed
-        // 'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+        'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
       },
       body: JSON.stringify(data)
     });
@@ -123,4 +147,37 @@ export async function updateLawyerProfile(id: string, data: Partial<Lawyer>): Pr
     toast.error(error instanceof Error ? error.message : 'An unknown error occurred during profile update.');
     throw error;
   }
+}
+
+export async function uploadLawyerImage(file: File): Promise<Partial<UploadImageResponse>> {
+  try {
+    // console.log('file: >>>>>', file);
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_BACKEND_URL}/upload/profile-pic/lawyer`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+      },
+      body: formData
+    });
+
+
+    const responseData = await response.json();
+    if (!response.ok) {
+      throw new Error(responseData.message || 'Failed to upload image');
+    }
+
+   toast.success('Image uploaded successfully');
+   console.log(responseData); 
+    return responseData;
+  }
+  catch (error) {
+    console.error('Error uploading image:', error);
+    toast.error(error instanceof Error? error.message : 'An unknown error occurred during image upload.');
+    throw error;
+  }
+ 
 }

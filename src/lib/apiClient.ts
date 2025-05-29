@@ -1,4 +1,5 @@
-import { getAccessToken, refreshTokens, logout } from '@/services/authService/authService';
+import { refreshTokens, logout } from '@/services/authService/authService';
+import { getAccessToken } from '@/contexts/AuthContext';
 
 // Queue to store pending requests during token refresh
 let refreshPromise: Promise<any> | null = null;

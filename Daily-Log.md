@@ -19,6 +19,7 @@ What's Next?
 - Multi-select field: practice areas and courts
 - Review and debug
 > OTP input field issue
+>New User dashboard issue('name' is null:: cannot read) #Priority Fix needed
 > 
 > Issue: roles include lawyer not working, review array method to check roles(for Redirect based on roles)
 

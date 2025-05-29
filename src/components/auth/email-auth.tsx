@@ -11,7 +11,6 @@ import { toast } from "sonner";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import { sendEmailOtp, verifyEmailOtp } from "@/services/authService/authService";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Router } from "next/router";
 
 // Email form schema
 const emailFormSchema = z.object({
@@ -28,7 +27,7 @@ type EmailAuthProps = {
   onAuthSuccess: (data: any, roles: string[]) => void;
 };
 
-export function EmailAuth({ defaultRole, onAuthSuccess }: EmailAuthProps) {
+export function EmailAuth({ defaultRole }: EmailAuthProps) {
   const [otpSent, setOtpSent] = useState(false);
   const [resendCooldown, setResendCooldown] = useState(0);
   const [canResend, setCanResend] = useState(false);
@@ -73,6 +72,7 @@ export function EmailAuth({ defaultRole, onAuthSuccess }: EmailAuthProps) {
       // Reset the OTP field explicitly when switching to OTP view
       // emailForm.resetField("otp");
     } catch (error) {
+      console.error("Error sending OTP:", error);
       setCanResend(true);
     }
   };
@@ -113,6 +113,7 @@ export function EmailAuth({ defaultRole, onAuthSuccess }: EmailAuthProps) {
         console.log(`email OTP verification Successful: ${data.data.user}`);
 
       } catch (error) {
+        console.error("Error verifying OTP:", error);
         // Error is already handled by the service function's toast
       }
     }

@@ -3,7 +3,7 @@ import { toast } from "sonner";
 // Define nested interfaces for better type safety
 export interface NamedEntity {
   id?: string;
-  name: string;
+  name?: string;
 }
 
 export interface Service extends NamedEntity {
@@ -12,8 +12,8 @@ export interface Service extends NamedEntity {
 
 export interface Education {
   id?: string;
-  degree: string;
-  institution: string;
+  degree?: string;
+  institution?: string;
   year: number;
   createdAt?: string;
   updatedAt?: string;
@@ -47,7 +47,7 @@ export interface UpdateLawyer {
   specialization: string;
  
   primaryCourt: string;
-  education: Education;
+  education?: Education;
   services: Service[];
  
  
@@ -61,13 +61,13 @@ export interface Lawyer {
   experience: number;
   bio: string;
   consultFee: number;
-  barId: string;
+  barId?: string;
   isVerified: boolean;
-  specialization: NamedEntity;
+  specialization?: NamedEntity;
   practiceAreas: practiceAreas[];
   primaryCourt: NamedEntity;
   practiceCourts: PracticeCourts[];
-  education: Education;
+  education?: Education;
   services: Service[];
   createdAt: string;
   updatedAt: string;

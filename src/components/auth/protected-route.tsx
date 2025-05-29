@@ -17,26 +17,26 @@ export default function ProtectedRoute({
   children, 
   requiredRole 
 }: ProtectedRouteProps) {
-  const { user, isLoading, isAuthenticated } = useAuth();
+  const { user, isAuthenticating, isAuthenticated } = useAuth();
   const router = useRouter();  // Correctly initialize the router hook
   const pathname = usePathname();  // Correctly initialize the pathname hook
   
   // If not authenticated, redirect to home and store intended destination
   useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
+    if (!isAuthenticating && !isAuthenticated) {
       sessionStorage.setItem('redirectAfterLogin', pathname || '/');
       router.push('/');  
       return;
     }
 
     // If authenticated but wrong role, redirect to appropriate dashboard
-    if (!isLoading && isAuthenticated && requiredRole && user?.role !== requiredRole) {
-      router.push(user?.role === 'LAWYER' ? '/lawyer/dashboard' : '/client');
+    if (!isAuthenticating && isAuthenticated && requiredRole && user?.roles.includes('LAWYER') ) {
+      router.push(user?.roles.includes('LAWYER') ? '/lawyer/dashboard' : '/client');
     }
-  }, [isLoading, isAuthenticated, user, requiredRole, router, pathname]);
+  }, [isAuthenticating, isAuthenticated, user, requiredRole, router, pathname]);
   
   // Show loading state or render children based on authentication status
-  if (isLoading) {
+  if (isAuthenticating) {
     return <div className="flex justify-center items-center min-h-[50vh]">
     <Loader className="h-8 w-8 animate-spin text-primary" />
   </div>; // You might want to replace this with a proper loading component
@@ -46,7 +46,7 @@ export default function ProtectedRoute({
     return null; // Don't render anything while redirecting
   }
   
-  if (requiredRole && user?.role !== requiredRole) {
+  if (requiredRole && !user?.roles.includes('LAWYER') ) {
     return null; // Don't render anything while redirecting to the correct dashboard
   }
   

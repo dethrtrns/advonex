@@ -16,7 +16,7 @@ import { toast } from "sonner";
 import { indianLocations } from "@/data/indianLocations/locations";
 import { practiceAreas } from "@/data/pacticeAreas/pacticeAreas";
 import { ImageUpload } from "@/components/ui/image-upload";
-import { useAuth, getAccessToken } from "@/contexts/AuthContext";
+import { useAuth } from "@/contexts/AuthContext";
 
 
 const formSchema = z.object({
@@ -118,7 +118,9 @@ export default function LawyerDashboard() {
         setLawyer(profile);
         
         // Split name into first and last name
-        const nameParts = profile.name.split(' ');
+        const profileName = profile?.name ? profile.name : '' ;
+       
+        const nameParts = profileName.split(' ');
         const firstName = nameParts[0];
         const lastName = nameParts.slice(1).join(' ');
         
@@ -139,9 +141,9 @@ export default function LawyerDashboard() {
           consultFee: profile.consultFee || 0,
           primaryCourt: profile.primaryCourt?.name || '', // Use primaryCourt.name
           practiceCourts: profile.practiceCourts?.[0]?.practiceCourt.name || '', // Use first practiceCourt name
-          lawSchool: profile.education.institution || '',
-          degree: profile.education.degree || '',
-          graduationYear: profile.education.year || 0, // year is already a number in the interface
+          lawSchool: profile.education?.institution || '',
+          degree: profile.education?.degree || '',
+          graduationYear: profile.education?.year || 0, // year is already a number in the interface
           photo: profile.photo || ''
         });
 
@@ -649,7 +651,7 @@ export default function LawyerDashboard() {
                     </div>
                     <div>
                       <div className="text-sm text-muted-foreground">Practice Area</div>
-                      <div className="font-medium">{lawyer.specialization.name}</div>
+                      <div className="font-medium">{lawyer.specialization?.name}</div>
                     </div>
                     
                   </div>
@@ -703,9 +705,9 @@ export default function LawyerDashboard() {
                   <div>
                     <div className="text-sm font-medium">Education</div>
                     <div className="text-sm text-muted-foreground">
-                      {lawyer.education.degree} - {lawyer.education.institution}
+                      {lawyer.education?.degree} - {lawyer.education?.institution}
                     </div>
-                    <div className="text-sm text-muted-foreground">Class of {lawyer.education.year}</div>
+                    <div className="text-sm text-muted-foreground">Class of {lawyer.education?.year}</div>
                   </div>
                 </div>
               </CardContent>

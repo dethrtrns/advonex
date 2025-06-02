@@ -61,6 +61,9 @@ export function EmailAuth({ defaultRole }: EmailAuthProps) {
     setCanResend(false);
   };
 
+  // Add this state to track OTP value separately
+  const [otpValue, setOtpValue] = useState("");
+
   // Function to handle sending/resending Email OTP
   const handleSendEmailOtp = async (email: string, role: 'lawyer' | 'client') => {
     try {
@@ -69,8 +72,9 @@ export function EmailAuth({ defaultRole }: EmailAuthProps) {
       setOtpSent(true);
       startResendTimer();
       
-      // Reset the OTP field explicitly when switching to OTP view
-      // emailForm.resetField("otp");
+      // Reset OTP value
+      setOtpValue("");
+      emailForm.setValue("otp", "");
     } catch (error) {
       console.error("Error sending OTP:", error);
       setCanResend(true);
@@ -79,10 +83,9 @@ export function EmailAuth({ defaultRole }: EmailAuthProps) {
 
   // Handle email form submission
   const onEmailSubmit = async (values: z.infer<typeof emailFormSchema>) => {
-    // Reset the OTP field explicitly when switching to OTP view
-    emailForm.resetField("otp");
-
     if (!otpSent) {
+      // Clear the OTP field before sending OTP
+      emailForm.setValue("otp", "");
       await handleSendEmailOtp(values.email, values.role);
     } else {
       try {
@@ -201,8 +204,17 @@ export function EmailAuth({ defaultRole }: EmailAuthProps) {
                 <FormItem>
                   <FormLabel>One-Time Password</FormLabel>
                   <FormControl>
-                    <InputOTP maxLength={6} pattern="[0-9]*" inputMode="numeric" {...field}>
-                      <InputOTPGroup defaultValue={9}>
+                    <InputOTP 
+                      maxLength={6} 
+                      pattern="[0-9]*" 
+                      inputMode="numeric" 
+                      value={otpValue}
+                      onChange={(value) => {
+                        setOtpValue(value);
+                        field.onChange(value);
+                      }}
+                    >
+                      <InputOTPGroup>
                         <InputOTPSlot index={0} />
                         <InputOTPSlot index={1} />
                         <InputOTPSlot index={2} />

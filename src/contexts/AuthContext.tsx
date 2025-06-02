@@ -9,6 +9,8 @@ type User = {
   id: string;
   roles: string[];
   email?: string;
+  lawyerProfileId?: string;
+  clientProfileId?: string;
   profileId?: string;
 };
 
@@ -71,7 +73,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         id: decoded.sub,
         roles: [decoded.roles], // Handle both formats
         email: decoded?.email,
-        profileId: decoded?.profileId
+        profileId: decoded?.profileId,
+        lawyerProfileId: decoded?.profileIds.lawyerId || undefined,
+        clientProfileId: decoded?.profileIds.clientId || undefined,
       };
       setUser(userInfoFromToken);
       return userInfoFromToken; // Return the user objec

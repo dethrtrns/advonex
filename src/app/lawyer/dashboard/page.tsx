@@ -51,7 +51,7 @@ export default function LawyerDashboard() {
   const [cities, setCities] = useState<string[]>([]);
 
   const {user} = useAuth();
-  const profileId = user?.profileId as string | null;
+  const profileId = user?.lawyerProfileId as string | null;
  
   // Add more detailed logging
   
@@ -59,11 +59,18 @@ export default function LawyerDashboard() {
   console.log('Profile ID:', profileId);
   console.log('User authenticated:', !!user);
   
-  if (!profileId) {
-    console.log("User not authenticated by Dashboard");
-    alert("User not authenticated");
+  if (user && !profileId) {
+    console.log("User does not have lawyer profile ID!");
+    alert("User not authorised!");
     window.location.href = "/";
-    // Consider adding a loading state or redirect here
+    return null;
+  }
+
+  if (!user) {
+    console.log("User is not Authenticated!");
+    alert("Please login to continue!");
+    window.location.href = "/";
+    return null;
   }
   
  
@@ -108,7 +115,7 @@ export default function LawyerDashboard() {
       try {
        
         if (user?.profileId) {
-          console.log(`Current Authenticated User with ProfileId: ${user.profileId}  `);
+          console.log(`Current Authenticated User with ProfileId: ${user.profileId}   `);
         }
         {
           console.log(`Hardcoded Profile Id: 550e8400-e29b-41d4-a716-446655440030 `);

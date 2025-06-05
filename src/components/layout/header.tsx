@@ -65,7 +65,7 @@ console.log(`User with role(s):  ${user?.roles} by AuthContext`);
         <div className="flex items-center gap-4">
           <div className="hidden md:flex items-center gap-4">         
             <ThemeToggle />
-            { (user) ? <div> <button onClick={logout}> Logout</button></div> :
+            { (user) ? <div> <Button variant={"secondary"} onClick={logout}> Logout</Button></div> :
             <RegisterDialog />
             }
           </div>
@@ -101,7 +101,10 @@ console.log(`User with role(s):  ${user?.roles} by AuthContext`);
                   <Link href="#" className="px-4 py-2">Practice Areas</Link>
                 </SheetClose>
                 <SheetClose asChild>
-                <RegisterDialog />
+
+                { (user) ? <div> <Button className="text-red"  variant={"secondary"} onClick={logout}> Logout</Button></div> :
+            <RegisterDialog />}
+
                 </SheetClose>
               </nav>
             </SheetContent>

@@ -77,7 +77,7 @@ export function RegisterDialog() {
         <Button> Sign Up / Register</Button>
         
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent aria-describedby="Sign In/Sign up modal" className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Sign In / Register</DialogTitle>
         </DialogHeader>

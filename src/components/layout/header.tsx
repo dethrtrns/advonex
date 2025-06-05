@@ -9,13 +9,7 @@ import Link from "next/link";
 import { isLawyerRoute } from "@/lib/checkLawyerRoute";
 import { useAuth } from "@/contexts/AuthContext";
 import { getAccessToken } from "@/contexts/AuthContext";
-import { jwtDecode } from "jwt-decode";
-// import { isAuthenticated, logout, getAccessToken } from "@/services/authService/authService";
 
-// const authenticatedUser = isAuthenticated();
-// const logoutUser = () => {
-//   logout();
-// }
 
 
 export function Header() {
@@ -24,7 +18,7 @@ export function Header() {
 // For testing purposes
 //   let accessToken = getAccessToken();
 
-console.log(`User with roles:  ${user?.roles} by AuthContext`);
+console.log(`User with role(s):  ${user?.roles} by AuthContext`);
 
 // if(accessToken){
 //   let decodedToken= jwtDecode<any>(accessToken);

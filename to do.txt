@@ -1,0 +1,21 @@
+UI fixes:
+dashboard page-- 
+Done: Top header margin, Prof pic Size, 
+to do: Default img=> fetch db ? setImage : Fallback; 
+
+Fix: [DONE]Redirect after alerts (not authorised , authenticated , etc.) #dashboard , @Not authorised user
+
+FIX: refresh service function to handle error cases.#AuthService
+
+Re-fact: Create function to store tokens in local storage, in #authContext
+
+Remove[DONE]: Search and Sort lawyers sections
+
+Refact: The create profile btn to dashboard or Sign In btn
+
+Loader on sendOTP btn?
+
+
+// For testing nerodante tokens:
+ "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI3MTE0YWMzYy1iZTY5LTQ1NzUtOGY0Ni00ZmEzMzIxOTdjODAiLCJlbWFpbCI6Im5lcm9kYW50ZXJ0cm5zQGdtYWlsLmNvbSIsInJvbGVzIjpbIkxBV1lFUiJdLCJwcm9maWxlSWQiOiJhMzdiN2IxZC1mMGVhLTRkMjctODk4MS05ODcxMjBjZDE5MzkiLCJwcm9maWxlSWRzIjp7Imxhd3llcklkIjoiYTM3YjdiMWQtZjBlYS00ZDI3LTg5ODEtOTg3MTIwY2QxOTM5In0sImlhdCI6MTc1MDIzNzMxMSwiZXhwIjoxNzUwMjQwOTExfQ.gomcHee0FjqLh3hwZeLmontiNXmv3dQA5INOqY5lICo",
+    "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI3MTE0YWMzYy1iZTY5LTQ1NzUtOGY0Ni00ZmEzMzIxOTdjODAiLCJpYXQiOjE3NTAyMzczMTEsImV4cCI6MTc1MjgyOTMxMX0.vszL0-7xf7iA7_R6z9XVNTPVIMOtwqEvpWmTcGieETg",

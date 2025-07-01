@@ -1,5 +1,4 @@
 "use client"
-
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -45,7 +44,7 @@ export default function LawyersDirectory() {
     <div className="space-y-6">
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <h1 className="text-3xl font-bold">Find Lawyers</h1>
-        <div className="flex items-center gap-4">
+        {/* <div className="flex items-center gap-4">
           <div className="relative flex-1 md:w-80">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
@@ -63,7 +62,7 @@ export default function LawyersDirectory() {
           <Button variant="outline" size="icon">
             <Filter className="h-4 w-4" />
           </Button>
-        </div>
+        </div> */}
       </div>
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">

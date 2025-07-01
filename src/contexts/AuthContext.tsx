@@ -1,60 +1,50 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { refreshTokens, logout, getCurrentUserFromToken } from '@/services/authService/authService';
-import { jwtDecode } from 'jwt-decode';
+import { getCurrentUserFromToken } from '@/services/authService/authService';
+import { getAccessToken } from '@/utils/storage/localStorage';
+import { isJwtexpired } from '@/utils/backend/auth';
+import { extractPayloadFromJwt, getUserFromToken } from '@/utils/common/commonUtils';
+import { UserDataFromJwtPayload } from '@/utils/types/types';
+import { usePathname } from 'next/navigation';
 
-// Define the user type based on JWT structure
-type User = {
-  id: string;
-  roles: string[];
-  email?: string;
-  lawyerProfileId?: string;
-  clientProfileId?: string;
-  profileId?: string;
-};
 
 // Define the auth context type
 // This context manages the global authentication state
 // It handles token storage, user information, and automatic token refresh
 
 // Key features:
-// 1. Stores user information (id, role)
+// 1. Stores user information (id, AppSide)
 // 2. Tracks authentication state (isLoading, isAuthenticated)
 // 3. Provides logout functionality
 // 4. Handles automatic token refresh before expiry
 
 // The context exposes these values to the entire application:
 type AuthContextType = {
-  user: User | null;         // Current user info from JWT
+  user: UserDataFromJwtPayload | null;         // Current user info from JWT
   isAuthenticating: boolean;        // Whether auth state is being determined
   isAuthenticated: boolean;  // Whether user is authenticated
+  activeAppSide: 'LAWYER' | 'CLIENT'; // Active AppSide
   logout: () => void;        // Function to log out
+  login: (token: string) => void; // Function to log in
+  setActiveAppSide: React.Dispatch<React.SetStateAction<'LAWYER' | 'CLIENT'>>;
+  resetAppLoginState: () => void;
 };
 
 // Function to get the current access token
-export function getAccessToken(): string | null {
-  if (typeof window === 'undefined') {
-    console.log('Not in a browser environment');
-    return null;
-  }
-  
-  let accessToken = localStorage.getItem('accessToken');
 
-  if (!accessToken) {
-    console.log('No access token available');
-    return null;
-  }
-  return accessToken;
-}
 
 // The useAuth() hook provides easy access to this context
 // Create the context with default values
 const AuthContext = createContext<AuthContextType>({
   user: null,
-  isAuthenticating: true,
+  isAuthenticating: false,
   isAuthenticated: false,
+  activeAppSide: "CLIENT",
   logout: () => {},
+  login: () => {},
+  setActiveAppSide: () => {},
+  resetAppLoginState: () => {},
 });
 
 // Custom hook to use the auth context
@@ -62,106 +52,141 @@ export const useAuth = () => useContext(AuthContext);
 
 // Provider component
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [isAuthenticating, setisAuthenticating] = useState(true);
+  const [user, setUser] = useState<UserDataFromJwtPayload | null>(null);
+  const [isAuthenticating, setisAuthenticating] = useState(false);
+  const [isAuthenticated, setisAuthenticated] = useState(false);
+  const [activeAppSide, setActiveAppSide] = useState<'LAWYER' | 'CLIENT'>('CLIENT');
+  const pathname = usePathname();
 
-  // Function to extract user info from token
-  const getUserFromToken = (token: string): User | null => {
+  const resetAppLoginState = () => {
+    setUser(null);
+    setisAuthenticated(false);
+    setActiveAppSide("CLIENT");
+  };
+
+  const login = async (token: string) => {
     try {
-      const decoded = jwtDecode<any>(token);
-      const userInfoFromToken =   {
-        id: decoded.sub,
-        roles: [decoded.roles], // Handle both formats
-        email: decoded?.email,
-        profileId: decoded?.profileId,
-        lawyerProfileId: decoded?.profileIds.lawyerId || undefined,
-        clientProfileId: decoded?.profileIds.clientId || undefined,
-      };
-      setUser(userInfoFromToken);
-      return userInfoFromToken; // Return the user objec
+      setisAuthenticating(true);
+      const userInfo = getUserFromToken(token);
+      setUser(userInfo);
+      setisAuthenticated(true);
+      // Set active AppSide based on URL
+      setActiveAppSideByUrl();
     } catch (error) {
-      console.error('Error decoding token:', error);
-      return null;
+      console.error('Error during login:', error);
+      setisAuthenticated(false);
+    } finally {
+      setisAuthenticating(false);
+      
     }
   };
 
+  // Function to set the active AppSide state by checking the current url path for /lawyer or /client and set the active AppSide accordingly only if that AppSide is present in user.AppSides array.
+  const setActiveAppSideByUrl = () => {
+    if (pathname) {
+      //check if pathname contains /lawyer or /client
+      if (pathname.includes('/lawyer')) {
+        setActiveAppSide('LAWYER');
+        console.log(`pathname: ${pathname}`); 
+      } else if (pathname.includes('/client')) {
+        setActiveAppSide('CLIENT');
+      }
+    } else {
+      console.error('pathname is null');
+      return;
+    }
+  };
+
+   // Handle logout
+   const logout = async () => {
+    try {
+      // Clear user state and local storage
+      setUser(null);
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
+      setisAuthenticated(false);
+    } catch (error) {
+      console.error('Error during logout:', error);
+    }
+  };
+  
   // Setup token refresh interval
   useEffect(() => {
-    const setupTokenRefresh = async () => {
+    // const refresh
+
+    // Function to initialize authentication state
+    const authInit = async () => {
       try {
-        // Try to get current access token
-        let token = getAccessToken();
+        setisAuthenticating(true);
+        setActiveAppSideByUrl();
         
-        // If no token in memory but refresh token exists, try to refresh
-        if (!token && localStorage.getItem('refreshToken')) {
-          try {
-            const authData = await refreshTokens();
-            token = authData.data.accessToken;
-          } catch (error) {
-            console.error('Failed to refresh token:', error);
-          }
-        }
+        // Try to get current access token
+        let token = await getAccessToken(); // this will also check for expired token or null token and try to refresh.
         
         if (token) {
-          // Extract user info from token
-           getUserFromToken(token);
-         console.log(`Token present by AuthContext`);
+          // if token is valid then Log in user
+          login(token);
+          console.log(`logged in successfully via authInit`);
+
+          // Set authentication state
           
-          // Setup proactive token refresh
-          const decoded = jwtDecode<{ exp: number }>(token);
-          const expiryTime = decoded.exp * 1000; // Convert to milliseconds (JWT exp is in seconds since epoch)
-          const currentTime = Date.now(); // Current time in milliseconds since epoch
-          const timeUntilExpiry = expiryTime - currentTime; // Time left until token expires in milliseconds
+          // // Setup proactive token refresh
+          // const decoded = jwtDecode<{ exp: number }>(token);
+          // const expiryTime = decoded.exp * 1000; // Convert to milliseconds (JWT exp is in seconds since epoch)
+          // const currentTime = Date.now(); // Current time in milliseconds since epoch
+          // const timeUntilExpiry = expiryTime - currentTime; // Time left until token expires in milliseconds
           
-          // Log token expiry information for debugging
-          console.log('Token expiry details:', {
-            expiryTimestamp: decoded.exp,
-            expiryDate: new Date(expiryTime).toISOString(),
-            currentDate: new Date(currentTime).toISOString(),
-            timeUntilExpiryMs: timeUntilExpiry,
-            timeUntilExpiryMinutes: Math.floor(timeUntilExpiry / (60 * 1000))
-          });
+          // // Log token expiry information for debugging
+          // console.log('Token expiry details:', {
+          //   expiryTimestamp: decoded.exp,
+          //   expiryDate: new Date(expiryTime).toISOString(),
+          //   currentDate: new Date(currentTime).toISOString(),
+          //   timeUntilExpiryMs: timeUntilExpiry,
+          //   timeUntilExpiryMinutes: Math.floor(timeUntilExpiry / (60 * 1000))
+          // });
           
-          // Refresh 15 minutes before expiry to ensure continuous session
-          const refreshTime = Math.max(0, timeUntilExpiry - 15 * 60 * 1000);
-          console.log(`Token will be refreshed in ${Math.floor(refreshTime / (60 * 1000))} minutes`);
+          // // Refresh 15 minutes before expiry to ensure continuous session
+          // const refreshTime = Math.max(0, timeUntilExpiry - 15 * 60 * 1000);
+          // console.log(`Token will be refreshed in ${Math.floor(refreshTime / (60 * 1000))} minutes`);
           
-          const refreshTimer = setTimeout(async () => {
-            try {
-              console.log('Refreshing token before expiry...');
-              const newAuthData = await refreshTokens();
-              const newUserInfo = getUserFromToken(newAuthData.data.accessToken);
-              setUser(newUserInfo);
-              console.log('Token refreshed successfully');
-            } catch (error) {
-              console.error('Failed to refresh token:', error);
-              setUser(null);
-            }
-          }, refreshTime);
+          // const refreshTimer = setTimeout(async () => {
+          //   try {
+          //     console.log('Refreshing token before expiry...');
+          //     const newAuthData = await refreshTokens();
+          //     const newUserInfo = getUserFromToken(newAuthData.data.accessToken);
+          //     setUser(newUserInfo);
+          //     console.log('Token refreshed successfully');
+          //   } catch (error) {
+          //     console.error('Failed to refresh token:', error);
+          //     setUser(null);
+          //   }
+          // }, refreshTime);
           
-          return () => clearTimeout(refreshTimer);
+          // return () => clearTimeout(refreshTimer);
         }
       } catch (error) {
+        setUser(null);
+        setActiveAppSide('CLIENT');
+        setisAuthenticated(false);
         console.error('Auth initialization error:', error);
       } finally {
         setisAuthenticating(false);
+        // console.info(`activeAppSide: ${activeAppSide} from authInit`);
       }
     };
     
-    setupTokenRefresh();
+    authInit();
   }, []);
-
-  // Handle logout
-  const handleLogout = () => {
-    logout();
-    setUser(null);
-  };
-
+ 
   const value = {
     user,
     isAuthenticating,
-    isAuthenticated: !!getAccessToken(), // Check based on token existence
-    logout: handleLogout,
+    isAuthenticated,
+    activeAppSide,
+    logout,
+    login,
+    setActiveAppSide,
+    resetAppLoginState,
   };
 
   return (

@@ -13,16 +13,25 @@ import { usePathname } from "next/navigation";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PhoneAuth } from "./phone-auth";
 import { EmailAuth } from "./email-auth";
+import { useAuth } from "@/contexts/AuthContext";
 
 
 
 export function RegisterDialog() {
   const [open, setOpen] = useState(false);
   const [authMethod, setAuthMethod] = useState<'phone' | 'email'>('email');
+  const { activeAppSide } =useAuth();
   const pathname = usePathname();
-  const isLawyerRoute = pathname?.startsWith('/lawyer');
-  const defaultRole = isLawyerRoute ? "lawyer" : "client";
 
+  console.log("cuurent route path from register dialog", pathname);
+
+  function openDialog() {
+    setOpen(true);
+  }
+
+  function closeDialog() {
+    setOpen(false);
+  }
 
   // Handle changing authentication method
   const handleAuthMethodChange = (method: 'phone' | 'email') => {
@@ -79,7 +88,7 @@ export function RegisterDialog() {
       </DialogTrigger>
       <DialogContent aria-describedby="Sign In/Sign up modal" className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Sign In / Register</DialogTitle>
+          <DialogTitle>Sign In / Register as a {activeAppSide} on Advonex</DialogTitle>
         </DialogHeader>
     
         <Tabs defaultValue="email" className="w-full" onValueChange={(value: string) => handleAuthMethodChange(value as 'phone' | 'email')}>
@@ -89,15 +98,16 @@ export function RegisterDialog() {
           </TabsList>
           <div className="h-8"></div>
           <TabsContent value="phone">
-            <PhoneAuth 
-              defaultRole={defaultRole} 
+            {/* <PhoneAuth 
+              defaultRole={activeAppSide} 
               onAuthSuccess={handleAuthSuccess} 
-            />
+            /> */}
           </TabsContent>
           
           <TabsContent value="email">
             <EmailAuth 
-              defaultRole={defaultRole} 
+             closeAction={closeDialog}
+              defaultRole={activeAppSide} 
               onAuthSuccess={handleAuthSuccess} 
             />
           </TabsContent>

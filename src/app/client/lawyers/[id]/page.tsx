@@ -9,11 +9,12 @@ import { useParams } from "next/navigation";
 import { getLawyerProfile, type Lawyer } from "@/services/lawyerService";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Dialog, DialogContent, DialogTitle,  DialogTrigger ,DialogHeader } from "@/components/ui/dialog";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function LawyerProfile() {
   const params = useParams();
   const lawyerId = params.id as string;
-  
+  const {isAuthenticated, user} =  useAuth();
   const [lawyer, setLawyer] = useState<Lawyer | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -22,7 +23,6 @@ export default function LawyerProfile() {
     const fetchLawyerProfile = async () => {
       setIsLoading(true);
       setError(null);
-      
       try {
         const profile = await getLawyerProfile(lawyerId);
         setLawyer(profile);
@@ -142,9 +142,9 @@ export default function LawyerProfile() {
                   <Mail className="h-5 w-5 text-muted-foreground" />
                   <div>
                     <div className="text-sm font-medium">Email</div>
-                    <a href={`mailto:${lawyer.email}`} className="text-sm text-muted-foreground hover:underline">
+                    {isAuthenticated? <a href={`mailto:${lawyer.email}`} className="text-sm text-muted-foreground hover:underline">
                       {lawyer.email}
-                    </a>
+                    </a> : 'login to view contact'}
                   </div>
                 </div>
                 <div className="flex items-center gap-3">

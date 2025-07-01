@@ -1,17 +1,19 @@
 
-import { getAccessToken } from "@/contexts/AuthContext";
+// import { getAccessToken, useAuth } from "@/contexts/AuthContext";
+import { getAccessToken, getRefreshToken } from "@/utils/storage/localStorage";
+import { VerifyOtpEmailResponse } from "@/utils/types/types";
 import { toast } from "sonner";
 
 // Types for our authentication requests and responses
 type RequestOtpParams = {
   phone: string;
-  type: 'lawyer' | 'client';
+  type: 'LAWYER' | 'CLIENT';
 };
 
 type VerifyOtpParams = {
   phone: string;
   otp: string;
-  role: 'lawyer' | 'client';
+  role: 'LAWYER' | 'CLIENT';
 };
 // Update phone otp data according to API response
 type AuthResponse = {
@@ -30,17 +32,17 @@ type AuthResponse = {
 // Types for email authentication
 type RequestEmailOtpParams = {
   email: string;
-  role?: 'lawyer' | 'client';
+  role?: 'LAWYER' | 'CLIENT';
 };
 
 type VerifyEmailOtpParams = {
   email: string;
   otp: string;
-  role: 'lawyer' | 'client';
+  role: 'LAWYER' | 'CLIENT';
 };
 
 // In-memory storage for the access token
-let accessToken: string | null = null;
+// let accessToken: string | null = null;
 
 // Function to request OTP
 export async function sendOtp(params: RequestOtpParams): Promise<void> {
@@ -91,8 +93,7 @@ export async function verifyOtp(params: VerifyOtpParams): Promise<AuthResponse> 
     const data = await response.json();
     console.log(data);
     
-    // Store access token in memory
-    accessToken = data.accessToken;
+    
     
     // Store refresh token securely (for now, using localStorage as per current app pattern)
     // In production, consider using HTTP-only cookies set by the backend
@@ -120,6 +121,7 @@ export async function sendEmailOtp(params: RequestEmailOtpParams): Promise<void>
       },
       body: JSON.stringify({
         email: params.email
+
         
       }),
     });
@@ -138,7 +140,7 @@ export async function sendEmailOtp(params: RequestEmailOtpParams): Promise<void>
 }
 
 // Function to verify Email OTP and get tokens
-export async function verifyEmailOtp(params: VerifyEmailOtpParams): Promise<AuthResponse> {
+export async function verifyEmailOtp(params: VerifyEmailOtpParams): Promise<VerifyOtpEmailResponse> {
   try {
     const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_BACKEND_URL}/auth/verify-otp-email`, {
       method: 'POST',
@@ -155,6 +157,7 @@ export async function verifyEmailOtp(params: VerifyEmailOtpParams): Promise<Auth
     if (!response.ok) {
       const errorData = await response.json();
       alert(errorData.message) + `:Please try again`;
+      console.info(response)
       // throw new Error(errorData.message || 'Failed to verify OTP');
     }
 
@@ -171,6 +174,7 @@ export async function verifyEmailOtp(params: VerifyEmailOtpParams): Promise<Auth
 // Store access token in memory
     
       localStorage.setItem('accessToken', otpVerifyResponse.data.accessToken);
+
     
 
     toast.success('Authentication successful!');
@@ -184,72 +188,23 @@ export async function verifyEmailOtp(params: VerifyEmailOtpParams): Promise<Auth
 
 
 ////////////////////////////////////////////////////
-// Function to refresh tokens
-export async function refreshTokens(): Promise<AuthResponse> {
-  try {
-    const refreshToken = localStorage.getItem('refreshToken');
-    
-    if (!refreshToken) {
-      console.log('No refresh token available');
-      throw new Error('No refresh token available');
-    }
-
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_BACKEND_URL}/auth/refresh`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${refreshToken}`,
-        'Content-Type': 'application/json',
-      },
-    });
-
-    if (!response.ok) {
-      // If refresh fails, clear tokens and throw error
-      accessToken = null;
-     
-      console.log('Refresh failed. Clearing tokens.');
-      throw new Error('Session expired. Please login again.');
-    }
-
-    const responseData = await response.json();
-    
-    // Clear old tokens first
-    accessToken = null;
-    localStorage.removeItem('refreshToken');
-    localStorage.removeItem('accessToken');
-    
-    // Store new tokens from response.data
-    if (responseData.data && responseData.data.accessToken) {
-      accessToken = responseData.data.accessToken;
-      localStorage.setItem('accessToken', responseData.data.accessToken);
-    }
-    
-    if (responseData.data && responseData.data.refreshToken) {
-      localStorage.setItem('refreshToken', responseData.data.refreshToken);
-    }
-    
-    return responseData;
-  } catch (error) {
-    console.error('Error refreshing tokens:', error);
-    // Don't show toast here as this might be called in the background
-    throw error;
-  }
-}
 
 
 
 // Function to check if user is authenticated
-export function isAuthenticated(): boolean {
-  return !!accessToken;
-}
+// export function isAuthenticated(): boolean {
+//   const accessToken = getAccessToken();
+//   return !!accessToken;
+// }
 
 // Function to logout
-export function logout(): void {
-  // accessToken = null;
-  localStorage.removeItem('accessToken'); // Not working for some reason, Need debugging
-  localStorage.removeItem('refreshToken');
-  // Redirect to home page or login page
-  window.location.href = '/';
-}
+// export function logout(): void {
+//   // accessToken = null;
+//   localStorage.removeItem('accessToken'); 
+//   localStorage.removeItem('refreshToken');
+//   // Redirect to home page or login page
+//   window.location.href = '/';
+// }
 
 
 // Type for full user profile data from API

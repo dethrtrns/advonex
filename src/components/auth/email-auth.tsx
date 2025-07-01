@@ -10,12 +10,13 @@ import * as z from "zod";
 import { toast } from "sonner";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import { sendEmailOtp, verifyEmailOtp } from "@/services/authService/authService";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+// import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { useAuth } from "@/contexts/AuthContext";
+import { VerifyOtpEmailResponse } from "@/utils/types/types";
 
 // Email form schema
 const emailFormSchema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
-  role: z.enum(["lawyer", "client"]),
   otp: z.string().optional().refine(
     (val) => !val || /^\d+$/.test(val),
     { message: "OTP must contain only numbers" }
@@ -23,21 +24,22 @@ const emailFormSchema = z.object({
 });
 
 type EmailAuthProps = {
-  defaultRole: "lawyer" | "client";
+  defaultRole: "LAWYER" | "CLIENT";
   onAuthSuccess: (data: any, roles: string[]) => void;
+  closeAction?: () => void;
 };
 
-export function EmailAuth({ defaultRole }: EmailAuthProps) {
+export function EmailAuth({ defaultRole,closeAction }: EmailAuthProps) {
   const [otpSent, setOtpSent] = useState(false);
   const [resendCooldown, setResendCooldown] = useState(0);
   const [canResend, setCanResend] = useState(false);
+  const { activeAppSide, login} = useAuth();
 
   // Email form
   const emailForm = useForm<z.infer<typeof emailFormSchema>>({
     resolver: zodResolver(emailFormSchema),
     defaultValues: {
       email: "",
-      role: defaultRole,
       otp: "",
     },
   });
@@ -65,7 +67,7 @@ export function EmailAuth({ defaultRole }: EmailAuthProps) {
   const [otpValue, setOtpValue] = useState("");
 
   // Function to handle sending/resending Email OTP
-  const handleSendEmailOtp = async (email: string, role: 'lawyer' | 'client') => {
+  const handleSendEmailOtp = async (email: string) => {
     try {
       await sendEmailOtp({ email });
       console.log("OTP sent successfully");
@@ -86,7 +88,7 @@ export function EmailAuth({ defaultRole }: EmailAuthProps) {
     if (!otpSent) {
       // Clear the OTP field before sending OTP
       emailForm.setValue("otp", "");
-      await handleSendEmailOtp(values.email, values.role);
+      await handleSendEmailOtp(values.email);
     } else {
       try {
         if (!values.otp) {
@@ -94,12 +96,13 @@ export function EmailAuth({ defaultRole }: EmailAuthProps) {
           return;
         }
         
-        const data = await verifyEmailOtp({
+        const verifyEmailOtpResponse: VerifyOtpEmailResponse = await verifyEmailOtp({
           email: values.email,
           otp: values.otp,
-          role: values.role
+          role: activeAppSide,
         });
-
+        login(verifyEmailOtpResponse.data.accessToken);
+        console.log(`active role is ${activeAppSide}`);
         // Handle successful authentication
         // if (!data.data.user?.roles) {
         //   console.log("User does not have any role");
@@ -108,12 +111,14 @@ export function EmailAuth({ defaultRole }: EmailAuthProps) {
         // onAuthSuccess(data, data.data.user?.roles);
         // REMOVE REDUNDANT REDIRECTION LOGIC
         // if (data.data.user?.roles.includes("LAWYER")) {
-          window.location.href = `/`;
+
+          // window.location.href = `/`;
         // } else {
         //   window.location.href = `/`;
         // }
+       closeAction?.();
        
-        console.log(`email OTP verification Successful: ${data.data.user}`);
+        console.log(`email OTP verification Successful: ${verifyEmailOtpResponse.data.user}`);
 
       } catch (error) {
         console.error("Error verifying OTP:", error);
@@ -154,12 +159,12 @@ export function EmailAuth({ defaultRole }: EmailAuthProps) {
               )}
             />
             
-            <FormField
+            {/* <FormField
               control={emailForm.control}
               name="role"
               render={({ field }) => (
                 <FormItem className="space-y-3">
-                  <FormLabel>Account Type</FormLabel>
+                  <FormLabel>Sign-In as:</FormLabel>
                   <FormControl>
                     <RadioGroup
                       onValueChange={field.onChange}
@@ -170,16 +175,16 @@ export function EmailAuth({ defaultRole }: EmailAuthProps) {
                         <FormControl>
                           <RadioGroupItem value="client" />
                         </FormControl>
-                        <FormLabel className="font-normal">
-                          Client
+                        <FormLabel className="font-bold text-lg">
+                          CLIENT
                         </FormLabel>
                       </FormItem>
                       <FormItem className="flex items-center space-x-2 space-y-0">
                         <FormControl>
                           <RadioGroupItem value="lawyer" />
                         </FormControl>
-                        <FormLabel className="font-normal">
-                          Lawyer
+                        <FormLabel className="font-bold text-lg">
+                          LAWYER
                         </FormLabel>
                       </FormItem>
                     </RadioGroup>
@@ -187,7 +192,7 @@ export function EmailAuth({ defaultRole }: EmailAuthProps) {
                   <FormMessage />
                 </FormItem>
               )}
-            />
+            /> */}
             
             <Button type="submit" className="w-full">
               Send OTP
@@ -232,12 +237,12 @@ export function EmailAuth({ defaultRole }: EmailAuthProps) {
               )}
             />
             
-            <FormItem>
+            {/* <FormItem>
               <FormLabel>Account Type</FormLabel>
               <div className="text-sm font-medium text-gray-700 dark:text-gray-300 p-2 border rounded-md bg-gray-50 dark:bg-gray-800">
                 {emailForm.getValues("role") === "lawyer" ? "Lawyer" : "Client"}
               </div>
-            </FormItem>
+            </FormItem> */}
             
             <Button type="submit" className="w-full" disabled={!emailForm.watch('otp')}>
               Verify OTP & Sign In
@@ -250,8 +255,8 @@ export function EmailAuth({ defaultRole }: EmailAuthProps) {
                 onClick={() => {
                   if (canResend) {
                     const emailValue = emailForm.getValues("email");
-                    const roleValue = emailForm.getValues("role");
-                    handleSendEmailOtp(emailValue, roleValue);
+                    // const roleValue = emailForm.getValues("role");
+                    handleSendEmailOtp(emailValue);
                   }
                 }}
                 disabled={!canResend}

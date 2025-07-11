@@ -18,7 +18,7 @@
 # important notes/rules to follow:
 - create everything in src/hooks/login folder.
 - go through all code/files: in src/contexts and src/utils to understand the codebase and plan implementation that uses functions existing in these files rather than writing everything from scratch.
-- Write readable code with proper comments explaining what's going on.
+- Write clean and readable code with proper comments explaining what's going on.
 - If needed extract/optimize code/relevant-parts into other places if a single file exceeds 200-300 lines.
 - show me your plan before you begin implementations.
 - DO NOT make any assumptions, ask me whatever/whenever you need to before/during implementation.

@@ -156,7 +156,7 @@ export async function verifyEmailOtp(params: VerifyEmailOtpParams): Promise<Veri
 
     if (!response.ok) {
       const errorData = await response.json();
-      alert(errorData.message) + `:Please try again`;
+      alert(errorData.message + `:Please try again`);
       console.info(response)
       // throw new Error(errorData.message || 'Failed to verify OTP');
     }

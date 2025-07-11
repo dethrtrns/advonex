@@ -1,3 +1,4 @@
+import { toast } from "sonner";
 import { jwtDecode } from 'jwt-decode';
 import { JwtPayloadDto, UserDataFromJwtPayload } from '../types/types';
 
@@ -35,3 +36,13 @@ export const getUserFromToken = (token: string): UserDataFromJwtPayload | null =
     return null;
   }
 };
+
+// Function to handle API errors
+export function handleApiError(error: unknown, defaultMessage: string = 'An unexpected error occurred.') {
+    console.error(defaultMessage, error);
+    if (error instanceof Error) {
+        toast.error(error.message);
+    } else {
+        toast.error(defaultMessage);
+    }
+}

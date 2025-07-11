@@ -1,5 +1,79 @@
+import { handleApiError } from "../common/commonUtils";
+import { toast } from "sonner";
 import { getAccessToken, getRefreshToken } from "../storage/localStorage";
-import { AuthMeResponse, AuthResponse, RefreshResponse, UserDataWithAllProfilesAndRoles } from "../types/types";
+import { AuthMeResponse, AuthResponse, RefreshResponse, RequestEmailOtpParams, UserDataWithAllProfilesAndRoles, VerifyEmailOtpParams, VerifyOtpEmailResponse } from "../types/types";
+
+
+// Function to request Email OTP
+export async function requestOtpOnEmail(params: RequestEmailOtpParams): Promise<void> {
+  try {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_BACKEND_URL}/auth/request-otp-email`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        email: params.email
+      }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(`${errorData.message}: Failed to send OTP`);
+    }
+
+    toast.success('OTP sent successfully. Please check your email.');
+  } catch (error) {
+    handleApiError(error, 'Failed to send OTP');
+    throw error;
+  }
+}
+
+// Function to verify Email OTP and get tokens
+export async function verifyEmailOtp(params: VerifyEmailOtpParams): Promise<VerifyOtpEmailResponse> {
+  try {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_BACKEND_URL}/auth/verify-otp-email`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        email: params.email,
+        otp: params.otp,
+        role: params.role.toUpperCase()
+      }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      alert(errorData.message + `:Please try again`);
+      console.log(response)
+      throw new Error(errorData.message || 'Failed to verify OTP');
+    }
+
+    const otpVerifyResponse = await response.json();
+    console.log('OTP verification successful(from API)',otpVerifyResponse.data);
+    
+    // Store access token in memory
+    // accessToken = otpVerifyResponse.data.accessToken;
+    
+    // Store refresh token securely
+  
+      localStorage.setItem('refreshToken', otpVerifyResponse.data.refreshToken);
+    
+// Store access token in memory
+    
+      localStorage.setItem('accessToken', otpVerifyResponse.data.accessToken);
+
+    
+
+    toast.success('Authentication successful!');
+    return otpVerifyResponse;
+  } catch (error) {
+    handleApiError(error, 'Failed to verify OTP');
+    throw error;
+  }
+}
 
 
 
@@ -28,7 +102,7 @@ export async function getFullUserDataFromAuthMeViaAccessToken(): Promise<UserDat
 
   }
   catch (error) {
-    console.error('Error fetching user data:', error);
+    handleApiError(error, 'Error fetching user data');
     return null;
   }
 }
@@ -53,9 +127,7 @@ export async function refreshTokens(): Promise<RefreshResponse | null> {
     const responseData: RefreshResponse = await response.json();
     if (!response.ok) {
       console.error('Refresh failed from API server.');
-      throw new Error(`Refresh failed from API server.
-        response from api: ${responseData.message}
-        `);//show the api response message in this case.
+      throw new Error(`Refresh failed from API server.\n        response from api: ${responseData.message}\n        `);//show the api response message in this case.
     }
     // Clear old tokens first
     localStorage.removeItem('refreshToken');
@@ -72,7 +144,7 @@ export async function refreshTokens(): Promise<RefreshResponse | null> {
     
     return responseData;
   } catch (error) {
-    console.error('Error refreshing tokens:', error);
+    handleApiError(error, 'Error refreshing tokens');
     return null;
     // throw error;
   }
@@ -85,7 +157,7 @@ export function isJwtexpired(token: string): boolean {
     const currentTime = Math.floor(Date.now() / 1000);
     return decodedToken.exp < currentTime;
   } catch (error) {
-    console.error('Error decoding token:', error);
+    handleApiError(error, 'Error decoding token');
     return true;
   }
 }

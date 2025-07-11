@@ -121,7 +121,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setActiveAppSideByUrl();
         
         // Try to get current access token
-        let token = await getAccessToken(); // this will also check for expired token or null token and try to refresh.
+        const token = await getAccessToken(); // this will also check for expired token or null token and try to refresh.
         
         if (token) {
           // if token is valid then Log in user

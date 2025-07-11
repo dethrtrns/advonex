@@ -183,3 +183,16 @@ export type UserDataFromJwtPayload = {
     clientId?: string;
   };
 }
+
+
+// Types for email authentication
+export type RequestEmailOtpParams = {
+  email: string;
+  role?: 'LAWYER' | 'CLIENT';
+};
+
+export type VerifyEmailOtpParams = {
+  email: string;
+  otp: string;
+  role: 'LAWYER' | 'CLIENT';
+};

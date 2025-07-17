@@ -5,6 +5,9 @@ import { BottomNav } from "@/components/layout/bottom-nav";
 import { ThemeProvider } from "@/components/theme-provider";
 import "./globals.css";
 import { AuthProvider } from '@/contexts/AuthContext';
+import { LoginProvider } from '@/contexts/LoginContext';
+import { LoginModal } from '@/hooks/login/login-modal';
+import { Toaster } from "@/components/ui/sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,16 +30,19 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
 
-
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <AuthProvider>
-          <ThemeProvider defaultTheme="dark">
-            <Header />
-            <main className="container mx-auto px-4 py-16 md:py-20">{children}</main>
-            <BottomNav />
-          </ThemeProvider>
+          <LoginProvider>
+            <ThemeProvider defaultTheme="dark">
+              <Header />
+              <main className="container mx-auto px-4 py-16 md:py-20">{children}</main>
+              <BottomNav />
+              <LoginModal />
+              <Toaster />
+            </ThemeProvider>
+          </LoginProvider>
         </AuthProvider>
       </body>
     </html>

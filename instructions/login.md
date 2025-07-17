@@ -16,7 +16,9 @@
  - the screen/modal should also have a "skip login" button to close the modal whenever the user wants(without signing in, after successful sign in/up the modal is closed automatically/by-default).
 
 # important notes/rules to follow:
-- create everything in src/hooks/login folder.
+- create everything(related components,types or helper functions, etc. if not already found in existing files and hence need to be created, should all be in new files in same dir, which i will manually review and then move to appropriate file/folder) in src/hooks/login folder.
+- Do not make any changes outside src/hooks/login.
+- you can use existing code but do not modify existing codebase without permission or explicit command to do so.
 - go through all code/files: in src/contexts and src/utils to understand the codebase and plan implementation that uses functions existing in these files rather than writing everything from scratch.
 - Write clean and readable code with proper comments explaining what's going on.
 - If needed extract/optimize code/relevant-parts into other places if a single file exceeds 200-300 lines.

@@ -5,6 +5,8 @@ import { useLogin } from "@/hooks/login/useLogin";
 import { UseLoginHookType } from "@/hooks/login/login-types";
 
 const LoginContext = createContext<UseLoginHookType | undefined>(undefined);
+
+// seems redundant, we can probably expose the hook in existing auth context???
 export const LoginProvider = ({ children }: { children: React.ReactNode }) => {
   const loginHook = useLogin();
   return (

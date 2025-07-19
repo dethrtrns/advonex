@@ -26,33 +26,31 @@ export function LoginModal({}: LoginModalProps) {
   const { isOpen, close } = hook;
   const isDesktop = useMediaQuery("(min-width: 768px)");
 
-  if (true) {
+  if (isDesktop) {
     return (
       <Dialog open={isOpen} onOpenChange={close}>
-        <DialogContent className="flex flex-col items-center justify-center max-w-full h-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-          <LiquidGlassCard className="sm:max-w-[425px] border-2 p-8 rounded-lg ">
-            <DialogHeader>
-              <DialogTitle>Login or Sign Up</DialogTitle>
-              <DialogDescription>
-                Enter your email to receive a one-time password.
-              </DialogDescription>
-            </DialogHeader>
-            <LoginForm
-              currentStep={hook.currentStep}
-              loggingIn={hook.loggingIn}
-              email={hook.email}
-              otp={hook.otp}
-              otpSent={hook.otpSent}
-              otpResendTimer={hook.otpResendTimer}
-              setEmail={hook.setEmail}
-              setOtp={hook.setOtp}
-              handleRequestOtp={hook.handleRequestOtp}
-              handleVerifyOtp={hook.handleVerifyOtp}
-            />
-            <Button variant="link" onClick={close} className="w-full mt-4">
-              Skip Login
-            </Button>
-          </LiquidGlassCard>
+        <DialogContent className="sm:max-w-[425px] bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+          <DialogHeader>
+            <DialogTitle>Login or Sign Up</DialogTitle>
+            <DialogDescription>
+              Enter your email to receive a one-time password.
+            </DialogDescription>
+          </DialogHeader>
+          <LoginForm
+            currentStep={hook.currentStep}
+            loggingIn={hook.loggingIn}
+            email={hook.email}
+            otp={hook.otp}
+            otpSent={hook.otpSent}
+            otpResendTimer={hook.otpResendTimer}
+            setEmail={hook.setEmail}
+            setOtp={hook.setOtp}
+            handleRequestOtp={hook.handleRequestOtp}
+            handleVerifyOtp={hook.handleVerifyOtp}
+          />
+          <Button variant="link" onClick={close} className="w-full mt-4">
+            Skip Login
+          </Button>
         </DialogContent>
       </Dialog>
     );

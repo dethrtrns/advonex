@@ -47,8 +47,9 @@ export function Header() {
   // const appSide = activeAppSide.toLocaleLowerCase();
   const handleLogout = () => {
     resetAppLoginState();
-    setActiveAppSide("CLIENT");
-    redirect("/client");
+    // setActiveAppSide("CLIENT");
+    // const redirectPathOnLogout = activeAppSide ? "/lawyer" : "/client";
+    redirect("/");
   };
   // valid appSide values are 'CLIENT' or 'LAWYER'
   // custom button component that displays action-text based on activeAppSide to switch between client and lawyer app, click should open a warning dialog and after confirmation,use redirect() to navigate the user and set the activeAppSide to appropriate value.

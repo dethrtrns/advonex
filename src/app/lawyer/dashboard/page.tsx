@@ -94,7 +94,7 @@ export default function LawyerDashboard() {
       primaryCourt: "",
       lawSchool: "",  // Fix: changed institution to lawSchool
       degree: "",
-      graduationYear: 0,  // Fix: changed year to graduationYear
+      graduationYear: undefined,  // Fix: changed year to graduationYear
       photo: "",
     }
   });
@@ -682,7 +682,7 @@ export default function LawyerDashboard() {
                   <Mail className="h-5 w-5 text-muted-foreground" />
                   <div>
                     <div className="text-sm font-medium">Email</div>
-                    <div className="text-sm text-muted-foreground">{lawyer.email}</div>
+                    <div className="text-sm text-muted-foreground">{user.email}</div>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">

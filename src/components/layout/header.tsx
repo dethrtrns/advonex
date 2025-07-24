@@ -12,7 +12,7 @@ import {
   SheetClose,
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import { Menu, TypeOutline } from "lucide-react";
+import { Menu, TypeOutline, User } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
 // import { RegisterDialog } from "@/components/auth/register-dialog";
 import Link from "next/link";
@@ -69,7 +69,7 @@ export function Header() {
           <div className="flex items-center px-4 gap-6">
             <Link
               href={`/${activeAppSide.toLocaleLowerCase()}`}
-              className="text-3xl px-4 font-serif font- tracking-tight md:text-4xl md:px-12">
+              className="text-2xl px-4 font-serif font- tracking-tight md:text-4xl md:px-12">
               Advonex
               <sub className="text-foreground text-xs space-x-1.5 tracking-wide text-amber-500">{`${activeAppSide.toLocaleLowerCase()}s`}</sub>
             </Link>
@@ -113,12 +113,12 @@ export function Header() {
                 ) // <RegisterDialog />
               }
             </div>
-
             <Button
+              className="w-fit hidden md:block"
               onClick={() =>
                 setActiveAppSide(checkLawyer === true ? "CLIENT" : "LAWYER")
               }
-              variant="outline"
+              variant="destructive"
               asChild>
               {checkLawyer === true ? (
                 <Link href="/client" className="flex items-center gap-2">
@@ -133,10 +133,14 @@ export function Header() {
                 </Link>
               )}
             </Button>
+
             <Sheet>
               <SheetTrigger asChild className="md:hidden">
-                <Button variant="ghost" size="icon">
-                  <Menu className="h-5 w-5" />
+                <Button
+                  variant="outline"
+                  className="rounded-full mr-2 bg-background/95 backdrop-blur-2xl"
+                  size="icon">
+                  <User className="h-5 w-5" />
                 </Button>
               </SheetTrigger>
               <SheetContent side="right">
@@ -178,6 +182,26 @@ export function Header() {
                     )}
                   </SheetClose>
                 </nav>
+                <Button
+                  className="w-fit absolute bottom-5 right-2"
+                  onClick={() =>
+                    setActiveAppSide(checkLawyer === true ? "CLIENT" : "LAWYER")
+                  }
+                  variant="destructive"
+                  asChild>
+                  {checkLawyer === true ? (
+                    <Link href="/client" className="flex items-center gap-2">
+                      <span>
+                        Go to Advonex
+                        <sub className="text-accent-foreground">clients</sub>
+                      </span>
+                    </Link>
+                  ) : (
+                    <Link href="/lawyer" className="flex items-center gap-2">
+                      <span>Become a Lawyer</span>
+                    </Link>
+                  )}
+                </Button>
               </SheetContent>
             </Sheet>
           </div>

@@ -29,13 +29,47 @@ export function LoginModal({}: LoginModalProps) {
   if (isDesktop) {
     return (
       <Dialog open={isOpen} onOpenChange={close}>
-        <DialogContent className="sm:max-w-[425px] bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-          <DialogHeader>
-            <DialogTitle>Login or Sign Up</DialogTitle>
-            <DialogDescription>
+        <DialogContent className="flex items-center justify-center gap-2 sm:max-w-full h-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+          <LiquidGlassCard className=" p-8">
+            <DialogHeader>
+              <DialogTitle>Login or Sign Up</DialogTitle>
+              <DialogDescription>
+                Enter your email to receive a one-time password.
+              </DialogDescription>
+            </DialogHeader>
+            <LoginForm
+              currentStep={hook.currentStep}
+              loggingIn={hook.loggingIn}
+              email={hook.email}
+              otp={hook.otp}
+              otpSent={hook.otpSent}
+              otpResendTimer={hook.otpResendTimer}
+              setEmail={hook.setEmail}
+              setOtp={hook.setOtp}
+              handleRequestOtp={hook.handleRequestOtp}
+              handleVerifyOtp={hook.handleVerifyOtp}
+            />
+            <Button variant="link" onClick={close} className="w-full mt-4">
+              Skip Login
+            </Button>
+          </LiquidGlassCard>
+        </DialogContent>
+      </Dialog>
+    );
+  }
+
+  return (
+    <Sheet open={isOpen} onOpenChange={close}>
+      <SheetContent
+        side="bottom"
+        className="flex items-center justify-center min-h-full">
+        <LiquidGlassCard className="p-6">
+          <SheetHeader>
+            <SheetTitle>Login or Sign Up</SheetTitle>
+            <SheetDescription>
               Enter your email to receive a one-time password.
-            </DialogDescription>
-          </DialogHeader>
+            </SheetDescription>
+          </SheetHeader>
           <LoginForm
             currentStep={hook.currentStep}
             loggingIn={hook.loggingIn}
@@ -51,35 +85,7 @@ export function LoginModal({}: LoginModalProps) {
           <Button variant="link" onClick={close} className="w-full mt-4">
             Skip Login
           </Button>
-        </DialogContent>
-      </Dialog>
-    );
-  }
-
-  return (
-    <Sheet open={isOpen} onOpenChange={close}>
-      <SheetContent side="bottom" className="h-full">
-        <SheetHeader>
-          <SheetTitle>Login or Sign Up</SheetTitle>
-          <SheetDescription>
-            Enter your email to receive a one-time password.
-          </SheetDescription>
-        </SheetHeader>
-        <LoginForm
-          currentStep={hook.currentStep}
-          loggingIn={hook.loggingIn}
-          email={hook.email}
-          otp={hook.otp}
-          otpSent={hook.otpSent}
-          otpResendTimer={hook.otpResendTimer}
-          setEmail={hook.setEmail}
-          setOtp={hook.setOtp}
-          handleRequestOtp={hook.handleRequestOtp}
-          handleVerifyOtp={hook.handleVerifyOtp}
-        />
-        <Button variant="link" onClick={close} className="w-full mt-4">
-          Skip Login
-        </Button>
+        </LiquidGlassCard>
       </SheetContent>
     </Sheet>
   );

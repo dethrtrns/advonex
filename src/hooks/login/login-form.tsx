@@ -5,8 +5,21 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
+import { NeumorphButton } from "@/components/ui/neumorph-button";
+
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
+} from "@/components/ui/input-otp";
 import { LoginStep, UseLoginHookType } from "./login-types";
 import { useEffect } from "react";
 
@@ -43,7 +56,6 @@ export function LoginForm({
   handleRequestOtp,
   handleVerifyOtp,
 }: LoginFormProps) {
-
   const emailForm = useForm<z.infer<typeof emailFormSchema>>({
     resolver: zodResolver(emailFormSchema),
     defaultValues: {
@@ -80,7 +92,9 @@ export function LoginForm({
     <div className="space-y-4">
       {currentStep === "email" && (
         <Form {...emailForm}>
-          <form onSubmit={emailForm.handleSubmit(onEmailSubmit)} className="space-y-4">
+          <form
+            onSubmit={emailForm.handleSubmit(onEmailSubmit)}
+            className="space-y-4">
             <FormField
               control={emailForm.control}
               name="email"
@@ -94,16 +108,25 @@ export function LoginForm({
                 </FormItem>
               )}
             />
-            <Button type="submit" className="w-full" disabled={loggingIn || otpSent}>
-              {loggingIn ? "Sending OTP..." : otpSent ? `Resend in ${otpResendTimer}s` : "Request OTP"}
-            </Button>
+            <NeumorphButton
+              type="submit"
+              className="w-full"
+              disabled={loggingIn || otpSent}>
+              {loggingIn
+                ? "Sending OTP..."
+                : otpSent
+                ? `Resend in ${otpResendTimer}s`
+                : "Request OTP"}
+            </NeumorphButton>
           </form>
         </Form>
       )}
 
       {currentStep === "otp" && (
         <Form {...otpForm}>
-          <form onSubmit={otpForm.handleSubmit(onOtpSubmit)} className="space-y-4">
+          <form
+            onSubmit={otpForm.handleSubmit(onOtpSubmit)}
+            className="space-y-4">
             <FormField
               control={otpForm.control}
               name="otp"
@@ -134,8 +157,7 @@ export function LoginForm({
               variant="link"
               className="w-full"
               onClick={() => handleRequestOtp(email)}
-              disabled={otpResendTimer > 0 || loggingIn}
-            >
+              disabled={otpResendTimer > 0 || loggingIn}>
               Resend OTP {otpResendTimer > 0 && `in ${otpResendTimer}s`}
             </Button>
           </form>

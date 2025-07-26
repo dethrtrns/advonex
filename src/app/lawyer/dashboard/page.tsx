@@ -1,29 +1,55 @@
-"use client"
+"use client";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useEffect, useState } from "react";
-import { Lawyer, getLawyerProfile, updateLawyerProfile } from "@/services/lawyerService"; // Import updateLawyerProfile
-import { Loader, MapPin, Mail, Phone, Briefcase, GraduationCap } from "lucide-react";
+import {
+  Lawyer,
+  getLawyerProfile,
+  updateLawyerProfile,
+} from "@/services/lawyerService"; // Import updateLawyerProfile
+import {
+  Loader,
+  MapPin,
+  Mail,
+  Phone,
+  Briefcase,
+  GraduationCap,
+} from "lucide-react";
 import { toast } from "sonner";
 import { indianLocations } from "@/data/indianLocations/locations";
 import { practiceAreas } from "@/data/pacticeAreas/pacticeAreas";
 import { ImageUpload } from "@/components/ui/image-upload";
 import { useAuth } from "@/contexts/AuthContext";
 
-
 const formSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
   lastName: z.string().min(1, "Last name is required"),
   email: z.string().email("Invalid email address"),
-  phone: z.string().min(10, "Phone number must be at least 10 digits").optional(),
+  phone: z
+    .string()
+    .min(10, "Phone number must be at least 10 digits")
+    .optional(),
   state: z.string().min(1, "State is required"),
   city: z.string().min(1, "City is required"),
   barNumber: z.string().min(1, "Bar number is required"),
@@ -32,7 +58,8 @@ const formSchema = z.object({
   bio: z.string().min(50, "Bio must be at least 50 characters"),
   lawSchool: z.string().min(1, "Law school is required"),
   degree: z.string().min(1, "Degree is required"),
-  graduationYear: z.number()
+  graduationYear: z
+    .number()
     .min(1900, "Invalid graduation year")
     .max(new Date().getFullYear(), "Graduation year cannot be in the future"),
   primaryCourt: z.string().min(1, "At least one practice court is required"),
@@ -41,8 +68,6 @@ const formSchema = z.object({
   photo: z.string().optional(),
 });
 
-
-
 export default function LawyerDashboard() {
   const [lawyer, setLawyer] = useState<Lawyer | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -50,15 +75,15 @@ export default function LawyerDashboard() {
   const [isSubmitting, setIsSubmitting] = useState(false); // Add submitting state
   const [cities, setCities] = useState<string[]>([]);
 
-  const {user} = useAuth();
-  const profileId = user?.lawyerProfileId as string | null;
- 
+  const { user } = useAuth();
+  const profileId = user?.profileIds.lawyerId as string | null;
+
   // Add more detailed logging
-  
-  console.log('User object:', user);
-  console.log('Profile ID:', profileId);
-  console.log('User authenticated:', !!user);
-  
+
+  console.log("User object:", user);
+  console.log("Profile ID:", profileId);
+  console.log("User authenticated:", !!user);
+
   if (user && !profileId) {
     console.log("User does not have lawyer profile ID!");
     alert("User not authorised!");
@@ -72,90 +97,91 @@ export default function LawyerDashboard() {
     window.location.href = "/";
     return null;
   }
-  
- 
 
-  
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      firstName: "",  
-      lastName: "",   
+      firstName: "",
+      lastName: "",
       email: "",
       phone: "",
       state: "",
       city: "",
-      barNumber: "",  // Fix: changed barId to barNumber to match schema
-      practiceArea: "" ,
+      barNumber: "", // Fix: changed barId to barNumber to match schema
+      practiceArea: "",
       experience: 0,
       bio: "",
       consultFee: 0,
       practiceCourts: "",
       primaryCourt: "",
-      lawSchool: "",  // Fix: changed institution to lawSchool
+      lawSchool: "", // Fix: changed institution to lawSchool
       degree: "",
-      graduationYear: undefined,  // Fix: changed year to graduationYear
+      graduationYear: undefined, // Fix: changed year to graduationYear
       photo: "",
-    }
+    },
   });
 
-  
-   // Update cities when state changes
-   const selectedState = form.watch("state");
-   useEffect(() => {
-     if (selectedState) {
-       setCities(indianLocations[selectedState as keyof typeof indianLocations] || []);
-       form.setValue("city", ""); // Reset city when state changes
-     }
-   }, [selectedState, form]);
+  // Update cities when state changes
+  const selectedState = form.watch("state");
+  useEffect(() => {
+    if (selectedState) {
+      setCities(
+        indianLocations[selectedState as keyof typeof indianLocations] || []
+      );
+      form.setValue("city", ""); // Reset city when state changes
+    }
+  }, [selectedState, form]);
 
   useEffect(() => {
-
     const fetchProfile = async (profileId: string | null) => {
       try {
-       
         if (user?.profileId) {
-          console.log(`Current Authenticated User with ProfileId: ${user.profileId}   `);
+          console.log(
+            `Current Authenticated User with ProfileId: ${user.profileId}   `
+          );
         }
         {
-          console.log(`Hardcoded Profile Id: 550e8400-e29b-41d4-a716-446655440030 `);
+          console.log(
+            `Hardcoded Profile Id: 550e8400-e29b-41d4-a716-446655440030 `
+          );
         }
-        const profile = await getLawyerProfile( (profileId) ? profileId : '550e8400-e29b-41d4-a716-446655440030');
-        
+        const profile = await getLawyerProfile(
+          profileId ? profileId : "550e8400-e29b-41d4-a716-446655440030"
+        );
+
         setLawyer(profile);
-        
+
         // Split name into first and last name
-        const profileName = profile?.name ? profile.name : '' ;
-       
-        const nameParts = profileName.split(' ');
+        const profileName = profile?.name ? profile.name : "";
+
+        const nameParts = profileName.split(" ");
         const firstName = nameParts[0];
-        const lastName = nameParts.slice(1).join(' ');
-        
-        
-        
+        const lastName = nameParts.slice(1).join(" ");
+
         // Populate form with existing data
         form.reset({
           firstName,
           lastName,
           email: profile.email,
           phone: profile.phone,
-          state: profile.location?.split(', ')[1] || '', // Extract state from location
-          city: profile.location?.split(', ')[0] || '', // Extract city from location
-          barNumber: profile.barId || '',
-          practiceArea: profile.practiceAreas[0]?.practiceArea.name.toLowerCase().replace(/ /g, '-') || '', // Use practiceArea.name
+          state: profile.location?.split(", ")[1] || "", // Extract state from location
+          city: profile.location?.split(", ")[0] || "", // Extract city from location
+          barNumber: profile.barId || "",
+          practiceArea:
+            profile.practiceAreas[0]?.practiceArea.name
+              .toLowerCase()
+              .replace(/ /g, "-") || "", // Use practiceArea.name
           experience: profile.experience || 0,
-          bio: profile.bio || '',
+          bio: profile.bio || "",
           consultFee: profile.consultFee || 0,
-          primaryCourt: profile.primaryCourt?.name || '', // Use primaryCourt.name
-          practiceCourts: profile.practiceCourts?.[0]?.practiceCourt.name || '', // Use first practiceCourt name
-          lawSchool: profile.education?.institution || '',
-          degree: profile.education?.degree || '',
+          primaryCourt: profile.primaryCourt?.name || "", // Use primaryCourt.name
+          practiceCourts: profile.practiceCourts?.[0]?.practiceCourt.name || "", // Use first practiceCourt name
+          lawSchool: profile.education?.institution || "",
+          degree: profile.education?.degree || "",
           graduationYear: profile.education?.year || 0, // year is already a number in the interface
-          photo: profile.photo || ''
+          photo: profile.photo || "",
         });
-
       } catch (error) {
-        
         console.error("Error fetching profile:", error);
         toast.error("Failed to load profile");
       } finally {
@@ -164,7 +190,7 @@ export default function LawyerDashboard() {
     };
 
     fetchProfile(profileId);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form.reset]); // Depend on form.reset to ensure it runs once on mount
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
@@ -176,9 +202,9 @@ export default function LawyerDashboard() {
       const transformedData = {
         name: `${values.firstName} ${values.lastName}`,
         // phone: values.phone,
-        location: `${values.city}, ${values.state}`, 
+        location: `${values.city}, ${values.state}`,
         barId: values.barNumber,
-        // practiceArea: [{ 
+        // practiceArea: [{
         //   practiceArea: {
         //     name: values.practiceArea,
         //   }
@@ -187,8 +213,8 @@ export default function LawyerDashboard() {
         bio: values.bio,
         consultFee: values.consultFee,
         specialization: values.practiceArea,
-        primaryCourt:  values.primaryCourt,
-        
+        primaryCourt: values.primaryCourt,
+
         // practiceCourts: values.practiceCourts ? [{
         //   practiceCourt: {
         //     name: values.practiceCourts
@@ -198,7 +224,7 @@ export default function LawyerDashboard() {
           // id, createdAt, updatedAt, and lawyerProfileId are missing but likely handled by the API
           institution: values.lawSchool,
           degree: values.degree,
-          year: Number(values.graduationYear) // Changed from String to Number to match the interface
+          year: Number(values.graduationYear), // Changed from String to Number to match the interface
         },
         photo: values.photo ? values.photo : lawyer.photo,
       };
@@ -279,32 +305,34 @@ export default function LawyerDashboard() {
               </CardContent>
             </Card> */}
 
-             {/* Image Upload section */}
-          
-    <FormField
-           control={form.control}
-           name="photo"
-           render={({ field }) => (
-          <FormItem>
-            <FormLabel>Profile Picture</FormLabel>
-            <FormControl>
-          <div className="flex">
-            <input type="hidden" {...field} />
-          <ImageUpload 
-            buttonText="Upload Profile Picture"
-            onUploadComplete={(imageUrl) => {
-              field.onChange(imageUrl);
-              console.log("Image URL updated:", imageUrl);
-            }}
-            name={`${form.watch("firstName")} ${form.watch("lastName")} `}
-            photo={lawyer.photo}
-          />
-        </div>
-      </FormControl>
-      <FormMessage />
-      </FormItem>
-      )}
-    />
+            {/* Image Upload section */}
+
+            <FormField
+              control={form.control}
+              name="photo"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Profile Picture</FormLabel>
+                  <FormControl>
+                    <div className="flex">
+                      <input type="hidden" {...field} />
+                      <ImageUpload
+                        buttonText="Upload Profile Picture"
+                        onUploadComplete={(imageUrl) => {
+                          field.onChange(imageUrl);
+                          console.log("Image URL updated:", imageUrl);
+                        }}
+                        name={`${form.watch("firstName")} ${form.watch(
+                          "lastName"
+                        )} `}
+                        photo={lawyer.photo}
+                      />
+                    </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
             <Card>
               <CardHeader>
@@ -319,7 +347,10 @@ export default function LawyerDashboard() {
                       <FormItem>
                         <FormLabel>First Name</FormLabel>
                         <FormControl>
-                          <Input placeholder="Enter your first name" {...field} />
+                          <Input
+                            placeholder="Enter your first name"
+                            {...field}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -332,7 +363,10 @@ export default function LawyerDashboard() {
                       <FormItem>
                         <FormLabel>Last Name</FormLabel>
                         <FormControl>
-                          <Input placeholder="Enter your last name" {...field} />
+                          <Input
+                            placeholder="Enter your last name"
+                            {...field}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -353,7 +387,7 @@ export default function LawyerDashboard() {
                     </FormItem>
                   )}
                 /> */}
-                 {/* Phone Number Field */}
+                {/* Phone Number Field */}
 
                 {/* <FormField
                   control={form.control}
@@ -370,60 +404,73 @@ export default function LawyerDashboard() {
                 /> */}
 
                 {/* Location Fields - State and City */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <FormField
-                  control={form.control}
-                  name="state"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>State</FormLabel>
-                      <Select onValueChange={field.onChange} value={field.value}>
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder={(field.value ==="") ? "Select your state" : "select your state"} />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {Object.keys(indianLocations).map((state) => (
-                            <SelectItem key={state} value={state}>
-                              {state}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="city"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>City</FormLabel>
-                      <Select 
-                        onValueChange={field.onChange} 
-                        value={field.value}
-                        disabled={!selectedState}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder={selectedState ? "Select your city" : "Select a state first"} />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {cities.map((city) => (
-                            <SelectItem key={city} value={city}>
-                              {city}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="state"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>State</FormLabel>
+                        <Select
+                          onValueChange={field.onChange}
+                          value={field.value}>
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue
+                                placeholder={
+                                  field.value === ""
+                                    ? "Select your state"
+                                    : "select your state"
+                                }
+                              />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {Object.keys(indianLocations).map((state) => (
+                              <SelectItem key={state} value={state}>
+                                {state}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="city"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>City</FormLabel>
+                        <Select
+                          onValueChange={field.onChange}
+                          value={field.value}
+                          disabled={!selectedState}>
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue
+                                placeholder={
+                                  selectedState
+                                    ? "Select your city"
+                                    : "Select a state first"
+                                }
+                              />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {cities.map((city) => (
+                              <SelectItem key={city} value={city}>
+                                {city}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
               </CardContent>
             </Card>
 
@@ -452,7 +499,9 @@ export default function LawyerDashboard() {
                     <FormItem>
                       <FormLabel>Primary Practice Area</FormLabel>
                       {/* Use value prop instead of defaultValue for controlled component */}
-                      <Select onValueChange={field.onChange} value={field.value}>
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value}>
                         <FormControl>
                           <SelectTrigger>
                             <SelectValue placeholder="Select your primary practice area" />
@@ -460,7 +509,9 @@ export default function LawyerDashboard() {
                         </FormControl>
                         <SelectContent>
                           {practiceAreas.map((area) => (
-                            <SelectItem key={area} value={area.toLowerCase().replace(/ /g, "-")}>
+                            <SelectItem
+                              key={area}
+                              value={area.toLowerCase().replace(/ /g, "-")}>
                               {area}
                             </SelectItem>
                           ))}
@@ -482,7 +533,9 @@ export default function LawyerDashboard() {
                           min="0"
                           placeholder="Enter years of experience"
                           {...field}
-                          onChange={(e) => field.onChange(Number(e.target.value))}
+                          onChange={(e) =>
+                            field.onChange(Number(e.target.value))
+                          }
                         />
                       </FormControl>
                       <FormMessage />
@@ -501,7 +554,9 @@ export default function LawyerDashboard() {
                           min="0"
                           placeholder="Enter your hourly consultation fee"
                           {...field}
-                          onChange={(e) => field.onChange(Number(e.target.value))}
+                          onChange={(e) =>
+                            field.onChange(Number(e.target.value))
+                          }
                         />
                       </FormControl>
                       <FormMessage />
@@ -566,7 +621,10 @@ export default function LawyerDashboard() {
                     <FormItem>
                       <FormLabel>Law School</FormLabel>
                       <FormControl>
-                        <Input placeholder="Enter your law school name" {...field} />
+                        <Input
+                          placeholder="Enter your law school name"
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -580,7 +638,10 @@ export default function LawyerDashboard() {
                       <FormItem>
                         <FormLabel>Degree</FormLabel>
                         <FormControl>
-                          <Input placeholder="e.g., Juris Doctor (J.D.)" {...field} />
+                          <Input
+                            placeholder="e.g., Juris Doctor (J.D.)"
+                            {...field}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -599,7 +660,9 @@ export default function LawyerDashboard() {
                             max={new Date().getFullYear()}
                             placeholder="Enter graduation year"
                             {...field}
-                            onChange={(e) => field.onChange(Number(e.target.value))}
+                            onChange={(e) =>
+                              field.onChange(Number(e.target.value))
+                            }
                           />
                         </FormControl>
                         <FormMessage />
@@ -614,15 +677,14 @@ export default function LawyerDashboard() {
               <Button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full md:w-auto"
-              >
+                className="w-full md:w-auto">
                 {isSubmitting ? (
                   <>
                     <Loader className="mr-2 h-4 w-4 animate-spin" />
                     Saving...
                   </>
                 ) : (
-                  'Save Changes'
+                  "Save Changes"
                 )}
               </Button>
             </div>
@@ -636,38 +698,48 @@ export default function LawyerDashboard() {
             </CardHeader>
             <CardContent>
               <div className="flex flex-col items-center justify-center sm:flex-row items-center justify-start gap-8 ">
-            {lawyer.photo && (
-                  <div className=""><img
-                    src={lawyer.photo}
-                    alt={lawyer.name}
-                    className="h-46 w-46 rounded-lg object-cover"
-                  /></div>
+                {lawyer.photo && (
+                  <div className="">
+                    <img
+                      src={lawyer.photo}
+                      alt={lawyer.name}
+                      className="h-46 w-46 rounded-lg object-cover"
+                    />
+                  </div>
                 )}
-              <div className="">
-               
-                <div>
-                  <h2 className="text-2xl font-bold">{lawyer.name}</h2>
-                  <div className="flex items-center text-sm text-muted-foreground">
-                    <MapPin className="mr-1 h-4 w-4" />
-                    {lawyer.location}
-                  </div>
-                  <div className="mt-4 flex items-center space-x-4">
-                    <div>
-                      <div className="text-sm text-muted-foreground">Bar ID</div>
-                      <div className="font-medium">{lawyer.barId}</div>
-                    </div>
-                    <div>
-                      <div className="text-sm text-muted-foreground">Practice Area</div>
-                      <div className="font-medium">{lawyer.specialization?.name}</div>
-                    </div>
-                    
-                  </div>
+                <div className="">
                   <div>
-                      <div className="text-sm text-muted-foreground mt-4">Consultation Fee</div>
-                      <div className="text-2xl font-bold text-primary">${lawyer.consultFee}/hr</div>
+                    <h2 className="text-2xl font-bold">{lawyer.name}</h2>
+                    <div className="flex items-center text-sm text-muted-foreground">
+                      <MapPin className="mr-1 h-4 w-4" />
+                      {lawyer.location}
+                    </div>
+                    <div className="mt-4 flex items-center space-x-4">
+                      <div>
+                        <div className="text-sm text-muted-foreground">
+                          Bar ID
+                        </div>
+                        <div className="font-medium">{lawyer.barId}</div>
+                      </div>
+                      <div>
+                        <div className="text-sm text-muted-foreground">
+                          Practice Area
+                        </div>
+                        <div className="font-medium">
+                          {lawyer.specialization?.name}
+                        </div>
+                      </div>
+                    </div>
+                    <div>
+                      <div className="text-sm text-muted-foreground mt-4">
+                        Consultation Fee
+                      </div>
+                      <div className="text-2xl font-bold text-primary">
+                        ${lawyer.consultFee}/hr
+                      </div>
                     </div>
                   </div>
-              </div>
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -682,14 +754,18 @@ export default function LawyerDashboard() {
                   <Mail className="h-5 w-5 text-muted-foreground" />
                   <div>
                     <div className="text-sm font-medium">Email</div>
-                    <div className="text-sm text-muted-foreground">{user.email}</div>
+                    <div className="text-sm text-muted-foreground">
+                      {user.email}
+                    </div>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
                   <Phone className="h-5 w-5 text-muted-foreground" />
                   <div>
                     <div className="text-sm font-medium">Phone</div>
-                    <div className="text-sm text-muted-foreground">{lawyer.phone}</div>
+                    <div className="text-sm text-muted-foreground">
+                      {lawyer.phone}
+                    </div>
                   </div>
                 </div>
               </CardContent>
@@ -704,7 +780,9 @@ export default function LawyerDashboard() {
                   <Briefcase className="h-5 w-5 text-muted-foreground" />
                   <div>
                     <div className="text-sm font-medium">Experience</div>
-                    <div className="text-sm text-muted-foreground">{lawyer.experience} years</div>
+                    <div className="text-sm text-muted-foreground">
+                      {lawyer.experience} years
+                    </div>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
@@ -712,9 +790,12 @@ export default function LawyerDashboard() {
                   <div>
                     <div className="text-sm font-medium">Education</div>
                     <div className="text-sm text-muted-foreground">
-                      {lawyer.education?.degree} - {lawyer.education?.institution}
+                      {lawyer.education?.degree} -{" "}
+                      {lawyer.education?.institution}
                     </div>
-                    <div className="text-sm text-muted-foreground">Class of {lawyer.education?.year}</div>
+                    <div className="text-sm text-muted-foreground">
+                      Class of {lawyer.education?.year}
+                    </div>
                   </div>
                 </div>
               </CardContent>
@@ -734,5 +815,3 @@ export default function LawyerDashboard() {
     </div>
   );
 }
-
-

@@ -1,6 +1,6 @@
 "use client";
 
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/common/utils";
 import { motion, MotionProps, type AnimationProps } from "motion/react";
 import React from "react";
 
@@ -41,18 +41,16 @@ export const ShinyButton = React.forwardRef<
       ref={ref}
       className={cn(
         "relative cursor-pointer rounded-lg px-6 py-2 font-medium backdrop-blur-xl border transition-shadow duration-100 ease-in-out hover:shadow dark:bg-[radial-gradient(circle_at_50%_0%,var(--primary)/10%_0%,transparent_60%)] dark:hover:shadow-[0_0_20px_var(--primary)/10%]",
-        className,
+        className
       )}
       {...animationProps}
-      {...props}
-    >
+      {...props}>
       <span
         className="relative block size-full text-sm uppercase tracking-wide text-[rgb(0,0,0,65%)] dark:font-light dark:text-[rgb(255,255,255,90%)]"
         style={{
           maskImage:
             "linear-gradient(-75deg,var(--primary) calc(var(--x) + 20%),transparent calc(var(--x) + 30%),var(--primary) calc(var(--x) + 100%))",
-        }}
-      >
+        }}>
         {children}
       </span>
       <span

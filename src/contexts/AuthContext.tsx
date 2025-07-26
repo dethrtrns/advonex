@@ -2,13 +2,13 @@
 
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { getCurrentUserFromToken } from "@/services/authService/authService";
-import { getAccessToken } from "@/utils/storage/localStorage";
-import { isJwtexpired } from "@/utils/backend/auth";
+import { getAccessToken } from "@/lib/storage/localStorage";
+import { isJwtexpired } from "@/lib/backend/auth";
 import {
   extractPayloadFromJwt,
   getUserFromToken,
-} from "@/utils/common/commonUtils";
-import { UserDataFromJwtPayload } from "@/utils/types/types";
+} from "@/lib/common/commonUtils";
+import { UserDataFromJwtPayload } from "@/lib/types/types";
 import { usePathname } from "next/navigation";
 
 // Define the auth context type

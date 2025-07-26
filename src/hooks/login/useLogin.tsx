@@ -2,8 +2,8 @@
 
 import { useState, useCallback, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
-import { requestOtpOnEmail, verifyEmailOtp } from "@/utils/backend/auth";
-import { handleApiError } from "@/utils/common/commonUtils";
+import { requestOtpOnEmail, verifyEmailOtp } from "@/lib/backend/auth";
+import { handleApiError } from "@/lib/common/commonUtils";
 import { toast } from "sonner";
 import { UseLoginHookType, LoginStep } from "./login-types";
 

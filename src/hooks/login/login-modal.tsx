@@ -7,86 +7,101 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-} from "@/components/ui/sheet";
+
 import { Button } from "@/components/ui/button";
 import { LoginForm } from "./login-form";
 import { useLoginContext } from "@/contexts/LoginContext";
 import { useMediaQuery } from "@/hooks/use-media-query";
-import { LiquidGlassCard } from "@/components/ui/liquid-glass-card";
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+} from "@/components/ui/drawer";
+
 interface LoginModalProps {}
 
 export function LoginModal({}: LoginModalProps) {
   const hook = useLoginContext();
-  const { isOpen, close } = hook;
+  const {
+    isOpen,
+    close,
+    currentStep,
+    email,
+    otp,
+    otpSent,
+    otpResendTimer,
+    setEmail,
+    setOtp,
+    handleRequestOtp,
+    handleVerifyOtp,
+  } = hook;
   const isDesktop = useMediaQuery("(min-width: 768px)");
 
   if (isDesktop) {
     return (
       <Dialog open={isOpen} onOpenChange={close}>
-        <DialogContent className="flex items-center justify-center gap-2 sm:max-w-full h-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-          <LiquidGlassCard className=" p-8">
-            <DialogHeader>
-              <DialogTitle>Login or Sign Up</DialogTitle>
-              <DialogDescription>
-                Enter your email to receive a one-time password.
-              </DialogDescription>
-            </DialogHeader>
-            <LoginForm
-              currentStep={hook.currentStep}
-              loggingIn={hook.loggingIn}
-              email={hook.email}
-              otp={hook.otp}
-              otpSent={hook.otpSent}
-              otpResendTimer={hook.otpResendTimer}
-              setEmail={hook.setEmail}
-              setOtp={hook.setOtp}
-              handleRequestOtp={hook.handleRequestOtp}
-              handleVerifyOtp={hook.handleVerifyOtp}
-            />
-            <Button variant="link" onClick={close} className="w-full mt-4">
-              Skip Login
-            </Button>
-          </LiquidGlassCard>
+        <DialogContent className="max-w-fit mx-auto p-6 rounded-2xl shadow-xl bg-background/80 backdrop-blur-sm">
+          <DialogHeader>
+            <DialogTitle>Login</DialogTitle>
+            <DialogDescription>
+              Enter your email to receive a one-time password.
+            </DialogDescription>
+          </DialogHeader>
+          <LoginForm
+            currentStep={currentStep}
+            loggingIn={hook.loggingIn}
+            email={email}
+            otp={otp}
+            otpSent={otpSent}
+            otpResendTimer={otpResendTimer}
+            setEmail={setEmail}
+            setOtp={setOtp}
+            handleRequestOtp={handleRequestOtp}
+            handleVerifyOtp={handleVerifyOtp}
+          />
+          <Button variant="outline" onClick={close}>
+            Skip Login
+          </Button>
         </DialogContent>
       </Dialog>
     );
   }
 
   return (
-    <Sheet open={isOpen} onOpenChange={close}>
-      <SheetContent
-        side="bottom"
-        className="flex items-center justify-center min-h-full">
-        <LiquidGlassCard className="p-6">
-          <SheetHeader>
-            <SheetTitle>Login or Sign Up</SheetTitle>
-            <SheetDescription>
-              Enter your email to receive a one-time password.
-            </SheetDescription>
-          </SheetHeader>
-          <LoginForm
-            currentStep={hook.currentStep}
-            loggingIn={hook.loggingIn}
-            email={hook.email}
-            otp={hook.otp}
-            otpSent={hook.otpSent}
-            otpResendTimer={hook.otpResendTimer}
-            setEmail={hook.setEmail}
-            setOtp={hook.setOtp}
-            handleRequestOtp={hook.handleRequestOtp}
-            handleVerifyOtp={hook.handleVerifyOtp}
-          />
-          <Button variant="link" onClick={close} className="w-full mt-4">
-            Skip Login
-          </Button>
-        </LiquidGlassCard>
-      </SheetContent>
-    </Sheet>
+    <Drawer open={isOpen} onOpenChange={close}>
+      <DrawerContent className="max-w-fit h-1/2 mx-auto p-6 rounded-2xl shadow-xl">
+        <DrawerHeader>
+          <DrawerTitle className="text-2xl font-semibold flex items-center gap-2.5 tracking-tighter">
+            Login
+          </DrawerTitle>
+          <DrawerDescription>
+            Enter your email to receive a one-time password.
+          </DrawerDescription>
+        </DrawerHeader>
+        <LoginForm
+          currentStep={currentStep}
+          loggingIn={hook.loggingIn}
+          email={email}
+          otp={otp}
+          otpSent={otpSent}
+          otpResendTimer={otpResendTimer}
+          setEmail={setEmail}
+          setOtp={setOtp}
+          handleRequestOtp={handleRequestOtp}
+          handleVerifyOtp={handleVerifyOtp}
+        />
+        <DrawerFooter>
+          <DrawerClose asChild>
+            <Button variant="outline" onClick={close}>
+              Skip Login
+            </Button>
+          </DrawerClose>
+        </DrawerFooter>
+      </DrawerContent>
+    </Drawer>
   );
 }

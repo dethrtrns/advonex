@@ -118,7 +118,7 @@ export function Header() {
               onClick={() =>
                 setActiveAppSide(checkLawyer === true ? "CLIENT" : "LAWYER")
               }
-              variant="destructive"
+              variant="ghost"
               asChild>
               {checkLawyer === true ? (
                 <Link href="/client" className="flex items-center gap-2">

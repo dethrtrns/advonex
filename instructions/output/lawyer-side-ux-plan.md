@@ -1,6 +1,6 @@
 # Implementation Plan: Lawyer-Side UX for Registration and Profile Management
 
-This plan outlines the steps to implement the lawyer-side registration and profile management features as detailed in `lawyer-side-ux.md`.
+This plan outlines the steps to implement the lawyer's registration and profile management features as detailed in `lawyer-side-ux.md`.
 
 ## Permissions
 
@@ -141,3 +141,11 @@ src/
 ---
 
 Once you approve this plan, I will begin with Phase 0.
+
+
+# issues to avoid:
+- **Maximum update depth exceeded error**: This error can occur when a component calls `setState` inside `useEffect`, but `useEffect` either doesn't have a dependency array, or one of the dependencies changes on every render. This was observed in:
+  - `src/components/lawyer/dashboard/ProfileEditForm.tsx`
+  - `src/app/lawyer/dashboard/profile/page.tsx`
+  - `src/app/lawyer/dashboard/page.tsx`
+  This was observed with `initialData` and the `user` object from `useAuth()` being unstable, causing infinite re-renders. To avoid this, ensure that props and dependencies passed to `useEffect` are stable (e.g., by using `useMemo`).

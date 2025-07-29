@@ -332,11 +332,10 @@ Authorization: Bearer <your_access_token>
 **Usage:**
 Modify the details of the lawyer's profile.
 
-**Behavior:**
-
 - Requires a valid `accessToken` for a user with an active `LAWYER` role.
 - All fields in the request body are optional.
-- On the first successful update, `registrationPending` is set to `false`.
+- `registrationPending` is set to `true` by default, only the frontend can set this to `false` after step 2 of registration is complete.
+  <!-- refine for above point -->
 - For relational fields (e.g., `specialization`, `primaryCourt`), providing a string name will either link to an existing record or create a new one.
 
 **Request Body:**

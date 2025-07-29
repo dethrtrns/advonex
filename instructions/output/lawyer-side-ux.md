@@ -1,104 +1,88 @@
+# Lawyer-Side UX Flow for Registration and Profile Management
 
-# Lawyer-Side UX Flows: Registration and Onboarding
+This document outlines the UX flow for the lawyer-side registration process after email verification and sign-in, focusing on the collection of essential information to make a lawyer's profile publicly visible.
 
-This document outlines two potential UX flows for the lawyer registration and profile setup process. The goal is to define a set of "essential" fields for a profile to be publicly visible and to provide a smooth onboarding experience.
+## Mandatory Fields for Public Profile Visibility
 
-**Assumptions on Lawyer Data Model (pending `schema.prisma` access):**
+Based on the `LawyerProfile` schema in `schema.prisma` and the requirement that a lawyer's profile becomes visible once `registrationPending` is set to `false`, the following fields are considered essential for a basic public profile:
 
-I am currently unable to access `schema.prisma`. I will proceed with a general model and update this document once I can read the schema. I will assume the following fields are available for a lawyer's profile:
-
-*   **Basic Information:** `name`, `email`, `phone`, `profilePictureUrl`
-*   **Professional Details:** `barCouncilId`, `barRegistrationDate`, `practiceAreas` (list), `courts` (list)
-*   **Location:** `address`, `city`, `state`, `country`
-*   **Experience & Education:** `experienceInYears`, `education` (list of degrees/universities)
-*   **Profile Status:** `isRegistrationComplete` (boolean), `isVerified` (boolean)
-
----
-
-## UX Flow 1: The Guided Onboarding
-
-This flow prioritizes collecting essential information upfront through a structured, multi-step registration form.
-
-### 1.1. Essential/Mandatory Fields
-
-The following fields are considered essential for a lawyer's profile to be visible on the platform. Without this information, the lawyer's profile will be considered in a "pending" state.
-
-*   `name`
-*   `profilePictureUrl`
-*   `barCouncilId`
-*   `barRegistrationDate`
-*   `practiceAreas` (at least one)
-*   `courts` (at least one)
-*   `city`
-*   `state`
-*   `experienceInYears`
-
-### 1.2. Registration Stages
-
-The registration process will be divided into the following steps:
-
-*   **Step 1: Personal Information**
-    *   `name`
-    *   `profilePictureUrl` (with a good default/placeholder)
-    *   `phone`
-    *   `email` (pre-filled from signup)
-
-*   **Step 2: Professional Verification**
-    *   `barCouncilId`
-    *   `barRegistrationDate`
-
-*   **Step 3: Practice Details**
-    *   `practiceAreas` (multi-select with search)
-    *   `courts` (multi-select with search)
-    *   `experienceInYears`
-
-*   **Step 4: Location**
-    *   `address`
-    *   `city`
-    *   `state`
-    *   `country`
-
-### 1.3. Post-Registration Flow
-
-1.  After the final step is submitted, the `isRegistrationComplete` flag is set to `true`.
-2.  The lawyer is redirected to their dashboard.
-3.  A "Profile" tab on the dashboard will allow them to view their information.
-4.  An "Edit Profile" button will allow them to modify existing information and add additional, non-essential details (e.g., `education`, detailed bio, etc.).
+*   `name`: The lawyer's full name.
+*   `photo`: A profile picture. (A placeholder can be used if not provided initially, but the option to upload should be present).
+*   `locationId`: The primary location where the lawyer practices (city/state).
+*   `experience`: Years of legal experience.
+*   `bio`: A brief professional biography.
+*   `consultFee`: The fee for consultation.
+*   `barId`: The lawyer's bar identification number (crucial for professional verification).
+*   At least one `specializationId` or `practiceArea`: The lawyer's area(s) of expertise.
+*   At least one `primaryCourtId` or `practiceCourt`: The court(s) where the lawyer primarily practices.
 
 ---
 
-## UX Flow 2: The "Get in Quick" Approach
+## UX Flow: Progressive Disclosure (Minimalist First, then Expand)
 
-This flow focuses on getting the user into the application as quickly as possible, with a minimal initial sign-up. Profile completion is encouraged through in-dashboard prompts and wizards.
+This flow aims to get the lawyer to a "publicly visible" state with minimal initial friction, allowing them to fill in more details later. The `registrationPending` flag will be set to `false` after the completion of the initial multi-step form.
 
-### 2.1. Essential/Mandatory Fields
+### Registration Stage (Multi-step Form - Sets `registrationPending` to `false`)
 
-The same set of essential fields from Flow 1 applies here. However, they are not all required during the initial sign-up.
+This form collects the mandatory fields.
 
-### 2.2. Registration Stages
+*   **Step 1: Basic Personal & Professional Info**
+    *   `name` (Text Input)
+    *   `photo` (Image Upload with option to skip for a default placeholder)
+    *   `experience` (Number Input/Dropdown for years)
+    *   `bio` (Textarea - short, e.g., 2-3 sentences)
+    *   `consultFee` (Number Input)
+*   **Step 2: Core Legal Credentials & Location**
+    *   `barId` (Text Input)
+    *   `locationId` (Dropdowns for Country, State, City - linked to `Location` model)
+    *   `specializationId` (Dropdown/Search for primary specialization from `PracticeArea`)
+    *   `practiceAreas` (Multi-select/Tags for additional practice areas from `PracticeArea`)
+    *   `primaryCourtId` (Dropdown/Search for primary court from `PracticeCourt`)
+    *   `practiceCourts` (Multi-select/Tags for additional practice courts from `PracticeCourt`)
 
-*   **Step 1: Quick Sign-Up**
-    *   `name`
-    *   `email`
-    *   `password`
+*   **Submission:** Upon completion of Step 2, all mandatory fields are collected. The frontend sends a `PUT` request to `/profiles/lawyer` with all collected data, including `registrationPending: false`. On successful response, the lawyer's profile is now public.
+*   **Redirection:** Redirect to the Lawyer Dashboard.
 
-### 2.3. Post-Registration Flow & Profile Completion
+### After Registration (Dashboard - Edit/Update Profile)
 
-1.  After the initial sign-up, the user is immediately logged in and redirected to their dashboard. `isRegistrationComplete` is `false`.
-2.  The dashboard will have a prominent "Complete Your Profile" banner or section. This could be a dismissible alert or a persistent card.
-3.  Clicking this call-to-action will launch a multi-step modal or a dedicated "Profile Completion" page that guides the user through adding the remaining essential information. This wizard would cover the same steps as in Flow 1 (Professional Verification, Practice Details, Location).
-4.  Until the essential fields are filled, the lawyer's profile will not be publicly visible. A clear message on their profile page will indicate this (e.g., "Your profile is not yet visible to clients. Complete your profile to get started.").
-5.  Once the essential information is provided, the `isRegistrationComplete` flag is set to `true`, the "Complete Your Profile" prompts are removed, and the profile becomes visible.
-6.  All information, both essential and non-essential, can be edited from the "Edit Profile" page.
+Once `registrationPending` is `false`, the lawyer can access their full dashboard.
 
-## Comparison and Recommendation
+*   **Dashboard Landing:** The lawyer lands on their dashboard. A prominent section or notification could encourage them to complete their profile further.
+*   **"My Profile" Tab/Section:** This dedicated section allows the lawyer to view and edit all their profile information.
+    *   **Edit Functionality:** All fields from the initial registration steps are editable.
+    *   **Additional Sections:**
+        *   **Education:** Add/Edit `Education` details (degree, institution, year).
+        *   **Services:** Add/Edit `Service` offerings (from predefined list or custom).
+        *   **Detailed Bio/About Me:** Expand on the initial `bio`.
+        *   **Contact Information:** (If applicable, not in current schema, but common for profiles).
+    *   **Save Changes:** Each section or the entire profile can have a "Save" button that triggers a `PUT` request to `/profiles/lawyer` with the updated data.
 
-| Feature | Flow 1: Guided Onboarding | Flow 2: Get in Quick |
-| :--- | :--- | :--- |
-| **User Experience** | More structured, can feel longer. | Faster initial access, more flexible. |
-| **Data Quality** | Higher initial data quality. | Risk of many incomplete profiles. |
-| **Implementation** | Simpler initial logic. | Requires more complex in-dashboard UI/UX for prompts and completion wizards. |
+---
 
-**Recommendation:**
+## Implementation Details & Decisions
 
-For a platform like Advonex, where the quality and completeness of lawyer profiles are crucial for clients, **UX Flow 1 (The Guided Onboarding)** is the recommended approach. It ensures that all lawyers on the platform meet a minimum standard of information, which builds trust and improves the experience for clients. While it may have a slightly higher initial friction, the long-term benefits of having well-populated profiles outweigh the risk of incomplete profiles from a quicker, less structured approach.
+This section documents the key implementation decisions for the chosen UX flow.
+
+*   **Partial Registration (Saving Progress):**
+    *   After a lawyer completes Step 1 of the registration, the frontend will send a `PUT` request to `/profiles/lawyer` with the collected data. The backend will save this partial information, and `registrationPending` will remain `true`.
+    *   When a lawyer with `registrationPending: true` logs in, the frontend will fetch their profile data. By checking which mandatory fields are present or missing, the frontend will determine if the lawyer has completed Step 1 and will redirect them to the appropriate step (e.g., Step 2).
+
+*   **Profile Editing on Dashboard:**
+    *   The "My Profile" page on the dashboard will initially display the lawyer's information in a read-only format.
+    *   An "Edit Profile" button will be prominently displayed. Clicking this button will switch the entire profile page into an "edit mode," making all fields editable within a form.
+    *   A "Save Changes" button will be located at the bottom of the form. Clicking this button will submit all updated data in a single `PUT` request to `/profiles/lawyer`.
+
+*   **Handling Stale Registrations:**
+    *   To manage incomplete profiles, a backend cron job is recommended. This job would periodically query the database for profiles where `registrationPending` is `true` and the `updatedAt` timestamp is older than a defined threshold (e.g., 30 days). These stale profiles can then be soft-deleted or permanently removed, ensuring a clean database.
+
+## Verification (`isVerified`)
+
+In both flows, the `isVerified` flag remains separate. It is a backend-controlled flag that indicates Advonex has verified the lawyer's credentials (e.g., `barId`). This would likely be triggered by an internal process after the lawyer has completed their registration and submitted their `barId`. The frontend would simply display a "Advonex Verified" badge on the public profile if `isVerified` is true.
+
+# session info with gemini(including decisions made):
+- **`registrationPending` Flag:** The backend sets `registrationPending` to `true` by default. The frontend is responsible for setting this to `false` by sending `registrationPending: false` in the `PUT /profiles/lawyer` request only after the lawyer has successfully completed all steps of the registration process.
+- **No Backend Changes for Step Tracking:** The backend does not need to be modified to track the user's current registration step. The frontend can determine the user's progress by fetching the lawyer's profile and checking which mandatory fields have been filled.
+- **UX Flow:** We will proceed with a single, two-step registration flow (UX Flow 1). UX Flow 2 has been discarded.
+- **Partial Registration:** The frontend will save the user's progress after Step 1 by sending a `PUT` request with the partial data. The `registrationPending` flag will remain `true`.
+- **Dashboard Profile Editing:** The profile page on the dashboard will have a dedicated "edit mode." An "Edit Profile" button will make all fields editable, and a "Save Changes" button will submit all changes at once.
+- **Stale Registrations:** A backend cron job is the agreed-upon solution for cleaning up incomplete registrations that have been pending for an extended period.

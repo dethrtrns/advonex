@@ -6,9 +6,9 @@ This plan outlines the steps to implement the lawyer's registration and profile 
 
 I will need permission to perform the following actions:
 
-- **Create** new files and directories for the lawyer registration, dashboard components, and data services.
-- **Modify** `src\lib\backend\lawyer.ts` to add the necessary API calls for updating the lawyer's profile.
-- **Read** files in `src/data` to populate dropdowns for locations, practice areas, and courts.
+- **Create** new files and directories for the lawyer registration, dashboard components, and data services. ok
+- **Modify** `src\lib\backend\lawyer.ts` to add the necessary API calls for updating the lawyer's profile. ok
+- **Read** files in `src/data`, `src\lib`, `instructions\input\endpointsUsageGuideV1.md`, `src\contexts\AuthContext.tsx` to understand codebase/project. ok
 
 ---
 
@@ -47,10 +47,7 @@ src/
 |           |-- components/
 |               |-- Step1Form.tsx
 |               |-- Step2Form.tsx
-|-- components/
-|   |-- lawyer/
-|       |-- register/
-|           |-- MultiStepRegisterForm.tsx
+|               |-- MultiStepRegisterForm.tsx     
 ```
 
 ### 1.2. Develop `MultiStepRegisterForm.tsx`

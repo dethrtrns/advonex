@@ -1,6 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Scale, Users2, Trophy, BadgeDollarSign } from "lucide-react";
+import { BoxReveal } from "@/components/magicui/box-reveal";
+import { cn } from "@/lib/common/utils";
 import Link from "next/link";
 
 export default function LawyerLanding() {
@@ -30,18 +32,29 @@ export default function LawyerLanding() {
   return (
     <div className="flex flex-col gap-8 py-4">
       <section className="text-center md:text-left">
+        
+      <BoxReveal boxColor={"#5046e6"} duration={0.5}>
         <h1 className="text-4xl font-bold tracking-tight mb-4">
           Grow Your Legal Practice<br />
           with Advonex
         </h1>
+      </BoxReveal>
+
+      <BoxReveal boxColor={"#5046e6"} duration={0.5}>
+
         <p className="text-lg text-muted-foreground mb-6">
           Join our network of distinguished legal professionals and connect with clients who need your expertise
         </p>
-        <Button size="lg" asChild>
+      </BoxReveal>
+        
+        <BoxReveal boxColor={"#5046e6"} duration={0.5}>
+
+        <Button variant={"outline"} size="lg" asChild>
           <Link href="/lawyer/dashboard" className="gap-2">
             Go to Dashboard
           </Link>
         </Button>
+        </BoxReveal>
       </section>
 
       <section className="mt-8">

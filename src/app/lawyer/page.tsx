@@ -1,11 +1,19 @@
+'use client'
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Scale, Users2, Trophy, BadgeDollarSign } from "lucide-react";
 import { BoxReveal } from "@/components/magicui/box-reveal";
 import { cn } from "@/lib/common/utils";
 import Link from "next/link";
+import { ShinyButton } from "@/components/ui/shiny-button";
+import { redirect } from "next/navigation";
+import { useAuth } from "@/contexts/AuthContext";
+import { useLoginContext } from "@/contexts/LoginContext";
 
 export default function LawyerLanding() {
+  const { user, isAuthenticated } = useAuth();
+  const LoginModal = useLoginContext();
+
   const benefits = [
     {
       icon: Users2,
@@ -29,6 +37,14 @@ export default function LawyerLanding() {
     }
   ];
 
+  const handleRegisterAction = () => {
+    // if(!isAuthenticated){
+    //   LoginModal.open();
+    // } else {
+      redirect('/lawyer/register');
+    // }
+  }
+
   return (
     <div className="flex flex-col gap-8 py-4">
       <section className="text-center md:text-left">
@@ -49,11 +65,10 @@ export default function LawyerLanding() {
         
         <BoxReveal boxColor={"#5046e6"} duration={0.5}>
 
-        <Button variant={"outline"} size="lg" asChild>
-          <Link href="/lawyer/dashboard" className="gap-2">
-            Go to Dashboard
-          </Link>
-        </Button>
+          
+        <ShinyButton onClick={handleRegisterAction}>
+            Register now.
+        </ShinyButton>
         </BoxReveal>
       </section>
 
@@ -80,8 +95,8 @@ export default function LawyerLanding() {
           Join our growing network of legal professionals and start connecting with clients today.
         </p>
         <Button size="lg" asChild>
-          <Link href="/lawyer/register">
-            Create Your Profile
+          <Link href="/lawyer/dashboard">
+            open dashboard page
           </Link>
         </Button>
       </section>

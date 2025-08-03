@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { cn } from "@/lib/common/utils";
+import { cn } from "@/lib/utils";
 
 const LiquidGlassCard = React.forwardRef<
   HTMLDivElement,

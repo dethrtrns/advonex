@@ -14,7 +14,7 @@ import { useAuth } from "@/contexts/AuthContext";
 export default function LawyerProfile() {
   const params = useParams();
   const lawyerId = params.id as string;
-  const {isAuthenticated, user} =  useAuth();
+  const {isAuthenticated, user, activeAppSide} =  useAuth();
   const [lawyer, setLawyer] = useState<Lawyer | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -24,7 +24,8 @@ export default function LawyerProfile() {
       setIsLoading(true);
       setError(null);
       try {
-        const profile = await getLawyerProfile(lawyerId);
+        const lawyerProfileId = (activeAppSide === 'LAWYER' && user?.profileIds.lawyerId)? user?.profileIds.lawyerId : lawyerId;
+        const profile = await getLawyerProfile(lawyerProfileId);
         setLawyer(profile);
       } catch (err) {
         console.error("Error fetching lawyer profile:", err);

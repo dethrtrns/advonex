@@ -3,10 +3,10 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Search, Scale, Briefcase, Building2, Users2 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import { RainbowButton } from "@/components/magicui/rainbow-button";
+
 import { cn } from "@/lib/utils";
 import { AnimatedGridPattern } from "@/components/magicui/animated-grid-pattern";
-import { PulsatingButton } from "@/components/magicui/pulsating-button";
+import { AnimatedBeamDemo } from "@/components/ui/beam-connect";
 import { ShimmerButton } from "@/components/magicui/shimmer-button";
 
 export default function ClientLandingPage() {
@@ -59,16 +59,7 @@ export default function ClientLandingPage() {
 
       <section className="relative w-full max-w-6xl mx-auto px-4 py-16 overflow-hidden">
         <div className="aspect-video w-full rounded-lg ">
-         <AnimatedGridPattern
-        numSquares={30}
-        maxOpacity={0.1}
-        duration={3}
-        repeatDelay={1}
-        className={cn(
-          "[mask-image:radial-gradient(500px_circle_at_center,white,transparent)]",
-          "inset-x-0 inset-y-[-30%] h-[200%] skew-y-12",
-        )}
-      />
+         <AnimatedBeamDemo></AnimatedBeamDemo>
         </div>
         <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-background/20 pointer-events-none" />
       </section>

@@ -3,12 +3,14 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Scale, Users2, Trophy, BadgeDollarSign } from "lucide-react";
 import { BoxReveal } from "@/components/magicui/box-reveal";
-import { cn } from "@/lib/common/utils";
+import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { ShinyButton } from "@/components/ui/shiny-button";
 import { redirect } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLoginContext } from "@/contexts/LoginContext";
+import { AnimatedGridPattern } from "@/components/magicui/animated-grid-pattern";
+import { NeumorphButton } from "@/components/ui/neumorph-button";
 
 export default function LawyerLanding() {
   const { user, isAuthenticated } = useAuth();
@@ -48,28 +50,28 @@ export default function LawyerLanding() {
   return (
     <div className="flex flex-col gap-8 py-4">
       <section className="text-center md:text-left">
-        
-      <BoxReveal boxColor={"#5046e6"} duration={0.5}>
+   
+      
         <h1 className="text-4xl font-bold tracking-tight mb-4">
           Grow Your Legal Practice<br />
           with Advonex
         </h1>
-      </BoxReveal>
+      
 
-      <BoxReveal boxColor={"#5046e6"} duration={0.5}>
+     
 
         <p className="text-lg text-muted-foreground mb-6">
           Join our network of distinguished legal professionals and connect with clients who need your expertise
         </p>
-      </BoxReveal>
+      
         
-        <BoxReveal boxColor={"#5046e6"} duration={0.5}>
+        
 
           
-        <ShinyButton onClick={handleRegisterAction}>
+        <NeumorphButton  onClick={handleRegisterAction}>
             Register now.
-        </ShinyButton>
-        </BoxReveal>
+        </NeumorphButton>
+       
       </section>
 
       <section className="mt-8">

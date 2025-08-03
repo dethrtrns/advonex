@@ -4,6 +4,10 @@ import { Search, Scale, Briefcase, Building2, Users2 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { RainbowButton } from "@/components/magicui/rainbow-button";
+import { cn } from "@/lib/utils";
+import { AnimatedGridPattern } from "@/components/magicui/animated-grid-pattern";
+import { PulsatingButton } from "@/components/magicui/pulsating-button";
+import { ShimmerButton } from "@/components/magicui/shimmer-button";
 
 export default function ClientLandingPage() {
   const practiceAreas = [
@@ -31,7 +35,7 @@ export default function ClientLandingPage() {
 
   return (
     <div className="flex flex-col gap-8 py-4">
-      <section className="text-center max-w-4xl mx-auto px-4">
+      <section className="flex flex-col items-center text-center max-w-4xl mx-auto px-4">
         <h1 className="text-5xl font-serif tracking-tight mt-20 mb-4 md:text-7xl ">
           Next Level <br /> Lawyers
         </h1>
@@ -39,28 +43,32 @@ export default function ClientLandingPage() {
           Connect with qualified legal professionals <br /> across various
           practice areas
         </p>
-        <RainbowButton
-          size="lg"
-          variant="outline"
-          asChild
-          className="px-8 py-6 text-sm">
-          <Link href="/client/lawyers" className="gap-2">
-            <Search className="h-5 w-5" />
+        <ShimmerButton shimmerColor="blue" className="w-fit ">
+
+          
+          <Link href="/client/lawyers">
+          
+           <span className="whitespace-pre-wrap text-center text-sm font-medium leading-none tracking-tight text-white dark:from-white dark:to-slate-900/10 lg:text-lg">
             Search Lawyers
+            
+            </span>
           </Link>
-        </RainbowButton>
+          <Search className="h-4 w-4 ml-2 text-white dark:from-white dark:to-slate-900/10 lg:h-5 lg:w-5" />
+        </ShimmerButton>
       </section>
 
       <section className="relative w-full max-w-6xl mx-auto px-4 py-16 overflow-hidden">
-        <div className="aspect-video w-full rounded-lg overflow-hidden bg-muted">
-          <Image
-            src="https://images.unsplash.com/photo-1731955418581-5ba6827ca5ff?q=80&w=1931&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-            alt="Advonex legal services"
-            priority={true}
-            width={1931}
-            height={1080}
-            className="w-full h-full object-cover"
-          />
+        <div className="aspect-video w-full rounded-lg ">
+         <AnimatedGridPattern
+        numSquares={30}
+        maxOpacity={0.1}
+        duration={3}
+        repeatDelay={1}
+        className={cn(
+          "[mask-image:radial-gradient(500px_circle_at_center,white,transparent)]",
+          "inset-x-0 inset-y-[-30%] h-[200%] skew-y-12",
+        )}
+      />
         </div>
         <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-background/20 pointer-events-none" />
       </section>

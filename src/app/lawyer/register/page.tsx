@@ -90,14 +90,14 @@ export default function LawyerRegistrationPage() {
   if (user && !profileId) {
     console.log("User does not have lawyer profile ID!");
     alert("User not authorised!");
-    window.location.href = "/"; //FIX: remove this??
+    redirect('/'); //FIX: remove this??
     return null;
   }
 
   if (!user) {
     console.log("User is not Authenticated!");
     // alert("Please login to continue!");
-    window.location.href = "/"; //FIX this!
+    redirect('/'); //FIX this!
     return null;
   }
 
@@ -268,14 +268,14 @@ export default function LawyerRegistrationPage() {
 
   return (
     <div className="space-y-8">
-      <div className="flex justify-between items-center mt-8">
+      {/* <div className="flex justify-between items-center mt-8">
         <h1 className="text-3xl font-bold">My Profile</h1>
         <Button onClick={() => setIsEditing(!isEditing)}>
           {isEditing ? "Cancel" : "Edit Profile"}
         </Button>
-      </div>
+      </div> */}
 
-      {isEditing ? (
+      { (
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             {/* <Card>
@@ -313,6 +313,7 @@ export default function LawyerRegistrationPage() {
             <FormField
               control={form.control}
               name="photo"
+              
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Profile Picture</FormLabel>
@@ -693,128 +694,7 @@ export default function LawyerRegistrationPage() {
             </div>
           </form>
         </Form>
-      ) : (
-        <div className="space-y-6">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle>Profile Overview</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex flex-col items-center justify-center sm:flex-row items-center justify-start gap-8 ">
-                {lawyer.photo && (
-                  <div className="">
-                    <img
-                      src={lawyer.photo}
-                      alt={lawyer.name}
-                      className="h-46 w-46 rounded-lg object-cover"
-                    />
-                  </div>
-                )}
-                <div className="">
-                  <div>
-                    <h2 className="text-2xl font-bold">{lawyer.name}</h2>
-                    <div className="flex items-center text-sm text-muted-foreground">
-                      <MapPin className="mr-1 h-4 w-4" />
-                      {lawyer.location}
-                    </div>
-                    <div className="mt-4 flex items-center space-x-4">
-                      <div>
-                        <div className="text-sm text-muted-foreground">
-                          Bar ID
-                        </div>
-                        <div className="font-medium">{lawyer.barId}</div>
-                      </div>
-                      <div>
-                        <div className="text-sm text-muted-foreground">
-                          Practice Area
-                        </div>
-                        <div className="font-medium">
-                          {lawyer.specialization?.name}
-                        </div>
-                      </div>
-                    </div>
-                    <div>
-                      <div className="text-sm text-muted-foreground mt-4">
-                        Consultation Fee
-                      </div>
-                      <div className="text-2xl font-bold text-primary">
-                        ${lawyer.consultFee}/hr
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Contact Information</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-center gap-3">
-                  <Mail className="h-5 w-5 text-muted-foreground" />
-                  <div>
-                    <div className="text-sm font-medium">Email</div>
-                    <div className="text-sm text-muted-foreground">
-                      {user.email}
-                    </div>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <Phone className="h-5 w-5 text-muted-foreground" />
-                  <div>
-                    <div className="text-sm font-medium">Phone</div>
-                    <div className="text-sm text-muted-foreground">
-                      {lawyer.phone}
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Professional Details</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-center gap-3">
-                  <Briefcase className="h-5 w-5 text-muted-foreground" />
-                  <div>
-                    <div className="text-sm font-medium">Experience</div>
-                    <div className="text-sm text-muted-foreground">
-                      {lawyer.experience} years
-                    </div>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <GraduationCap className="h-5 w-5 text-muted-foreground" />
-                  <div>
-                    <div className="text-sm font-medium">Education</div>
-                    <div className="text-sm text-muted-foreground">
-                      {lawyer.education?.degree} -{" "}
-                      {lawyer.education?.institution}
-                    </div>
-                    <div className="text-sm text-muted-foreground">
-                      Class of {lawyer.education?.year}
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>About Me</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground">{lawyer.bio}</p>
-            </CardContent>
-          </Card>
-        </div>
-      )}
+      ) }
     </div>
   );
 }

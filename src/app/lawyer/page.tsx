@@ -43,11 +43,11 @@ export default function LawyerLanding() {
   ];
 
   const handleRegisterAction = () => {
-    // if(!isAuthenticated){
-    //   LoginModal.open();
-    // } else {
+    if(!isAuthenticated){
+      LoginModal.open();
+    } else {
       redirect('/lawyer/register');
-    // }
+    }
   }
 
   return (

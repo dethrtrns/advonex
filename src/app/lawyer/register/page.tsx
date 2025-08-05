@@ -65,9 +65,9 @@ const formSchema = z.object({
 });
 
 export default function LawyerRegistrationPage() {
-  const [lawyer, setLawyer] = useState<Lawyer | null>(null);
+  // const [lawyer, setLawyer] = useState<Lawyer | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [isEditing, setIsEditing] = useState(true);
+  // const [isEditing, setIsEditing] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false); // Add submitting state
   const [cities, setCities] = useState<string[]>([]);
 
@@ -82,19 +82,7 @@ export default function LawyerRegistrationPage() {
   console.log("Profile ID:", profileId);
   console.log("User authenticated:", !!user);
 
-  if (user && !profileId) {
-    console.log("User does not have lawyer profile ID!");
-    alert("User not authorised!");
-    redirect('/'); //FIX: remove this??
-    return null;
-  }
 
-  if (!user) {
-    console.log("User is not Authenticated!");
-    // alert("Please login to continue!");
-    redirect('/'); //FIX this!
-    return null;
-  }
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -140,14 +128,15 @@ export default function LawyerRegistrationPage() {
         }
         {
           console.log(
-            `Hardcoded Profile Id: 550e8400-e29b-41d4-a716-446655440030 `
+            `Hardcoded Profile Id: 550e8400-e29b-41d4-a716-446655440030 ` // just for dev view
           );
         }
+        // use GET '/profiles/lawyer'
         const profile = await getLawyerProfile(
           profileId ? profileId : "550e8400-e29b-41d4-a716-446655440030"
         );
 
-        setLawyer(profile);
+        // setLawyer(profile);
 
         // Split name into first and last name
         const profileName = profile?.name ? profile.name : "";
@@ -189,10 +178,24 @@ export default function LawyerRegistrationPage() {
 
     fetchProfile(profileId);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [form.reset]); // Depend on form.reset to ensure it runs once on mount
+  }, []); // Depend on form.reset to ensure it runs once on mount
+
+    if (user && !profileId) {
+    console.log("User does not have lawyer profile ID!");
+    alert("User not authorised!");
+    redirect('/'); //FIX: remove this??
+    return null;
+  }
+
+  if (!user) {
+    console.log("User is not Authenticated!");
+    // alert("Please login to continue!");
+    redirect('/'); //FIX this!
+    return null;
+  }
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    if (!lawyer) return; // Should not happen if form is enabled only when lawyer exists
+    // if (!lawyer) return; // Should not happen if form is enabled only when lawyer exists
 
     setIsSubmitting(true); // Set submitting state
     try {
@@ -224,7 +227,7 @@ export default function LawyerRegistrationPage() {
           degree: values.degree,
           year: Number(values.graduationYear), // Changed from String to Number to match the interface
         },
-        photo: values.photo ? values.photo : lawyer.photo,
+        photo: values.photo ? values.photo : '',
       };
 
       console.log("Updating profile with:", transformedData);
@@ -232,10 +235,10 @@ export default function LawyerRegistrationPage() {
       // Call the service function
       const updatedProfile = await updateLawyerProfile(transformedData);
 
-      setLawyer(updatedProfile); // Update local state with the response from API
-      form.reset(values); // Reset form with current values to prevent dirty state
+      // setLawyer(updatedProfile); // Update local state with the response from API. this state is for dashboard 'profile view' UI 
+      form.reset(values); // Reset form with current values to prevent dirty state, check if needed.
       toast.success("Profile updated successfully");
-      setIsEditing(false);
+      // setIsEditing(false);
     } catch (error) {
       // Error toast is handled in the service function
       console.error("Failed to update profile:", error);
@@ -252,14 +255,14 @@ export default function LawyerRegistrationPage() {
     );
   }
 
-  if (!lawyer) {
-    return (
-      <div className="text-center py-10">
-        <h2 className="text-2xl font-semibold text-destructive">Error</h2>
-        <p className="text-muted-foreground">Could not load profile</p>
-      </div>
-    );
-  }
+  // if (!lawyer) { // for 'profile view'
+  //   return (
+  //     <div className="text-center py-10">
+  //       <h2 className="text-2xl font-semibold text-destructive">Error</h2>
+  //       <p className="text-muted-foreground">Could not load profile</p>
+  //     </div>
+  //   );
+  // }
 
   return (
     <div className="space-y-8">
@@ -318,7 +321,7 @@ export default function LawyerRegistrationPage() {
                         name={`${form.watch("firstName")} ${form.watch(
                           "lastName"
                         )} `}
-                        photo={lawyer.photo}
+                        // photo={lawyer.photo}
                       />
                     </div>
                   </FormControl>

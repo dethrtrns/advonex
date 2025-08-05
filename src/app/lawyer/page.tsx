@@ -11,6 +11,9 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useLoginContext } from "@/contexts/LoginContext";
 import { AnimatedGridPattern } from "@/components/magicui/animated-grid-pattern";
 import { NeumorphButton } from "@/components/ui/neumorph-button";
+import { ShimmerButton } from "@/components/magicui/shimmer-button";
+import { StripeBgGuides } from "@/components/ui/stripe-bg-guides";
+import { LiquidGlassCard } from "@/components/ui/liquid-glass-card";
 
 export default function LawyerLanding() {
   const { user, isAuthenticated } = useAuth();
@@ -49,10 +52,23 @@ export default function LawyerLanding() {
 
   return (
     <div className="flex flex-col gap-8 py-4">
-      <section className="text-center md:text-left">
+      
+      <StripeBgGuides
+        columnCount={6}
+        animated={true}
+        animationDuration={62}
+        animationDelay = {0.1}
+        glowColor="cyan"
+        glowSize = "5vh"
+        glowOpacity = {0.8}
+        randomize = {true}
+        randomInterval={9000}
+        contained={true}
+      />
+      <section className="flex flex-col items-center text-center max-w-4xl mx-auto px-4">
    
       
-        <h1 className="text-4xl font-bold tracking-tight mb-4">
+        <h1 className="text-5xl font-serif tracking-tight mt-20 mb-4 md:text-7xl">
           Grow Your Legal Practice<br />
           with Advonex
         </h1>
@@ -60,7 +76,7 @@ export default function LawyerLanding() {
 
      
 
-        <p className="text-lg text-muted-foreground mb-6">
+        <p className="text-md mb-6 max-w-2xl mx-auto">
           Join our network of distinguished legal professionals and connect with clients who need your expertise
         </p>
       
@@ -68,9 +84,12 @@ export default function LawyerLanding() {
         
 
           
-        <NeumorphButton  onClick={handleRegisterAction}>
-            Register now.
-        </NeumorphButton>
+        <ShimmerButton shimmerColor="cyan" className="w-fit " onClick={handleRegisterAction}>
+           <span className="whitespace-pre-wrap text-center text-sm font-medium leading-none tracking-tight text-white dark:from-white dark:to-slate-900/10 lg:text-lg">
+            Register now
+            
+            </span> 
+        </ShimmerButton>
        
       </section>
 
@@ -78,15 +97,15 @@ export default function LawyerLanding() {
         <h2 className="text-2xl font-semibold mb-6 text-center">Why Join Advonex?</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {benefits.map((benefit) => (
-            <Card key={benefit.title}>
-              <CardContent className="flex items-start gap-4 p-6">
+            <LiquidGlassCard key={benefit.title}>
+              <CardContent className="flex items-start gap-4 p-12">
                 <benefit.icon className="h-8 w-8 text-primary flex-shrink-0" />
                 <div>
                   <h3 className="font-semibold mb-2">{benefit.title}</h3>
                   <p className="text-sm text-muted-foreground">{benefit.description}</p>
                 </div>
               </CardContent>
-            </Card>
+            </LiquidGlassCard>
           ))}
         </div>
       </section>

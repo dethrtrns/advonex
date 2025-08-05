@@ -4,7 +4,7 @@ import LawyerProfile from "@/app/client/lawyers/[id]/page";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "@/contexts/AuthContext";
-import { BoxIcon, EyeIcon, HouseIcon, PanelsTopLeftIcon, Settings, SettingsIcon, UserIcon } from "lucide-react";
+import { EyeIcon, HouseIcon, PanelsTopLeftIcon, Settings, SettingsIcon, UserIcon } from "lucide-react";
 import { redirect } from "next/navigation";
 
 export default function LawyerDashboardPage() {
@@ -66,8 +66,8 @@ export default function LawyerDashboardPage() {
         <LawyerProfile />
       </TabsContent>
       <TabsContent value="tab-2">
-        <p className="text-muted-foreground p-4 pt-1 text-center text-xs">
-          Content for Tab 2
+        <p className="text-accent-foreground p-4 pt-1 text-center text-xs">
+          View your account details here. COMING SOON...
         </p>
       </TabsContent>
       <TabsContent value="tab-3">

@@ -30,11 +30,6 @@ import {
 } from "@/services/lawyerService"; // Import updateLawyerProfile
 import {
   Loader,
-  MapPin,
-  Mail,
-  Phone,
-  Briefcase,
-  GraduationCap,
 } from "lucide-react";
 import { toast } from "sonner";
 import { indianLocations } from "@/data/indianLocations/locations";
@@ -268,13 +263,7 @@ export default function LawyerRegistrationPage() {
 
   return (
     <div className="space-y-8">
-      {/* <div className="flex justify-between items-center mt-8">
-        <h1 className="text-3xl font-bold">My Profile</h1>
-        <Button onClick={() => setIsEditing(!isEditing)}>
-          {isEditing ? "Cancel" : "Edit Profile"}
-        </Button>
-      </div> */}
-
+      <h1>Register Form</h1>
       { (
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">

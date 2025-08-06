@@ -54,21 +54,25 @@ export default function LawyerLanding() {
     <div className="flex flex-col gap-8 py-4">
       
       <StripeBgGuides
-        columnCount={6}
+        columnCount={8}
         animated={true}
-        animationDuration={62}
-        animationDelay = {0.1}
+        animationDuration={8}
+        animationDelay = {0.8}
         glowColor="cyan"
         glowSize = "5vh"
         glowOpacity = {0.8}
-        randomize = {true}
-        randomInterval={9000}
-        contained={true}
+        randomize = {false}
+        randomInterval={120}
+        maxActiveColumns={8}
+        contained={false}
+        easing="spring"
+        
+        darkMode={true}
       />
       <section className="flex flex-col items-center text-center max-w-4xl mx-auto px-4">
    
       
-        <h1 className="text-5xl font-serif tracking-tight mt-20 mb-4 md:text-7xl">
+        <h1 className="text-3xl font-serif tracking-tight mt-20 mb-4 md:text-5xl">
           Grow Your Legal Practice<br />
           with Advonex
         </h1>
@@ -84,16 +88,16 @@ export default function LawyerLanding() {
         
 
           
-        <ShimmerButton shimmerColor="cyan" className="w-fit " onClick={handleRegisterAction}>
-           <span className="whitespace-pre-wrap text-center text-sm font-medium leading-none tracking-tight text-white dark:from-white dark:to-slate-900/10 lg:text-lg">
+        <ShinyButton onClick={handleRegisterAction}>
+          
             Register now
             
-            </span> 
-        </ShimmerButton>
+           
+        </ShinyButton>
        
       </section>
 
-      <section className="mt-8">
+      <section className="mt-8  ">
         <h2 className="text-2xl font-semibold mb-6 text-center">Why Join Advonex?</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {benefits.map((benefit) => (

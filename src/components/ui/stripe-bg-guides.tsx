@@ -140,7 +140,7 @@ export function StripeBgGuides({
   const lineColors = useMemo(() => {
     return {
       solid: darkMode ? "hsl(233 14% 13%)" : "hsl(233 14.1% 96.1%)",
-      dashed: darkMode ? "hsl(233 14% 20%)" : "hsl(233 14% 93%)",
+      dashed: darkMode ? "hsla(233, 14%, 20%, 0)" : "hsla(233, 14%, 93%, 0)",
     }
   }, [darkMode])
 

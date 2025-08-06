@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 import { AnimatedGridPattern } from "@/components/magicui/animated-grid-pattern";
 import { AnimatedBeamDemo } from "@/components/ui/beam-connect";
 import { ShimmerButton } from "@/components/magicui/shimmer-button";
+import { ShinyButton } from "@/components/ui/shiny-button";
 
 export default function ClientLandingPage() {
   const practiceAreas = [
@@ -43,18 +44,18 @@ export default function ClientLandingPage() {
           Connect with qualified legal professionals <br /> across various
           practice areas
         </p>
-        <ShimmerButton shimmerColor="blue" className="w-fit ">
+        <ShinyButton >
 
           
           <Link href="/client/lawyers">
           
-           <span className="whitespace-pre-wrap text-center text-sm font-medium leading-none tracking-tight text-white dark:from-white dark:to-slate-900/10 lg:text-lg">
-            Search Lawyers
+           
+            Find Lawyers
             
-            </span>
+           
           </Link>
-          <Search className="h-4 w-4 ml-2 text-white dark:from-white dark:to-slate-900/10 lg:h-5 lg:w-5" />
-        </ShimmerButton>
+          
+        </ShinyButton>
       </section>
 
       <section className="relative w-full max-w-6xl mx-auto px-4 py-16 overflow-hidden">

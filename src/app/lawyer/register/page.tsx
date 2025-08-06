@@ -28,9 +28,7 @@ import {
   getLawyerProfile,
   updateLawyerProfile,
 } from "@/services/lawyerService"; // Import updateLawyerProfile
-import {
-  Loader,
-} from "lucide-react";
+import { Loader } from "lucide-react";
 import { toast } from "sonner";
 import { indianLocations } from "@/data/indianLocations/locations";
 import { practiceAreas } from "@/data/pacticeAreas/pacticeAreas";
@@ -65,24 +63,19 @@ const formSchema = z.object({
 });
 
 export default function LawyerRegistrationPage() {
-  // const [lawyer, setLawyer] = useState<Lawyer | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  // const [isEditing, setIsEditing] = useState(true);
-  const [isSubmitting, setIsSubmitting] = useState(false); // Add submitting state
-  const [cities, setCities] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { user, isAuthenticated } = useAuth();
   const profileId = user?.profileIds.lawyerId as string | null;
-//  if(isAuthenticated) {
-//   redirect('/lawyer/dashboard');
-//  }
-  // Add more detailed logging
+  //  if(!lawyerRegistrationPending) {
+  //   redirect('/lawyer/dashboard');
+  //  }
 
+  // logs for dev info
   console.log("User object:", user);
   console.log("Profile ID:", profileId);
   console.log("User authenticated:", !!user);
-
-
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -91,7 +84,7 @@ export default function LawyerRegistrationPage() {
       lastName: "",
       email: "",
       phone: "",
-      state: "",
+      state: Object.keys(indianLocations)[0],
       city: "",
       barNumber: "", // Fix: changed barId to barNumber to match schema
       practiceArea: "",
@@ -108,95 +101,22 @@ export default function LawyerRegistrationPage() {
   });
 
   // Update cities when state changes
-  const selectedState = form.watch("state");
-  useEffect(() => {
-    if (selectedState) {
-      setCities(
-        indianLocations[selectedState as keyof typeof indianLocations] || []
-      );
-      form.setValue("city", ""); // Reset city when state changes
-    }
-  }, [selectedState, form]);
 
-  useEffect(() => {
-    const fetchProfile = async (profileId: string | null) => {
-      try {
-        if (user?.profileId) {
-          console.log(
-            `Current Authenticated User with ProfileId: ${user.profileId}   `
-          );
-        }
-        {
-          console.log(
-            `Hardcoded Profile Id: 550e8400-e29b-41d4-a716-446655440030 ` // just for dev view
-          );
-        }
-        // use GET '/profiles/lawyer'
-        const profile = await getLawyerProfile(
-          profileId ? profileId : "550e8400-e29b-41d4-a716-446655440030"
-        );
-
-        // setLawyer(profile);
-
-        // Split name into first and last name
-        const profileName = profile?.name ? profile.name : "";
-
-        const nameParts = profileName.split(" ");
-        const firstName = nameParts[0];
-        const lastName = nameParts.slice(1).join(" ");
-
-        // Populate form with existing data
-        form.reset({
-          firstName,
-          lastName,
-          email: profile.email,
-          phone: profile.phone,
-          state: profile.location?.split(", ")[1] || "", // Extract state from location
-          city: profile.location?.split(", ")[0] || "", // Extract city from location
-          barNumber: profile.barId || "",
-          practiceArea:
-            profile.practiceAreas[0]?.practiceArea.name
-              .toLowerCase()
-              .replace(/ /g, "-") || "", // Use practiceArea.name
-          experience: profile.experience || 0,
-          bio: profile.bio || "",
-          consultFee: profile.consultFee || 0,
-          primaryCourt: profile.primaryCourt?.name || "", // Use primaryCourt.name
-          practiceCourts: profile.practiceCourts?.[0]?.practiceCourt.name || "", // Use first practiceCourt name
-          lawSchool: profile.education?.institution || "",
-          degree: profile.education?.degree || "",
-          graduationYear: profile.education?.year || 0, // year is already a number in the interface
-          photo: profile.photo || "",
-        });
-      } catch (error) {
-        console.error("Error fetching profile:", error);
-        toast.error("Failed to load profile");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchProfile(profileId);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // Depend on form.reset to ensure it runs once on mount
-
-    if (user && !profileId) {
+  if (user && !profileId) {
     console.log("User does not have lawyer profile ID!");
     alert("User not authorised!");
-    redirect('/'); //FIX: remove this??
+    redirect("/"); //FIX: remove this??
     return null;
   }
 
   if (!user) {
     console.log("User is not Authenticated!");
     // alert("Please login to continue!");
-    redirect('/'); //FIX this!
+    redirect("/"); //FIX this!
     return null;
   }
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    // if (!lawyer) return; // Should not happen if form is enabled only when lawyer exists
-
     setIsSubmitting(true); // Set submitting state
     try {
       // Transform form data to match API structure (UpdateLawyer interface: Different from lawyer interface)
@@ -227,21 +147,18 @@ export default function LawyerRegistrationPage() {
           degree: values.degree,
           year: Number(values.graduationYear), // Changed from String to Number to match the interface
         },
-        photo: values.photo ? values.photo : '',
+        photo: values.photo ? values.photo : "",
       };
 
       console.log("Updating profile with:", transformedData);
 
       // Call the service function
       const updatedProfile = await updateLawyerProfile(transformedData);
-
-      // setLawyer(updatedProfile); // Update local state with the response from API. this state is for dashboard 'profile view' UI 
-      form.reset(values); // Reset form with current values to prevent dirty state, check if needed.
       toast.success("Profile updated successfully");
-      // setIsEditing(false);
     } catch (error) {
       // Error toast is handled in the service function
       console.error("Failed to update profile:", error);
+      toast.error("Failed to update profile, retry!");
     } finally {
       setIsSubmitting(false); // Reset submitting state
     }
@@ -255,21 +172,14 @@ export default function LawyerRegistrationPage() {
     );
   }
 
-  // if (!lawyer) { // for 'profile view'
-  //   return (
-  //     <div className="text-center py-10">
-  //       <h2 className="text-2xl font-semibold text-destructive">Error</h2>
-  //       <p className="text-muted-foreground">Could not load profile</p>
-  //     </div>
-  //   );
-  // }
-
   return (
     <div className="space-y-8">
       <h1>Register Form</h1>
-      { (
+      {
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="space-y-6">
             {/* <Card>
               <CardHeader>
                 <CardTitle>Profile Photo</CardTitle>
@@ -305,13 +215,15 @@ export default function LawyerRegistrationPage() {
             <FormField
               control={form.control}
               name="photo"
-              
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Profile Picture</FormLabel>
                   <FormControl>
                     <div className="flex">
-                      <input type="hidden" {...field} />
+                      <input
+                        type="hidden"
+                        {...field}
+                      />
                       <ImageUpload
                         buttonText="Upload Profile Picture"
                         onUploadComplete={(imageUrl) => {
@@ -423,7 +335,9 @@ export default function LawyerRegistrationPage() {
                           </FormControl>
                           <SelectContent>
                             {Object.keys(indianLocations).map((state) => (
-                              <SelectItem key={state} value={state}>
+                              <SelectItem
+                                key={state}
+                                value={state}>
                                 {state}
                               </SelectItem>
                             ))}
@@ -442,24 +356,30 @@ export default function LawyerRegistrationPage() {
                         <Select
                           onValueChange={field.onChange}
                           value={field.value}
-                          disabled={!selectedState}>
+                          // disabled={!selectedState}
+                        >
                           <FormControl>
                             <SelectTrigger>
                               <SelectValue
                                 placeholder={
-                                  selectedState
-                                    ? "Select your city"
-                                    : "Select a state first"
+                                  // selectedState
+                                  //   ?
+                                  "Select your city"
+                                  // : "Select a state first"
                                 }
                               />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            {cities.map((city) => (
-                              <SelectItem key={city} value={city}>
-                                {city}
-                              </SelectItem>
-                            ))}
+                            {indianLocations[form.watch("state")].map(
+                              (city) => (
+                                <SelectItem
+                                  key={city}
+                                  value={city}>
+                                  {city}
+                                </SelectItem>
+                              )
+                            )}
                           </SelectContent>
                         </Select>
                         <FormMessage />
@@ -482,7 +402,10 @@ export default function LawyerRegistrationPage() {
                     <FormItem>
                       <FormLabel>Bar Number</FormLabel>
                       <FormControl>
-                        <Input placeholder="Enter your bar number" {...field} />
+                        <Input
+                          placeholder="Enter your bar number"
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -566,7 +489,10 @@ export default function LawyerRegistrationPage() {
                     <FormItem>
                       <FormLabel>Primary Court</FormLabel>
                       <FormControl>
-                        <Input placeholder="e.g., Family Court" {...field} />
+                        <Input
+                          placeholder="e.g., Family Court"
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -579,7 +505,10 @@ export default function LawyerRegistrationPage() {
                     <FormItem>
                       <FormLabel>Secondary Court (Optional)</FormLabel>
                       <FormControl>
-                        <Input placeholder="e.g., Civil Court" {...field} />
+                        <Input
+                          placeholder="e.g., Civil Court"
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -686,7 +615,7 @@ export default function LawyerRegistrationPage() {
             </div>
           </form>
         </Form>
-      ) }
+      }
     </div>
   );
 }

@@ -14,6 +14,7 @@ import { NeumorphButton } from "@/components/ui/neumorph-button";
 import { ShimmerButton } from "@/components/magicui/shimmer-button";
 import { StripeBgGuides } from "@/components/ui/stripe-bg-guides";
 import { LiquidGlassCard } from "@/components/ui/liquid-glass-card";
+import { motion } from "motion/react";
 
 export default function LawyerLanding() {
   const { user, isAuthenticated } = useAuth();
@@ -72,11 +73,33 @@ export default function LawyerLanding() {
         darkMode={true}
       />
       <section className="flex flex-col items-center text-center max-w-4xl mx-auto px-4">
-        <h1 className="text-3xl font-serif tracking-tight mt-20 mb-4 md:text-5xl">
+        {/* <h1 className="text-3xl font-serif tracking-tight mt-20 mb-4 md:text-5xl">
           Grow Your Legal Practice
           <br />
           with Advonex
-        </h1>
+        </h1> */}
+        {/* <h1 className="text-3xl font-serif tracking-tight mt-20 mb-4 md:text-5xl"> */}
+        <motion.h1
+          className="text-3xl font-serif tracking-tight mt-20 mb-4 md:text-5xl"
+          // animate={{ scale: [1, 1.05, 1] }}
+          // Start off-screen to the right and invisible
+          initial={{
+            opacity: 0,
+            color: "white",
+          }}
+          // Animate to its final position on-screen and fully visible
+          animate={{ opacity: 1, color: "cyan" }}
+          transition={{
+            duration: 1,
+            ease: "easeOut",
+            repeat: Infinity,
+            repeatDelay: 0.1,
+          }}>
+          Grow Your Legal Practice
+          <br />
+          with Advonex
+          {/* </h1> */}
+        </motion.h1>
 
         <p className="text-md mb-6 max-w-2xl mx-auto">
           Join our network of distinguished legal professionals and connect with

@@ -35,6 +35,7 @@ import { practiceAreas } from "@/data/pacticeAreas/pacticeAreas";
 import { ImageUpload } from "@/components/ui/image-upload";
 import { useAuth } from "@/contexts/AuthContext";
 import { redirect, useRouter } from "next/navigation";
+import FileUpload from "@/components/kokonutui/file-upload";
 
 // INFO: all number fields should be limited to max 32-bit signed integer limit, e.i. 2,147,483,647 as that's default in backend db
 const formSchema = z.object({
@@ -182,15 +183,14 @@ export default function LawyerRegistrationPage() {
                       type="hidden"
                       {...field}
                     />
-                    <ImageUpload
-                      buttonText="Upload Profile Picture"
-                      onUploadComplete={(imageUrl) => {
+                    <FileUpload
+                      onUploadSuccess={(imageUrl) => {
                         field.onChange(imageUrl);
                         console.log("Image URL updated:", imageUrl);
                       }}
-                      name={`${form.watch("firstName")} ${form.watch(
-                        "lastName"
-                      )} `}
+                      // name={`${form.watch("firstName")} ${form.watch(
+                      //   "lastName"
+                      // )} `}
                       // photo={lawyer.photo}
                     />
                   </div>

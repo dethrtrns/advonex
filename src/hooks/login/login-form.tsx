@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/input-otp";
 import { LoginStep, UseLoginHookType } from "./login-types";
 import { useEffect } from "react";
+import { LiquidButton } from "@/components/liquid-glass-button";
 
 const emailFormSchema = z.object({
   email: z.string().email({ message: "Invalid email address." }),
@@ -102,13 +103,16 @@ export function LoginForm({
                 <FormItem>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input placeholder="your@example.com" {...field} />
+                    <Input
+                      placeholder="your@example.com"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <NeumorphButton
+            <LiquidButton
               type="submit"
               className="w-full"
               disabled={loggingIn || otpSent}>
@@ -117,7 +121,7 @@ export function LoginForm({
                 : otpSent
                 ? `Resend in ${otpResendTimer}s`
                 : "Request OTP"}
-            </NeumorphButton>
+            </LiquidButton>
           </form>
         </Form>
       )}
@@ -134,7 +138,9 @@ export function LoginForm({
                 <FormItem>
                   <FormLabel>One-Time Password</FormLabel>
                   <FormControl>
-                    <InputOTP maxLength={6} {...field}>
+                    <InputOTP
+                      maxLength={6}
+                      {...field}>
                       <InputOTPGroup>
                         <InputOTPSlot index={0} />
                         <InputOTPSlot index={1} />
@@ -149,7 +155,10 @@ export function LoginForm({
                 </FormItem>
               )}
             />
-            <Button type="submit" className="w-full" disabled={loggingIn}>
+            <Button
+              type="submit"
+              className="w-full"
+              disabled={loggingIn}>
               {loggingIn ? "Verifying..." : "Submit OTP"}
             </Button>
             <Button

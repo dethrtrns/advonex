@@ -10,6 +10,8 @@ import { AnimatedBeamDemo } from "@/components/ui/beam-connect";
 import { ShimmerButton } from "@/components/magicui/shimmer-button";
 import { ShinyButton } from "@/components/ui/shiny-button";
 import { LiquidGlassCard } from "@/components/ui/liquid-glass-card";
+import { LiquidCard } from "@/components/liquid-glass-card";
+import { LiquidButton } from "@/components/liquid-glass-button";
 
 export default function ClientLandingPage() {
   const practiceAreas = [
@@ -45,13 +47,13 @@ export default function ClientLandingPage() {
           Connect with qualified legal professionals <br /> across various
           practice areas
         </p>
-        <ShinyButton>
+        <LiquidButton>
           <Link href="/client/lawyers">Find Lawyers</Link>
-        </ShinyButton>
+        </LiquidButton>
       </section>
 
       <section className="relative w-full max-w-6xl mx-auto px-4 py-16 overflow-hidden">
-        <div className="aspect-video w-full rounded-lg ">
+        <div className="w-full rounded-lg ">
           <AnimatedBeamDemo></AnimatedBeamDemo>
         </div>
         <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-background/20 pointer-events-none" />
@@ -61,7 +63,7 @@ export default function ClientLandingPage() {
         <h2 className="text-2xl font-semibold mb-6">Practice Areas</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {practiceAreas.map((area) => (
-            <LiquidGlassCard key={area.name}>
+            <LiquidCard key={area.name}>
               <CardContent className="flex flex-col items-center text-center p-6">
                 <area.icon className="h-12 w-12 mb-4 text-primary" />
                 <h3 className="font-semibold mb-2">{area.name}</h3>
@@ -69,7 +71,7 @@ export default function ClientLandingPage() {
                   {area.description}
                 </p>
               </CardContent>
-            </LiquidGlassCard>
+            </LiquidCard>
           ))}
         </div>
       </section>

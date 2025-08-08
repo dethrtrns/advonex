@@ -36,6 +36,7 @@ import { ImageUpload } from "@/components/ui/image-upload";
 import { useAuth } from "@/contexts/AuthContext";
 import { redirect, useRouter } from "next/navigation";
 import FileUpload from "@/components/kokonutui/file-upload";
+import { LiquidCard } from "@/components/liquid-glass-card";
 
 // INFO: all number fields should be limited to max 32-bit signed integer limit, e.i. 2,147,483,647 as that's default in backend db
 const formSchema = z.object({
@@ -200,7 +201,7 @@ export default function LawyerRegistrationPage() {
             )}
           />
 
-          <Card>
+          <LiquidCard>
             <CardHeader>
               <CardTitle>Personal Information</CardTitle>
             </CardHeader>
@@ -314,9 +315,9 @@ export default function LawyerRegistrationPage() {
                 />
               </div>
             </CardContent>
-          </Card>
+          </LiquidCard>
 
-          <Card>
+          <LiquidCard>
             <CardHeader>
               <CardTitle>Professional Information</CardTitle>
             </CardHeader>
@@ -438,9 +439,9 @@ export default function LawyerRegistrationPage() {
                 )}
               />
             </CardContent>
-          </Card>
+          </LiquidCard>
 
-          <Card>
+          <LiquidCard>
             <CardHeader>
               <CardTitle>Education</CardTitle>
             </CardHeader>
@@ -502,7 +503,7 @@ export default function LawyerRegistrationPage() {
                 />
               </div>
             </CardContent>
-          </Card>
+          </LiquidCard>
 
           <div className="flex justify-end space-x-4">
             <Button

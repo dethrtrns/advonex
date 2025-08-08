@@ -21,6 +21,7 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from "@/components/ui/drawer";
+import { LiquidButton } from "@/components/liquid-glass-button";
 
 interface LoginModalProps {}
 
@@ -43,7 +44,9 @@ export function LoginModal({}: LoginModalProps) {
 
   if (isDesktop) {
     return (
-      <Dialog open={isOpen} onOpenChange={close}>
+      <Dialog
+        open={isOpen}
+        onOpenChange={close}>
         <DialogContent className="max-w-fit mx-auto p-6 rounded-2xl shadow-xl bg-background/80 backdrop-blur-sm">
           <DialogHeader>
             <DialogTitle>Login</DialogTitle>
@@ -63,16 +66,20 @@ export function LoginModal({}: LoginModalProps) {
             handleRequestOtp={handleRequestOtp}
             handleVerifyOtp={handleVerifyOtp}
           />
-          <Button variant="outline" onClick={close}>
+          <LiquidButton
+            variant="secondary"
+            onClick={close}>
             Skip Login
-          </Button>
+          </LiquidButton>
         </DialogContent>
       </Dialog>
     );
   }
 
   return (
-    <Drawer open={isOpen} onOpenChange={close}>
+    <Drawer
+      open={isOpen}
+      onOpenChange={close}>
       <DrawerContent className="max-w-fit h-1/2 mx-auto p-6 rounded-2xl shadow-xl">
         <DrawerHeader>
           <DrawerTitle className="text-2xl font-semibold flex items-center gap-2.5 tracking-tighter">
@@ -96,7 +103,9 @@ export function LoginModal({}: LoginModalProps) {
         />
         <DrawerFooter>
           <DrawerClose asChild>
-            <Button variant="outline" onClick={close}>
+            <Button
+              variant="outline"
+              onClick={close}>
               Skip Login
             </Button>
           </DrawerClose>

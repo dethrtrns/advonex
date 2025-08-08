@@ -6,7 +6,8 @@ import { Search, MapPin, Filter, Briefcase, Loader } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { getLawyersList, type Lawyer } from "@/services/lawyerService"; // Update import to use service types
-import { LiquidGlassCard } from "@/components/ui/liquid-glass-card";
+
+import { LiquidCard } from "@/components/liquid-glass-card";
 export default function LawyersDirectory() {
   const [lawyers, setLawyers] = useState<Lawyer[]>([]);
   const [isLoading, setIsLoading] = useState(true); // Add loading state
@@ -66,8 +67,12 @@ export default function LawyersDirectory() {
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
         {lawyers && lawyers.length > 0 ? (
           lawyers.map((lawyer) => (
-            <LiquidGlassCard key={lawyer.id} className="p-0 overflow-hidden">
-              <Link href={`/client/lawyers/${lawyer.id}`} className="block">
+            <LiquidCard
+              key={lawyer.id}
+              className="p-0 overflow-hidden">
+              <Link
+                href={`/client/lawyers/${lawyer.id}`}
+                className="block">
                 <CardContent className="p-0 flex">
                   <div className="w-1/3 aspect-square relative overflow-hidden group">
                     {lawyer.photo ? (
@@ -91,7 +96,7 @@ export default function LawyersDirectory() {
                       </div>
                     )}
                   </div>
-                  <div className="flex-1 p-4 space-y-2">
+                  <div className="flex-1 p-4 flex flex-col justify-between space-y-2">
                     <h3 className="font-semibold text-lg">{lawyer.name}</h3>
                     <div className="flex items-center gap-1 text-sm text-muted-foreground">
                       <MapPin className="h-4 w-4" />
@@ -129,7 +134,7 @@ export default function LawyersDirectory() {
                   </div>
                 </CardContent>
               </Link>
-            </LiquidGlassCard>
+            </LiquidCard>
           ))
         ) : (
           <div className="col-span-full text-center py-10">

@@ -13,8 +13,10 @@ import { AnimatedGridPattern } from "@/components/magicui/animated-grid-pattern"
 import { NeumorphButton } from "@/components/ui/neumorph-button";
 import { ShimmerButton } from "@/components/magicui/shimmer-button";
 import { StripeBgGuides } from "@/components/ui/stripe-bg-guides";
-import { LiquidGlassCard } from "@/components/ui/liquid-glass-card";
+
 import { motion } from "motion/react";
+import { LiquidCard } from "@/components/liquid-glass-card";
+import { LiquidButton } from "@/components/liquid-glass-button";
 
 export default function LawyerLanding() {
   const { user, isAuthenticated } = useAuth();
@@ -73,21 +75,20 @@ export default function LawyerLanding() {
         darkMode={true}
       />
       <section className="flex flex-col items-center text-center max-w-4xl mx-auto px-4">
-        {/* <h1 className="text-3xl font-serif tracking-tight mt-20 mb-4 md:text-5xl">
+        <h1 className="text-3xl font-serif tracking-tight mt-20 mb-4 md:text-5xl">
           Grow Your Legal Practice
           <br />
           with Advonex
-        </h1> */}
+        </h1>
         {/* <h1 className="text-3xl font-serif tracking-tight mt-20 mb-4 md:text-5xl"> */}
-        <motion.h1
+        {/* <motion.h1
           className="text-3xl font-serif tracking-tight mt-20 mb-4 md:text-5xl"
-          // animate={{ scale: [1, 1.05, 1] }}
-          // Start off-screen to the right and invisible
+        
           initial={{
             opacity: 0,
             color: "white",
           }}
-          // Animate to its final position on-screen and fully visible
+          
           animate={{ opacity: 1, color: "cyan" }}
           transition={{
             duration: 1,
@@ -98,15 +99,15 @@ export default function LawyerLanding() {
           Grow Your Legal Practice
           <br />
           with Advonex
-          {/* </h1> */}
-        </motion.h1>
+         
+        </motion.h1> */}
 
         <p className="text-md mb-6 max-w-2xl mx-auto">
           Join our network of distinguished legal professionals and connect with
           clients who need your expertise
         </p>
 
-        <ShinyButton onClick={handleRegisterAction}>Register now</ShinyButton>
+        <LiquidButton onClick={handleRegisterAction}>Register now</LiquidButton>
       </section>
 
       <section className="mt-8  ">
@@ -115,7 +116,7 @@ export default function LawyerLanding() {
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {benefits.map((benefit) => (
-            <LiquidGlassCard key={benefit.title}>
+            <LiquidCard key={benefit.title}>
               <CardContent className="flex items-start gap-4 p-12">
                 <benefit.icon className="h-8 w-8 text-primary flex-shrink-0" />
                 <div>
@@ -125,7 +126,7 @@ export default function LawyerLanding() {
                   </p>
                 </div>
               </CardContent>
-            </LiquidGlassCard>
+            </LiquidCard>
           ))}
         </div>
       </section>
@@ -136,11 +137,9 @@ export default function LawyerLanding() {
           Join our growing network of legal professionals and start connecting
           with clients today.
         </p>
-        <Button
-          size="lg"
-          asChild>
+        <LiquidButton variant={"secondary"}>
           <Link href="/lawyer/dashboard">open dashboard page</Link>
-        </Button>
+        </LiquidButton>
       </section>
     </div>
   );

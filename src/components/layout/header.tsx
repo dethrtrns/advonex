@@ -22,6 +22,7 @@ import { useState } from "react";
 import { redirect } from "next/navigation";
 import { ShinyButton } from "../ui/shiny-button";
 import { useLoginContext } from "@/contexts/LoginContext";
+import { LiquidButton } from "../liquid-glass-button";
 
 export function Header() {
   const {
@@ -77,19 +78,23 @@ export function Header() {
             <NavigationMenu className="hidden md:flex">
               <NavigationMenuList>
                 <NavigationMenuItem>
-                  <Link href="/client/lawyers" className="px-4 py-2">
+                  <Link
+                    href="/client/lawyers"
+                    className="px-4 py-2">
                     Find Lawyers
                   </Link>
                 </NavigationMenuItem>
                 <NavigationMenuItem>
-                  <Link href="#" className="px-4 py-2">
+                  <Link
+                    href="#"
+                    className="px-4 py-2">
                     Practice Areas
                   </Link>
                 </NavigationMenuItem>
-                <span className="text-red-500">
+                {/* <span className="text-red-500">
                   Welcome {user ? user?.email : "Guest"} to Advonex{" "}
                   {activeAppSide} portal.
-                </span>
+                </span> */}
               </NavigationMenuList>
             </NavigationMenu>
           </div>
@@ -101,14 +106,21 @@ export function Header() {
                 user ? (
                   <div>
                     {" "}
-                    <Button variant={"secondary"} onClick={handleLogout}>
+                    <LiquidButton
+                      variant={"destructive"}
+                      onClick={handleLogout}>
                       {" "}
                       Logout
-                    </Button>
+                    </LiquidButton>
                   </div>
                 ) : (
                   <>
-                    <ShinyButton onClick={loginHook.open}>login</ShinyButton>
+                    <LiquidButton
+                      variant={"secondary"}
+                      size={"default"}
+                      onClick={loginHook.open}>
+                      Sign In
+                    </LiquidButton>
                   </>
                 ) // <RegisterDialog />
               }
@@ -121,21 +133,27 @@ export function Header() {
               variant="ghost"
               asChild>
               {checkLawyer === true ? (
-                <Link href="/client" className="flex items-center gap-2">
+                <Link
+                  href="/client"
+                  className="flex items-center gap-2">
                   <span>
                     Go to Advonex
                     <sub className="text-accent-foreground">clients</sub>
                   </span>
                 </Link>
               ) : (
-                <Link href="/lawyer" className="flex items-center gap-2">
+                <Link
+                  href="/lawyer"
+                  className="flex items-center gap-2">
                   <span>Become a Lawyer</span>
                 </Link>
               )}
             </Button>
 
             <Sheet>
-              <SheetTrigger asChild className="md:hidden">
+              <SheetTrigger
+                asChild
+                className="md:hidden">
                 <Button
                   variant="outline"
                   className="rounded-full mr-2 bg-background/95 backdrop-blur-2xl"
@@ -149,12 +167,16 @@ export function Header() {
                 </SheetTitle>
                 <nav className="flex flex-col gap-4">
                   <SheetClose asChild>
-                    <Link href="/client/lawyers" className="px-4 py-2">
+                    <Link
+                      href="/client/lawyers"
+                      className="px-4 py-2">
                       Find Lawyers
                     </Link>
                   </SheetClose>
                   <SheetClose asChild>
-                    <Link href="#" className="px-4 py-2">
+                    <Link
+                      href="#"
+                      className="px-4 py-2">
                       Practice Areas
                     </Link>
                   </SheetClose>
@@ -190,14 +212,18 @@ export function Header() {
                   variant="destructive"
                   asChild>
                   {checkLawyer === true ? (
-                    <Link href="/client" className="flex items-center gap-2">
+                    <Link
+                      href="/client"
+                      className="flex items-center gap-2">
                       <span>
                         Go to Advonex
                         <sub className="text-accent-foreground">clients</sub>
                       </span>
                     </Link>
                   ) : (
-                    <Link href="/lawyer" className="flex items-center gap-2">
+                    <Link
+                      href="/lawyer"
+                      className="flex items-center gap-2">
                       <span>Become a Lawyer</span>
                     </Link>
                   )}

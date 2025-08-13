@@ -4,6 +4,26 @@ import React, { forwardRef, useRef } from "react";
 
 import { cn } from "@/lib/utils";
 import { AnimatedBeam } from "@/components/magicui/animated-beam";
+import Link from "next/link";
+import {
+  BookUserIcon,
+  BriefcaseIcon,
+  Building2Icon,
+  FileUserIcon,
+  LucideUserSearch,
+  PaperclipIcon,
+  PartyPopperIcon,
+  PenLineIcon,
+  Scale3DIcon,
+  ScaleIcon,
+  ShieldUserIcon,
+  User2Icon,
+  UserCheckIcon,
+  UserCircle2Icon,
+  UserIcon,
+  UserPenIcon,
+  UserX2Icon,
+} from "lucide-react";
 
 const Circle = forwardRef<
   HTMLDivElement,
@@ -14,9 +34,8 @@ const Circle = forwardRef<
       ref={ref}
       className={cn(
         "z-10 flex size-12 items-center justify-center rounded-full border-2 bg-white p-3 shadow-[0_0_20px_-12px_rgba(0,0,0,0.8)]",
-        className,
-      )}
-    >
+        className
+      )}>
       {children}
     </div>
   );
@@ -37,34 +56,40 @@ export function AnimatedBeamDemo() {
   return (
     <div
       className="relative flex h-[300px] w-full items-center justify-center overflow-hidden p-10"
-      ref={containerRef}
-    >
+      ref={containerRef}>
       <div className="flex size-full max-h-[200px] max-w-lg flex-col items-stretch justify-between gap-10">
         <div className="flex flex-row items-center justify-between">
           <Circle ref={div1Ref}>
-            <Icons.googleDrive />
+            {/* <Icons.googleDrive /> */}
+            <ScaleIcon color="black" />
           </Circle>
           <Circle ref={div5Ref}>
-            <Icons.googleDocs />
+            <PenLineIcon color="black" />
           </Circle>
         </div>
         <div className="flex flex-row items-center justify-between">
           <Circle ref={div2Ref}>
-            <Icons.notion />
+            <BriefcaseIcon color="black" />
           </Circle>
-          <Circle ref={div4Ref} className="size-16">
-            <Icons.openai />
+          <Circle
+            ref={div4Ref}
+            className="size-16 overflow-clip">
+            <Link
+              href={`/client`}
+              className=" text-ring border-b-2 border-t-1 p-0 -rotate-15 font-serif text-black tracking-tighter">
+              Advonex
+            </Link>
           </Circle>
           <Circle ref={div6Ref}>
-            <Icons.zapier />
+            <FileUserIcon color="black" />
           </Circle>
         </div>
         <div className="flex flex-row items-center justify-between">
           <Circle ref={div3Ref}>
-            <Icons.whatsapp />
+            <Building2Icon color="black" />
           </Circle>
           <Circle ref={div7Ref}>
-            <Icons.messenger />
+            <ShieldUserIcon color="black" />
           </Circle>
         </div>
       </div>
@@ -121,8 +146,7 @@ const Icons = {
       height="100"
       viewBox="0 0 100 100"
       fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+      xmlns="http://www.w3.org/2000/svg">
       <path
         d="M6.017 4.313l55.333 -4.087c6.797 -0.583 8.543 -0.19 12.817 2.917l17.663 12.443c2.913 2.14 3.883 2.723 3.883 5.053v68.243c0 4.277 -1.553 6.807 -6.99 7.193L24.467 99.967c-4.08 0.193 -6.023 -0.39 -8.16 -3.113L3.3 79.94c-2.333 -3.113 -3.3 -5.443 -3.3 -8.167V11.113c0 -3.497 1.553 -6.413 6.017 -6.8z"
         fill="#ffffff"
@@ -140,8 +164,7 @@ const Icons = {
       width="100"
       height="100"
       viewBox="0 0 24 24"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+      xmlns="http://www.w3.org/2000/svg">
       <path d="M22.2819 9.8211a5.9847 5.9847 0 0 0-.5157-4.9108 6.0462 6.0462 0 0 0-6.5098-2.9A6.0651 6.0651 0 0 0 4.9807 4.1818a5.9847 5.9847 0 0 0-3.9977 2.9 6.0462 6.0462 0 0 0 .7427 7.0966 5.98 5.98 0 0 0 .511 4.9107 6.051 6.051 0 0 0 6.5146 2.9001A5.9847 5.9847 0 0 0 13.2599 24a6.0557 6.0557 0 0 0 5.7718-4.2058 5.9894 5.9894 0 0 0 3.9977-2.9001 6.0557 6.0557 0 0 0-.7475-7.0729zm-9.022 12.6081a4.4755 4.4755 0 0 1-2.8764-1.0408l.1419-.0804 4.7783-2.7582a.7948.7948 0 0 0 .3927-.6813v-6.7369l2.02 1.1686a.071.071 0 0 1 .038.052v5.5826a4.504 4.504 0 0 1-4.4945 4.4944zm-9.6607-4.1254a4.4708 4.4708 0 0 1-.5346-3.0137l.142.0852 4.783 2.7582a.7712.7712 0 0 0 .7806 0l5.8428-3.3685v2.3324a.0804.0804 0 0 1-.0332.0615L9.74 19.9502a4.4992 4.4992 0 0 1-6.1408-1.6464zM2.3408 7.8956a4.485 4.485 0 0 1 2.3655-1.9728V11.6a.7664.7664 0 0 0 .3879.6765l5.8144 3.3543-2.0201 1.1685a.0757.0757 0 0 1-.071 0l-4.8303-2.7865A4.504 4.504 0 0 1 2.3408 7.872zm16.5963 3.8558L13.1038 8.364 15.1192 7.2a.0757.0757 0 0 1 .071 0l4.8303 2.7913a4.4944 4.4944 0 0 1-.6765 8.1042v-5.6772a.79.79 0 0 0-.407-.667zm2.0107-3.0231l-.142-.0852-4.7735-2.7818a.7759.7759 0 0 0-.7854 0L9.409 9.2297V6.8974a.0662.0662 0 0 1 .0284-.0615l4.8303-2.7866a4.4992 4.4992 0 0 1 6.6802 4.66zM8.3065 12.863l-2.02-1.1638a.0804.0804 0 0 1-.038-.0567V6.0742a4.4992 4.4992 0 0 1 7.3757-3.4537l-.142.0805L8.704 5.459a.7948.7948 0 0 0-.3927.6813zm1.0976-2.3654l2.602-1.4998 2.6069 1.4998v2.9994l-2.5974 1.4997-2.6067-1.4997Z" />
     </svg>
   ),
@@ -150,8 +173,7 @@ const Icons = {
       width="100"
       height="100"
       viewBox="0 0 87.3 78"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+      xmlns="http://www.w3.org/2000/svg">
       <path
         d="m6.6 66.85 3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8h-27.5c0 1.55.4 3.1 1.2 4.5z"
         fill="#0066da"
@@ -183,8 +205,7 @@ const Icons = {
       width="100"
       height="100"
       viewBox="0 0 175.216 175.552"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+      xmlns="http://www.w3.org/2000/svg">
       <defs>
         <linearGradient
           id="b"
@@ -192,10 +213,15 @@ const Icons = {
           x2="86.535"
           y1="32.567"
           y2="137.092"
-          gradientUnits="userSpaceOnUse"
-        >
-          <stop offset="0" stopColor="#57d163" />
-          <stop offset="1" stopColor="#23b33a" />
+          gradientUnits="userSpaceOnUse">
+          <stop
+            offset="0"
+            stopColor="#57d163"
+          />
+          <stop
+            offset="1"
+            stopColor="#23b33a"
+          />
         </linearGradient>
         <filter
           id="a"
@@ -203,8 +229,7 @@ const Icons = {
           height="1.114"
           x="-.057"
           y="-.057"
-          colorInterpolationFilters="sRGB"
-        >
+          colorInterpolationFilters="sRGB">
           <feGaussianBlur stdDeviation="3.531" />
         </filter>
       </defs>
@@ -237,8 +262,7 @@ const Icons = {
       width="47px"
       height="65px"
       viewBox="0 0 47 65"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+      xmlns="http://www.w3.org/2000/svg">
       <defs>
         <path
           d="M29.375,0 L4.40625,0 C1.9828125,0 0,1.99431818 0,4.43181818 L0,60.5681818 C0,63.0056818 1.9828125,65 4.40625,65 L42.59375,65 C45.0171875,65 47,63.0056818 47,60.5681818 L47,17.7272727 L29.375,0 Z"
@@ -253,10 +277,17 @@ const Icons = {
           y1="8.58610612%"
           x2="50.0053945%"
           y2="100.013939%"
-          id="linearGradient-5"
-        >
-          <stop stopColor="#1A237E" stopOpacity="0.2" offset="0%" />
-          <stop stopColor="#1A237E" stopOpacity="0.02" offset="100%" />
+          id="linearGradient-5">
+          <stop
+            stopColor="#1A237E"
+            stopOpacity="0.2"
+            offset="0%"
+          />
+          <stop
+            stopColor="#1A237E"
+            stopOpacity="0.02"
+            offset="100%"
+          />
         </linearGradient>
         <path
           d="M29.375,0 L4.40625,0 C1.9828125,0 0,1.99431818 0,4.43181818 L0,60.5681818 C0,63.0056818 1.9828125,65 4.40625,65 L42.59375,65 C45.0171875,65 47,63.0056818 47,60.5681818 L47,17.7272727 L29.375,0 Z"
@@ -285,10 +316,17 @@ const Icons = {
           fy="2.71744318%"
           r="161.248516%"
           gradientTransform="translate(0.031680,0.027174),scale(1.000000,0.723077),translate(-0.031680,-0.027174)"
-          id="radialGradient-16"
-        >
-          <stop stopColor="#FFFFFF" stopOpacity="0.1" offset="0%" />
-          <stop stopColor="#FFFFFF" stopOpacity="0" offset="100%" />
+          id="radialGradient-16">
+          <stop
+            stopColor="#FFFFFF"
+            stopOpacity="0.1"
+            offset="0%"
+          />
+          <stop
+            stopColor="#FFFFFF"
+            stopOpacity="0"
+            offset="100%"
+          />
         </radialGradient>
       </defs>
       <g
@@ -296,15 +334,22 @@ const Icons = {
         stroke="none"
         strokeWidth="1"
         fill="none"
-        fillRule="evenodd"
-      >
+        fillRule="evenodd">
         <g transform="translate(-451.000000, -463.000000)">
-          <g id="Hero" transform="translate(0.000000, 63.000000)">
-            <g id="Personal" transform="translate(277.000000, 309.000000)">
-              <g id="Docs-icon" transform="translate(174.000000, 91.000000)">
+          <g
+            id="Hero"
+            transform="translate(0.000000, 63.000000)">
+            <g
+              id="Personal"
+              transform="translate(277.000000, 309.000000)">
+              <g
+                id="Docs-icon"
+                transform="translate(174.000000, 91.000000)">
                 <g id="Group">
                   <g id="Clipped">
-                    <mask id="mask-2" fill="white">
+                    <mask
+                      id="mask-2"
+                      fill="white">
                       <use xlinkHref="#path-1" />
                     </mask>
                     <g id="SVGID_1_" />
@@ -317,7 +362,9 @@ const Icons = {
                     />
                   </g>
                   <g id="Clipped">
-                    <mask id="mask-4" fill="white">
+                    <mask
+                      id="mask-4"
+                      fill="white">
                       <use xlinkHref="#path-3" />
                     </mask>
                     <g id="SVGID_1_" />
@@ -326,11 +373,12 @@ const Icons = {
                       fill="url(#linearGradient-5)"
                       fillRule="nonzero"
                       mask="url(#mask-4)"
-                      points="30.6638281 16.4309659 47 32.8582386 47 17.7272727"
-                    ></polygon>
+                      points="30.6638281 16.4309659 47 32.8582386 47 17.7272727"></polygon>
                   </g>
                   <g id="Clipped">
-                    <mask id="mask-7" fill="white">
+                    <mask
+                      id="mask-7"
+                      fill="white">
                       <use xlinkHref="#path-6" />
                     </mask>
                     <g id="SVGID_1_" />
@@ -343,11 +391,15 @@ const Icons = {
                     />
                   </g>
                   <g id="Clipped">
-                    <mask id="mask-9" fill="white">
+                    <mask
+                      id="mask-9"
+                      fill="white">
                       <use xlinkHref="#path-8" />
                     </mask>
                     <g id="SVGID_1_" />
-                    <g id="Group" mask="url(#mask-9)">
+                    <g
+                      id="Group"
+                      mask="url(#mask-9)">
                       <g transform="translate(26.437500, -2.954545)">
                         <path
                           d="M2.9375,2.95454545 L2.9375,16.25 C2.9375,18.6985795 4.90929688,20.6818182 7.34375,20.6818182 L20.5625,20.6818182 L2.9375,2.95454545 Z"
@@ -359,7 +411,9 @@ const Icons = {
                     </g>
                   </g>
                   <g id="Clipped">
-                    <mask id="mask-11" fill="white">
+                    <mask
+                      id="mask-11"
+                      fill="white">
                       <use xlinkHref="#path-10" />
                     </mask>
                     <g id="SVGID_1_" />
@@ -373,7 +427,9 @@ const Icons = {
                     />
                   </g>
                   <g id="Clipped">
-                    <mask id="mask-13" fill="white">
+                    <mask
+                      id="mask-13"
+                      fill="white">
                       <use xlinkHref="#path-12" />
                     </mask>
                     <g id="SVGID_1_" />
@@ -387,7 +443,9 @@ const Icons = {
                     />
                   </g>
                   <g id="Clipped">
-                    <mask id="mask-15" fill="white">
+                    <mask
+                      id="mask-15"
+                      fill="white">
                       <use xlinkHref="#path-14" />
                     </mask>
                     <g id="SVGID_1_" />
@@ -420,8 +478,7 @@ const Icons = {
       height="28"
       viewBox="0 0 244 66"
       fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+      xmlns="http://www.w3.org/2000/svg">
       <path
         d="M57.1877 45.2253L57.1534 45.1166L78.809 25.2914V15.7391H44.0663V25.2914H64.8181L64.8524 25.3829L43.4084 45.2253V54.7775H79.1579V45.2253H57.1877Z"
         fill="#201515"
@@ -450,7 +507,10 @@ const Icons = {
         d="M146.201 14.6695C142.357 14.6695 139.268 15.8764 136.935 18.2902C135.207 20.0786 133.939 22.7479 133.131 26.2981H132.771L131.295 15.7563H121.657V66H132.942V45.3054H133.354C133.698 46.6852 134.181 48.0267 134.795 49.3093C135.75 51.3986 137.316 53.1496 139.286 54.3314C141.328 55.446 143.629 56.0005 145.955 55.9387C150.68 55.9387 154.277 54.0988 156.748 50.419C159.219 46.7392 160.455 41.6046 160.455 35.0153C160.455 28.6509 159.259 23.6689 156.869 20.0691C154.478 16.4694 150.922 14.6695 146.201 14.6695ZM147.345 42.9602C146.029 44.8668 143.97 45.8201 141.167 45.8201C140.012 45.8735 138.86 45.6507 137.808 45.1703C136.755 44.6898 135.832 43.9656 135.116 43.0574C133.655 41.2233 132.927 38.7122 132.931 35.5243V34.7807C132.931 31.5432 133.659 29.0646 135.116 27.3448C136.572 25.625 138.59 24.7747 141.167 24.7937C144.02 24.7937 146.092 25.6994 147.385 27.5107C148.678 29.322 149.324 31.8483 149.324 35.0896C149.332 38.4414 148.676 41.065 147.356 42.9602H147.345Z"
         fill="#201515"
       />
-      <path d="M39.0441 45.2253H0V54.789H39.0441V45.2253Z" fill="#FF4F00" />
+      <path
+        d="M39.0441 45.2253H0V54.789H39.0441V45.2253Z"
+        fill="#FF4F00"
+      />
     </svg>
   ),
   messenger: () => (
@@ -458,23 +518,35 @@ const Icons = {
       width="100"
       height="100"
       viewBox="0 0 48 48"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+      xmlns="http://www.w3.org/2000/svg">
       <radialGradient
         id="8O3wK6b5ASW2Wn6hRCB5xa_YFbzdUk7Q3F8_gr1"
         cx="11.087"
         cy="7.022"
         r="47.612"
         gradientTransform="matrix(1 0 0 -1 0 50)"
-        gradientUnits="userSpaceOnUse"
-      >
-        <stop offset="0" stopColor="#1292ff"></stop>
-        <stop offset=".079" stopColor="#2982ff"></stop>
-        <stop offset=".23" stopColor="#4e69ff"></stop>
-        <stop offset=".351" stopColor="#6559ff"></stop>
-        <stop offset=".428" stopColor="#6d53ff"></stop>
-        <stop offset=".754" stopColor="#df47aa"></stop>
-        <stop offset=".946" stopColor="#ff6257"></stop>
+        gradientUnits="userSpaceOnUse">
+        <stop
+          offset="0"
+          stopColor="#1292ff"></stop>
+        <stop
+          offset=".079"
+          stopColor="#2982ff"></stop>
+        <stop
+          offset=".23"
+          stopColor="#4e69ff"></stop>
+        <stop
+          offset=".351"
+          stopColor="#6559ff"></stop>
+        <stop
+          offset=".428"
+          stopColor="#6d53ff"></stop>
+        <stop
+          offset=".754"
+          stopColor="#df47aa"></stop>
+        <stop
+          offset=".946"
+          stopColor="#ff6257"></stop>
       </radialGradient>
       <path
         fill="url(#8O3wK6b5ASW2Wn6hRCB5xa_YFbzdUk7Q3F8_gr1)"

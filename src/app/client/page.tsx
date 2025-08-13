@@ -38,7 +38,7 @@ export default function ClientLandingPage() {
   ];
 
   return (
-    <div className="flex flex-col gap-8 py-4">
+    <div className="flex flex-col py-4">
       <section className="flex flex-col items-center text-center max-w-4xl mx-auto px-4">
         <h1 className="text-5xl font-serif tracking-tight mt-20 mb-4 md:text-7xl ">
           Next Level <br /> Lawyers
@@ -52,7 +52,7 @@ export default function ClientLandingPage() {
         </LiquidButton>
       </section>
 
-      <section className="relative w-full max-w-6xl mx-auto px-4 py-16 overflow-hidden">
+      <section className="relative w-full max-w-6xl mx-auto px-4  overflow-hidden">
         <div className="w-full rounded-lg ">
           <AnimatedBeamDemo></AnimatedBeamDemo>
         </div>

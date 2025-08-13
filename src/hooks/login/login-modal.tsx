@@ -22,6 +22,7 @@ import {
   DrawerTitle,
 } from "@/components/ui/drawer";
 import { LiquidButton } from "@/components/liquid-glass-button";
+import { LiquidCard } from "@/components/liquid-glass-card";
 
 interface LoginModalProps {}
 
@@ -47,30 +48,34 @@ export function LoginModal({}: LoginModalProps) {
       <Dialog
         open={isOpen}
         onOpenChange={close}>
-        <DialogContent className="max-w-fit mx-auto p-6 rounded-2xl shadow-xl bg-background/80 backdrop-blur-sm">
-          <DialogHeader>
-            <DialogTitle>Login</DialogTitle>
-            <DialogDescription>
-              Enter your email to receive a one-time password.
-            </DialogDescription>
-          </DialogHeader>
-          <LoginForm
-            currentStep={currentStep}
-            loggingIn={hook.loggingIn}
-            email={email}
-            otp={otp}
-            otpSent={otpSent}
-            otpResendTimer={otpResendTimer}
-            setEmail={setEmail}
-            setOtp={setOtp}
-            handleRequestOtp={handleRequestOtp}
-            handleVerifyOtp={handleVerifyOtp}
-          />
-          <LiquidButton
-            variant="secondary"
-            onClick={close}>
-            Skip Login
-          </LiquidButton>
+        <DialogContent className="max-w-1/5 h-1/2 p-0 bg-transparent ">
+          <LiquidCard className="flex w-full h-full py-20 px-14">
+            <DialogHeader>
+              <DialogTitle className="text-3xl font-serif flex items-center pb-4 ">
+                Sign In
+              </DialogTitle>
+              <DialogDescription>
+                Enter your email to receive a one-time password.
+              </DialogDescription>
+            </DialogHeader>
+            <LoginForm
+              currentStep={currentStep}
+              loggingIn={hook.loggingIn}
+              email={email}
+              otp={otp}
+              otpSent={otpSent}
+              otpResendTimer={otpResendTimer}
+              setEmail={setEmail}
+              setOtp={setOtp}
+              handleRequestOtp={handleRequestOtp}
+              handleVerifyOtp={handleVerifyOtp}
+            />
+            <LiquidButton
+              variant="secondary"
+              onClick={close}>
+              Skip Login
+            </LiquidButton>
+          </LiquidCard>
         </DialogContent>
       </Dialog>
     );

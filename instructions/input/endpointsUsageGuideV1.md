@@ -333,25 +333,11 @@ Authorization: Bearer <your_access_token>
 Modify the details of the lawyer's profile.
 
 - Requires a valid `accessToken` for a user with an active `LAWYER` role.
-- All fields in the request body are optional.
+- All fields in the request body are optional meaning the backend also supports single field updates.
 - `registrationPending` is set to `true` by default, only the frontend can set this to `false` after step 2 of registration is complete.
-  <!-- refine for above point -->
-- For relational fields (e.g., `specialization`, `primaryCourt`), providing a string name will either link to an existing record or create a new one.
-
-**Request Body:**
-
-```json
-{
-  "name": "Jane A. Smith",
-  "location": "San Francisco, CA",
-  "specialization": "Technology Law",
-  "education": {
-    "degree": "Juris Doctor",
-    "institution": "Harvard Law School",
-    "year": 2014
-  }
-}
-```
+- Following fields are relational fields where the frontend just sends the field's id(for single value fields)or ids(for multi value fields) to the backend:
+  a) single value fields: specializationId(which is primary practice area's id), PrimaryCourtId, location: {cityId:'cityId string'}
+  b) multi value fields: practiceAreas(array of practice area id strings ), practiceCourts(array of court id srings)
 
 **Responses:**
 
@@ -359,6 +345,20 @@ Modify the details of the lawyer's profile.
 - **401 Unauthorized:** Invalid or missing `accessToken`.
 - **403 Forbidden:** User does not have the `LAWYER` role.
 - **404 Not Found:** Lawyer profile does not exist for this user.
+
+**Request Body example:**
+
+```json
+{
+  "name": "Jane A. Smith",
+  "location": "San Francisco, CA",
+  "education": {
+    "degree": "Juris Doctor",
+    "institution": "Harvard Law School",
+    "year": 2014
+  }
+}
+```
 
 ---
 

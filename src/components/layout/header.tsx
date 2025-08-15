@@ -165,8 +165,12 @@ export function Header() {
                 </Button>
               </SheetTrigger>
               <SheetContent
-                className={cn(liquidGlassClasses, "flex items-center")}
-                // 2. Apply the style object for the backdrop-filter.
+                className={cn(
+                  // liquidGlassClasses,
+                  "w-full flex items-center bg-transparent"
+                  //removed liquidGlassClasses, added bg-transparent to remove shadow-box effect. `border-none` removes simple line border when w-2/3
+                )}
+                // 2. Apply the style object for the backdrop-filter which gives the main liquid glass effect.
                 style={liquidGlassStyle}
                 // className="w-full bg-transparent"
                 side="right">

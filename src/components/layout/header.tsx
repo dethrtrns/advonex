@@ -24,6 +24,8 @@ import { ShinyButton } from "../ui/shiny-button";
 import { useLoginContext } from "@/contexts/LoginContext";
 import { LiquidButton } from "../liquid-glass-button";
 import { LiquidCard } from "../liquid-glass-card";
+import { liquidGlassClasses, liquidGlassStyle } from "../ui/liquid-glass";
+import { cn } from "@/lib/utils";
 
 export function Header() {
   const {
@@ -163,79 +165,80 @@ export function Header() {
                 </Button>
               </SheetTrigger>
               <SheetContent
-                className="w-full bg-transparent"
+                className={cn(liquidGlassClasses, "flex items-center")}
+                // 2. Apply the style object for the backdrop-filter.
+                style={liquidGlassStyle}
+                // className="w-full bg-transparent"
                 side="right">
-                <LiquidCard className="flex items-center rounded-none -mx-1 min-h-screen">
-                  <SheetTitle className="text-2xl font-bold mb-4 px-4 py-4">
-                    Menu
-                  </SheetTitle>
-                  <nav className="flex flex-col items-center gap-8">
-                    <SheetClose asChild>
-                      <Link
-                        href="/client/lawyers"
-                        className="px-4 py-2">
-                        Find Lawyers
-                      </Link>
-                    </SheetClose>
-                    <SheetClose asChild>
-                      <Link
-                        href="#"
-                        className="px-4 py-2">
-                        Practice Areas
-                      </Link>
-                    </SheetClose>
-                    <span className="text-red-500">
-                      welcome {user ? user?.email : "Guest"}
-                    </span>
-                    <SheetClose asChild>
-                      {user ? (
-                        <div>
+                {/* <LiquidCard className="flex items-center rounded-none -mx-1 min-h-screen"> */}
+                <SheetTitle className="text-2xl font-bold mb-4 px-4 py-4">
+                  Menu
+                </SheetTitle>
+                <nav className="flex flex-col items-center gap-8">
+                  <SheetClose asChild>
+                    <Link
+                      href="/client/lawyers"
+                      className="px-4 py-2">
+                      Find Lawyers
+                    </Link>
+                  </SheetClose>
+                  <SheetClose asChild>
+                    <Link
+                      href="#"
+                      className="px-4 py-2">
+                      Practice Areas
+                    </Link>
+                  </SheetClose>
+                  <span className="text-red-500">
+                    welcome {user ? user?.email : "Guest"}
+                  </span>
+                  <SheetClose asChild>
+                    {user ? (
+                      <div>
+                        {" "}
+                        <LiquidButton
+                          variant={"destructive"}
+                          onClick={handleLogout}>
                           {" "}
-                          <LiquidButton
-                            variant={"destructive"}
-                            onClick={handleLogout}>
-                            {" "}
-                            Logout
-                          </LiquidButton>
-                        </div>
-                      ) : (
-                        <div>
-                          <LiquidButton
-                            variant={"secondary"}
-                            onClick={loginHook.open}>
-                            login
-                          </LiquidButton>
-                        </div>
-                      )}
-                    </SheetClose>
-                  </nav>
-                  <Button
-                    className="w-fit absolute bottom-5 right-2"
-                    onClick={() =>
-                      setActiveAppSide(
-                        checkLawyer === true ? "CLIENT" : "LAWYER"
-                      )
-                    }
-                    variant="ghost"
-                    asChild>
-                    {checkLawyer === true ? (
-                      <Link
-                        href="/client"
-                        className="flex items-center gap-2">
-                        <span>
-                          Go to Advonex
-                          <sub className="text-accent-foreground">clients</sub>
-                        </span>
-                      </Link>
+                          Logout
+                        </LiquidButton>
+                      </div>
                     ) : (
-                      <Link
-                        href="/lawyer"
-                        className="flex items-center gap-2">
-                        <span>Become a Lawyer</span>
-                      </Link>
+                      <div>
+                        <LiquidButton
+                          variant={"secondary"}
+                          onClick={loginHook.open}>
+                          login
+                        </LiquidButton>
+                      </div>
                     )}
-                  </Button>
-                </LiquidCard>
+                  </SheetClose>
+                </nav>
+                <Button
+                  className="w-fit absolute bottom-5 right-2"
+                  onClick={() =>
+                    setActiveAppSide(checkLawyer === true ? "CLIENT" : "LAWYER")
+                  }
+                  variant="ghost"
+                  asChild>
+                  {checkLawyer === true ? (
+                    <Link
+                      href="/client"
+                      className="flex items-center gap-2">
+                      <span>
+                        Go to Advonex
+                        <sub className="text-accent-foreground">clients</sub>
+                      </span>
+                    </Link>
+                  ) : (
+                    <Link
+                      href="/lawyer"
+                      className="flex items-center gap-2">
+                      <span>Become a Lawyer</span>
+                    </Link>
+                  )}
+                </Button>
+                {/* </LiquidCard> */}
               </SheetContent>
             </Sheet>
           </div>

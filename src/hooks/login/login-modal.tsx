@@ -23,7 +23,12 @@ import {
 } from "@/components/ui/drawer";
 import { LiquidButton } from "@/components/liquid-glass-button";
 import { LiquidCard } from "@/components/liquid-glass-card";
-import { LiquidGlass } from "@/components/ui/liquid-glass";
+import {
+  LiquidGlass,
+  liquidGlassClasses,
+  liquidGlassStyle,
+} from "@/components/ui/liquid-glass";
+import { cn } from "@/lib/utils";
 
 interface LoginModalProps {}
 
@@ -86,38 +91,43 @@ export function LoginModal({}: LoginModalProps) {
     <Drawer
       open={isOpen}
       onOpenChange={close}>
-      <DrawerContent className="max-w-fit h-1/2 mx-auto p-6 bg-transparent border-none">
-        <LiquidGlass className="rounded-2xl shadow-xl p-6">
-          <DrawerHeader>
-            <DrawerTitle className="flex justify-center font-serif text-2xl font-semibold gap-2.5 tracking-tighter">
-              Sign In
-            </DrawerTitle>
-            <DrawerDescription>
-              Enter your email to receive a one-time password.
-            </DrawerDescription>
-          </DrawerHeader>
-          <LoginForm
-            currentStep={currentStep}
-            loggingIn={hook.loggingIn}
-            email={email}
-            otp={otp}
-            otpSent={otpSent}
-            otpResendTimer={otpResendTimer}
-            setEmail={setEmail}
-            setOtp={setOtp}
-            handleRequestOtp={handleRequestOtp}
-            handleVerifyOtp={handleVerifyOtp}
-          />
-          <DrawerFooter>
-            <DrawerClose asChild>
-              <Button
-                variant="outline"
-                onClick={close}>
-                Skip Login
-              </Button>
-            </DrawerClose>
-          </DrawerFooter>
-        </LiquidGlass>
+      <DrawerContent
+        className={cn(liquidGlassClasses, "max-w-fit h-1/2 mx-4 p-6  ")}
+        // 2. Apply the style object for the backdrop-filter.
+        style={liquidGlassStyle}
+        // className="max-w-fit h-1/2 mx-auto p-6 bg-transparent border-none"
+      >
+        {/* <LiquidGlass className="rounded-2xl shadow-xl p-6"> */}
+        <DrawerHeader>
+          <DrawerTitle className="flex justify-center font-serif text-2xl font-semibold gap-2.5 tracking-tighter">
+            Sign In
+          </DrawerTitle>
+          <DrawerDescription>
+            Enter your email to receive a one-time password.
+          </DrawerDescription>
+        </DrawerHeader>
+        <LoginForm
+          currentStep={currentStep}
+          loggingIn={hook.loggingIn}
+          email={email}
+          otp={otp}
+          otpSent={otpSent}
+          otpResendTimer={otpResendTimer}
+          setEmail={setEmail}
+          setOtp={setOtp}
+          handleRequestOtp={handleRequestOtp}
+          handleVerifyOtp={handleVerifyOtp}
+        />
+        <DrawerFooter>
+          <DrawerClose asChild>
+            <Button
+              variant="outline"
+              onClick={close}>
+              Skip Login
+            </Button>
+          </DrawerClose>
+        </DrawerFooter>
+        {/* </LiquidGlass> */}
       </DrawerContent>
     </Drawer>
   );

@@ -92,7 +92,7 @@ export function LoginModal({}: LoginModalProps) {
       open={isOpen}
       onOpenChange={close}>
       <DrawerContent
-        className={cn(liquidGlassClasses, "max-w-fit h-1/2 mx-4 p-6  ")}
+        className={cn(liquidGlassClasses, "w-100vw min-h-1/2 mx-12 p-6  ")}
         // 2. Apply the style object for the backdrop-filter.
         style={liquidGlassStyle}
         // className="max-w-fit h-1/2 mx-auto p-6 bg-transparent border-none"

@@ -13,39 +13,44 @@ import {
   DrawerTitle,
 } from "../ui/drawer";
 import { liquidGlassClasses, liquidGlassStyle } from "../ui/liquid-glass";
+import { Dispatch, SetStateAction } from "react";
 
-export default function SwipeUpDrawer() {
-  const drawerProps = {
-    isOpen: true,
-    title: "Sign In",
-    Description: "Enter your email to receive a one-time password.",
-    closeButtonText: "Skip Login",
-  };
+interface SwipeUpDrawerProps {
+  isOpen: boolean;
+  setIsOpen: Dispatch<SetStateAction<boolean>>;
+  title?: string;
+  description?: string;
+  closeButtonText?: string;
+  children?: React.ReactNode;
+}
 
+export default function SwipeUpDrawer({
+  isOpen,
+  setIsOpen,
+  title = "Hello",
+  description = "This is a description",
+  closeButtonText = "Close",
+  children,
+}: SwipeUpDrawerProps) {
   return (
     <Drawer
-      open={drawerProps.isOpen}
-      onOpenChange={close}>
+      open={isOpen}
+      onOpenChange={() => setIsOpen(false)}>
       <DrawerContent
-        className={cn(liquidGlassClasses, "max-w-fit h-1/2 mx-4 p-6  ")}
-        // 2. Apply the style object for the backdrop-filter.
+        className={cn(liquidGlassClasses, "w-100vw min-h-1/2 mx-8 p-6 ")}
         style={liquidGlassStyle}
         // className="max-w-fit h-1/2 mx-auto p-6 bg-transparent border-none"
       >
         <DrawerHeader>
           <DrawerTitle className="flex justify-center font-serif text-2xl font-semibold gap-2.5 tracking-tighter">
-            {drawerProps.title}
+            {title}
           </DrawerTitle>
-          <DrawerDescription>{drawerProps.Description}</DrawerDescription>
+          <DrawerDescription>{description}</DrawerDescription>
         </DrawerHeader>
-        {/* render children here */}
+        {children}
         <DrawerFooter>
           <DrawerClose asChild>
-            <Button
-              variant="outline"
-              onClick={close}>
-              {drawerProps.closeButtonText}
-            </Button>
+            <Button variant="outline">{closeButtonText}</Button>
           </DrawerClose>
         </DrawerFooter>
       </DrawerContent>

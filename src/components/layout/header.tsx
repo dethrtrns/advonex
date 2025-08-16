@@ -224,7 +224,8 @@ export function Header() {
                     setActiveAppSide(checkLawyer === true ? "CLIENT" : "LAWYER")
                   }
                   variant="ghost"
-                  asChild>
+                  // asChild
+                >
                   {checkLawyer === true ? (
                     <Link
                       href="/client"

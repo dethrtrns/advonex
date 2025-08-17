@@ -23,6 +23,7 @@ import {
 import { LoginStep, UseLoginHookType } from "./login-types";
 import { useEffect } from "react";
 import { LiquidButton } from "@/components/liquid-glass-button";
+import { ArrowLeftIcon, SendToBackIcon, StepBackIcon } from "lucide-react";
 
 const emailFormSchema = z.object({
   email: z.string().email({ message: "Invalid email address." }),
@@ -39,6 +40,7 @@ interface LoginFormProps {
   otp: string;
   otpSent: boolean;
   otpResendTimer: number;
+  setCurrentStep: (step: LoginStep) => void;
   setEmail: (email: string) => void;
   setOtp: (otp: string) => void;
   handleRequestOtp: (email: string) => Promise<void>;
@@ -52,6 +54,7 @@ export function LoginForm({
   otp,
   otpSent,
   otpResendTimer,
+  setCurrentStep,
   setEmail,
   setOtp,
   handleRequestOtp,
@@ -115,12 +118,12 @@ export function LoginForm({
             <LiquidButton
               type="submit"
               className="w-full"
-              disabled={loggingIn || otpSent}>
+              disabled={loggingIn}>
               {loggingIn
                 ? "Sending OTP..."
-                : otpSent
-                ? `Resend in ${otpResendTimer}s`
-                : "Request OTP"}
+                : // : otpResendTimer > 0
+                  // ? `Resend in ${otpResendTimer}s`
+                  "Request OTP"}
             </LiquidButton>
           </form>
         </Form>
@@ -128,6 +131,12 @@ export function LoginForm({
 
       {currentStep === "otp" && (
         <Form {...otpForm}>
+          <Button
+            onClick={() => setCurrentStep("email")}
+            variant={"ghost"}>
+            <ArrowLeftIcon />
+            Change Email
+          </Button>
           <form
             onSubmit={otpForm.handleSubmit(onOtpSubmit)}
             className="space-y-4">
@@ -137,6 +146,9 @@ export function LoginForm({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>One-Time Password</FormLabel>
+                  <span>
+                    {/* a button here to trigger/open the users email app*/}
+                  </span>
                   <FormControl>
                     <InputOTP
                       maxLength={6}

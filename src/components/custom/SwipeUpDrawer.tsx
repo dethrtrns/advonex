@@ -11,6 +11,7 @@ import {
   DrawerFooter,
   DrawerHeader,
   DrawerTitle,
+  DrawerTrigger,
 } from "../ui/drawer";
 import { liquidGlassClasses, liquidGlassStyle } from "../ui/liquid-glass";
 import { Dispatch, SetStateAction } from "react";
@@ -27,15 +28,16 @@ interface SwipeUpDrawerProps {
 export default function SwipeUpDrawer({
   isOpen,
   setIsOpen,
-  title = "Hello",
-  description = "This is a description",
+  title = "Awesome drawer!",
+  description = "You're in a drawer! this is optional",
   closeButtonText = "Close",
   children,
 }: SwipeUpDrawerProps) {
   return (
     <Drawer
       open={isOpen}
-      onOpenChange={() => setIsOpen(false)}>
+      onOpenChange={setIsOpen}>
+      {/* <DrawerTrigger>hey</DrawerTrigger> */}
       <DrawerContent
         className={cn(liquidGlassClasses, "w-100vw min-h-1/2 mx-8 p-6 ")}
         style={liquidGlassStyle}

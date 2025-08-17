@@ -9,6 +9,8 @@ export type UseLoginHookType = {
   otpResendTimer: number;
   open: () => void;
   close: () => void;
+  setCurrentStep: (step: LoginStep) => void;
+  setIsOpen: (isOpen: boolean) => void;
   setEmail: (email: string) => void;
   setOtp: (otp: string) => void;
   handleRequestOtp: (email: string) => Promise<void>;
@@ -16,4 +18,4 @@ export type UseLoginHookType = {
 };
 
 // Type for the login flow steps
-export type LoginStep = 'email' | 'otp';
+export type LoginStep = "email" | "otp";

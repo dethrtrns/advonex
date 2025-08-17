@@ -37,6 +37,8 @@ export function LoginModal({}: LoginModalProps) {
   const {
     isOpen,
     close,
+    setIsOpen,
+    setCurrentStep,
     currentStep,
     email,
     otp,
@@ -53,7 +55,7 @@ export function LoginModal({}: LoginModalProps) {
     return (
       <Dialog
         open={isOpen}
-        onOpenChange={close}>
+        onOpenChange={setIsOpen}>
         <DialogContent className="max-w-1/5 h-1/2 p-0 bg-transparent ">
           <LiquidCard className="flex w-full h-full py-20 px-14">
             <DialogHeader>
@@ -66,6 +68,7 @@ export function LoginModal({}: LoginModalProps) {
             </DialogHeader>
             <LoginForm
               currentStep={currentStep}
+              setCurrentStep={setCurrentStep}
               loggingIn={hook.loggingIn}
               email={email}
               otp={otp}
@@ -109,6 +112,7 @@ export function LoginModal({}: LoginModalProps) {
         <LoginForm
           currentStep={currentStep}
           loggingIn={hook.loggingIn}
+          setCurrentStep={setCurrentStep}
           email={email}
           otp={otp}
           otpSent={otpSent}

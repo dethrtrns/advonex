@@ -80,6 +80,11 @@ export const useLogin = (): UseLoginHookType => {
     [email, activeAppSide, authLogin, close]
   );
 
+  // handle any issues here when current step is changes externally via setCurrentStep exposed
+  // useEffect(() => {
+
+  // }, [currentStep]);
+
   // Timer effect for OTP resend
   useEffect(() => {
     let timer: NodeJS.Timeout;
@@ -101,6 +106,8 @@ export const useLogin = (): UseLoginHookType => {
     otpResendTimer,
     open,
     close,
+    setCurrentStep,
+    setIsOpen,
     setEmail,
     setOtp,
     handleRequestOtp,

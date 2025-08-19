@@ -6,9 +6,15 @@ import SwipeUpDrawer from "../custom/SwipeUpDrawer";
 import { useState } from "react";
 import { Button } from "../ui/button";
 import { LiquidButton } from "../liquid-glass-button";
+import { useAuth } from "@/contexts/AuthContext";
 
 export function BottomNav() {
   const [isOpen, setIsOpen] = useState(false);
+  const { activeAppSide } = useAuth();
+
+  if (activeAppSide === "LAWYER") {
+    return null;
+  }
 
   return (
     <LiquidCard className="fixed bottom-0 left-0 right-0 z-50 h-16 -m-1 rounded-none border-none  md:hidden">

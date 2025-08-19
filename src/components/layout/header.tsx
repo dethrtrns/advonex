@@ -72,7 +72,7 @@ export function Header() {
       <div
         className={cn(
           // liquidGlassClasses,
-          "fixed top-0 left-0 right-0 z-50 h-18 rounded-none border-b-1 flex items-center justify-between"
+          "fixed top-0 left-0 right-0 z-50 h-18 px-1 rounded-none border-b-1 flex items-center justify-between"
           //removed liquidGlassClasses to remove shadow-box effect. `border-none` removes simple line border when w-2/3
         )}
         // 2. Apply the style object for the backdrop-filter which gives the main liquid glass effect.
@@ -108,7 +108,7 @@ export function Header() {
         </div>
 
         <div className="flex items-center gap-4">
-          <div className="hidden md:flex items-center gap-4">
+          <div className="flex items-center gap-4">
             <ThemeToggle />
             {
               user ? (
@@ -134,11 +134,11 @@ export function Header() {
             }
           </div>
           <Button
-            className="w-fit hidden md:block"
+            className="w-fit hidden md:flex"
             onClick={() =>
               setActiveAppSide(checkLawyer === true ? "CLIENT" : "LAWYER")
             }
-            variant="ghost"
+            variant="outline"
             asChild>
             {checkLawyer === true ? (
               <Link
@@ -186,7 +186,8 @@ export function Header() {
               <nav className="flex flex-col items-center gap-8">
                 <SheetClose asChild>
                   <Link
-                    href="/client/lawyers"
+                    href="#"
+                    // href="/client/lawyers"
                     className="px-4 py-2">
                     Find Lawyers
                   </Link>

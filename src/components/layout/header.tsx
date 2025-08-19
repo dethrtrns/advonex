@@ -68,17 +68,26 @@ export function Header() {
   };
   return (
     <>
-      <LiquidCard className="fixed top-0 left-0 right-0 z-50 h-18 -m-1 rounded-none ">
-        <div className="container h-full flex items-center justify-between">
-          <div className="flex items-center px-4 gap-6">
-            <Link
-              href={`/${activeAppSide.toLocaleLowerCase()}`}
-              className="text-2xl px-4 font-serif font- tracking-tight md:text-4xl md:px-12">
-              Advonex
-              <sub className="text-foreground text-xs space-x-1.5 tracking-wide text-amber-500">{`${activeAppSide.toLocaleLowerCase()}s`}</sub>
-            </Link>
+      {/* <LiquidCard className="fixed top-0 left-0 right-0 z-50 h-18 -m-1 rounded-none "> */}
+      <div
+        className={cn(
+          // liquidGlassClasses,
+          "fixed top-0 left-0 right-0 z-50 h-18 rounded-none border-b-1 flex items-center justify-between"
+          //removed liquidGlassClasses to remove shadow-box effect. `border-none` removes simple line border when w-2/3
+        )}
+        // 2. Apply the style object for the backdrop-filter which gives the main liquid glass effect.
+        style={liquidGlassStyle}
+        // className="container h-full flex items-center justify-between"
+      >
+        <div className="flex items-center px-4 gap-6">
+          <Link
+            href={`/${activeAppSide.toLocaleLowerCase()}`}
+            className="text-2xl px-4 font-serif font- tracking-tight md:text-4xl md:px-12">
+            Advonex
+            <sub className="text-foreground text-xs space-x-1.5 tracking-wide text-amber-500">{`${activeAppSide.toLocaleLowerCase()}s`}</sub>
+          </Link>
 
-            <NavigationMenu className="hidden md:flex">
+          {/* <NavigationMenu className="hidden md:flex">
               <NavigationMenuList>
                 <NavigationMenuItem>
                   <Link
@@ -94,161 +103,157 @@ export function Header() {
                     Practice Areas
                   </Link>
                 </NavigationMenuItem>
-                {/* <span className="text-red-500">
-                  Welcome {user ? user?.email : "Guest"} to Advonex{" "}
-                  {activeAppSide} portal.
-                </span> */}
               </NavigationMenuList>
-            </NavigationMenu>
-          </div>
-
-          <div className="flex items-center gap-4">
-            <div className="hidden md:flex items-center gap-4">
-              <ThemeToggle />
-              {
-                user ? (
-                  <div>
-                    {" "}
-                    <LiquidButton
-                      variant={"destructive"}
-                      onClick={handleLogout}>
-                      {" "}
-                      Logout
-                    </LiquidButton>
-                  </div>
-                ) : (
-                  <>
-                    <LiquidButton
-                      variant={"secondary"}
-                      size={"default"}
-                      onClick={loginHook.open}>
-                      Sign In
-                    </LiquidButton>
-                  </>
-                ) // <RegisterDialog />
-              }
-            </div>
-            <Button
-              className="w-fit hidden md:block"
-              onClick={() =>
-                setActiveAppSide(checkLawyer === true ? "CLIENT" : "LAWYER")
-              }
-              variant="ghost"
-              asChild>
-              {checkLawyer === true ? (
-                <Link
-                  href="/client"
-                  className="flex items-center gap-2">
-                  <span>
-                    Go to Advonex
-                    <sub className="text-accent-foreground">clients</sub>
-                  </span>
-                </Link>
-              ) : (
-                <Link
-                  href="/lawyer"
-                  className="flex items-center gap-2">
-                  <span>Become a Lawyer</span>
-                </Link>
-              )}
-            </Button>
-
-            <Sheet>
-              <SheetTrigger
-                asChild
-                className="md:hidden">
-                <Button
-                  variant="outline"
-                  className="rounded-full mr-2 bg-background/95 backdrop-blur-2xl"
-                  size="icon">
-                  <User className="h-5 w-5" />
-                </Button>
-              </SheetTrigger>
-              <SheetContent
-                className={cn(
-                  // liquidGlassClasses,
-                  "w-full flex items-center bg-transparent"
-                  //removed liquidGlassClasses, added bg-transparent to remove shadow-box effect. `border-none` removes simple line border when w-2/3
-                )}
-                // 2. Apply the style object for the backdrop-filter which gives the main liquid glass effect.
-                style={liquidGlassStyle}
-                // className="w-full bg-transparent"
-                side="right">
-                {/* <LiquidCard className="flex items-center rounded-none -mx-1 min-h-screen"> */}
-                <SheetTitle className="text-2xl font-bold mb-4 px-4 py-4">
-                  Menu
-                </SheetTitle>
-                <nav className="flex flex-col items-center gap-8">
-                  <SheetClose asChild>
-                    <Link
-                      href="/client/lawyers"
-                      className="px-4 py-2">
-                      Find Lawyers
-                    </Link>
-                  </SheetClose>
-                  <SheetClose asChild>
-                    <Link
-                      href="#"
-                      className="px-4 py-2">
-                      Practice Areas
-                    </Link>
-                  </SheetClose>
-                  <span className="text-red-500">
-                    welcome {user ? user?.email : "Guest"}
-                  </span>
-                  <SheetClose asChild>
-                    {user ? (
-                      <div>
-                        {" "}
-                        <LiquidButton
-                          variant={"destructive"}
-                          onClick={handleLogout}>
-                          {" "}
-                          Logout
-                        </LiquidButton>
-                      </div>
-                    ) : (
-                      <div>
-                        <LiquidButton
-                          variant={"secondary"}
-                          onClick={loginHook.open}>
-                          login
-                        </LiquidButton>
-                      </div>
-                    )}
-                  </SheetClose>
-                </nav>
-                <Button
-                  className="w-fit absolute bottom-5 right-2"
-                  onClick={() =>
-                    setActiveAppSide(checkLawyer === true ? "CLIENT" : "LAWYER")
-                  }
-                  variant="ghost"
-                  // asChild
-                >
-                  {checkLawyer === true ? (
-                    <Link
-                      href="/client"
-                      className="flex items-center gap-2">
-                      <span>
-                        Go to Advonex
-                        <sub className="text-accent-foreground">clients</sub>
-                      </span>
-                    </Link>
-                  ) : (
-                    <Link
-                      href="/lawyer"
-                      className="flex items-center gap-2">
-                      <span>Become a Lawyer</span>
-                    </Link>
-                  )}
-                </Button>
-                {/* </LiquidCard> */}
-              </SheetContent>
-            </Sheet>
-          </div>
+            </NavigationMenu> */}
         </div>
-      </LiquidCard>
+
+        <div className="flex items-center gap-4">
+          <div className="hidden md:flex items-center gap-4">
+            <ThemeToggle />
+            {
+              user ? (
+                <div>
+                  {" "}
+                  <LiquidButton
+                    variant={"destructive"}
+                    onClick={handleLogout}>
+                    {" "}
+                    Logout
+                  </LiquidButton>
+                </div>
+              ) : (
+                <>
+                  <LiquidButton
+                    variant={"secondary"}
+                    size={"default"}
+                    onClick={loginHook.open}>
+                    Sign In
+                  </LiquidButton>
+                </>
+              ) // <RegisterDialog />
+            }
+          </div>
+          <Button
+            className="w-fit hidden md:block"
+            onClick={() =>
+              setActiveAppSide(checkLawyer === true ? "CLIENT" : "LAWYER")
+            }
+            variant="ghost"
+            asChild>
+            {checkLawyer === true ? (
+              <Link
+                href="/client"
+                className="flex items-center gap-2">
+                <span>
+                  Go to Advonex
+                  <sub className="text-accent-foreground">clients</sub>
+                </span>
+              </Link>
+            ) : (
+              <Link
+                href="/lawyer"
+                className="flex items-center gap-2">
+                <span>Become a Lawyer</span>
+              </Link>
+            )}
+          </Button>
+
+          <Sheet>
+            <SheetTrigger
+              asChild
+              className="md:hidden">
+              <Button
+                variant="outline"
+                className="rounded-full mr-2 bg-background/95 backdrop-blur-2xl"
+                size="icon">
+                <User className="h-5 w-5" />
+              </Button>
+            </SheetTrigger>
+            <SheetContent
+              className={cn(
+                // liquidGlassClasses,
+                "w-full flex items-center bg-transparent"
+                //removed liquidGlassClasses, added bg-transparent to remove shadow-box effect. `border-none` removes simple line border when w-2/3
+              )}
+              // 2. Apply the style object for the backdrop-filter which gives the main liquid glass effect.
+              style={liquidGlassStyle}
+              // className="w-full bg-transparent"
+              side="right">
+              {/* <LiquidCard className="flex items-center rounded-none -mx-1 min-h-screen"> */}
+              <SheetTitle className="text-2xl font-bold mb-4 px-4 py-4">
+                Menu
+              </SheetTitle>
+              <nav className="flex flex-col items-center gap-8">
+                <SheetClose asChild>
+                  <Link
+                    href="/client/lawyers"
+                    className="px-4 py-2">
+                    Find Lawyers
+                  </Link>
+                </SheetClose>
+                <SheetClose asChild>
+                  <Link
+                    href="#"
+                    className="px-4 py-2">
+                    Practice Areas
+                  </Link>
+                </SheetClose>
+                <span className="text-red-500">
+                  welcome {user ? user?.email : "Guest"}
+                </span>
+                <SheetClose asChild>
+                  {user ? (
+                    <div>
+                      {" "}
+                      <LiquidButton
+                        variant={"destructive"}
+                        onClick={handleLogout}>
+                        {" "}
+                        Logout
+                      </LiquidButton>
+                    </div>
+                  ) : (
+                    <div>
+                      <LiquidButton
+                        variant={"secondary"}
+                        onClick={loginHook.open}>
+                        login
+                      </LiquidButton>
+                    </div>
+                  )}
+                </SheetClose>
+              </nav>
+              <Button
+                className="w-fit absolute bottom-5 right-2"
+                onClick={() =>
+                  setActiveAppSide(checkLawyer === true ? "CLIENT" : "LAWYER")
+                }
+                variant="ghost"
+                // asChild
+              >
+                {checkLawyer === true ? (
+                  <Link
+                    href="/client"
+                    className="flex items-center gap-2">
+                    <span>
+                      Go to Advonex
+                      <sub className="text-accent-foreground">clients</sub>
+                    </span>
+                  </Link>
+                ) : (
+                  <Link
+                    href="/lawyer"
+                    className="flex items-center gap-2">
+                    <span>Become a Lawyer</span>
+                  </Link>
+                )}
+              </Button>
+              {/* </LiquidCard> */}
+            </SheetContent>
+          </Sheet>
+        </div>
+      </div>
+      {/* </LiquidCard> */}
     </>
   );
 }

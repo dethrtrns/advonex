@@ -2,15 +2,6 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import {
   Form,
   FormControl,
@@ -22,26 +13,15 @@ import {
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
-  Lawyer,
-  getLawyerProfile,
   updateLawyerProfile,
-} from "@/services/lawyerService"; // Import updateLawyerProfile
+} from "@/services/lawyerService";
 import { Loader } from "lucide-react";
 import { toast } from "sonner";
-import { indianLocations } from "@/data/indianLocations/locations";
-// import { practiceAreas } from "@/data/pacticeAreas/pacticeAreas";
-import { ImageUpload } from "@/components/ui/image-upload";
 import { useAuth } from "@/contexts/AuthContext";
 import { redirect, useRouter } from "next/navigation";
-import FileUpload from "@/components/kokonutui/file-upload";
 import { LiquidCard } from "@/components/liquid-glass-card";
-import Areas from "@/app/client/areas/page";
-import {
-  bringPracticeAreas,
-  practiceArea,
-} from "@/data/pacticeAreas/pacticeAreas";
 
 import { PhotoUpload } from "./components/PhotoUpload";
 import { NameInputs } from "./components/NameInputs";
@@ -82,55 +62,32 @@ export const formSchema = z.object({
 });
 
 export default function LawyerRegistrationPage() {
-  // const [isLoading, setIsLoading] = useState(false); // check if can be used else remove
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [practiceAreasList, setPracticeAreasList] = useState<practiceArea[]>(
-    []
-  );
   const { user, isAuthenticated } = useAuth();
   const router = useRouter();
   const profileId = user?.profileIds.lawyerId as string | null;
-
-  useEffect(() => {
-    const fetchAndSetPracticeAreas = async () => {
-      try {
-        const areas = await bringPracticeAreas();
-        setPracticeAreasList(areas);
-        console.log("Practice areas fetched:", areas);
-      } catch (error) {
-        console.error("Error fetching practice areas:", error);
-      }
-    };
-
-    fetchAndSetPracticeAreas();
-  }, []);
 
   // TODO: get this value from profile for now or in jwt(lawyerRegistrationPending) after backend production sync.
   //  if(!lawyerRegistrationPending) {
   //   redirect('/lawyer/dashboard');
   //  }
 
-  // logs for dev info
-  console.log("User object:", user);
-  console.log("Profile ID:", profileId);
-  console.log("User authenticated:", !!user);
-
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       firstName: "",
       lastName: "",
-      state: Object.keys(indianLocations)[0],
+      state: "",
       city: "",
-      barNumber: "", // Fix: changed barId to barNumber to match schema
+      barNumber: "",
       practiceArea: "",
       experience: 0,
       bio: "",
       consultFee: 0,
       primaryCourt: "",
-      lawSchool: "", // Fix: changed institution to lawSchool
+      lawSchool: "",
       degree: "",
-      graduationYear: undefined, // Fix: changed year to graduationYear
+      graduationYear: undefined,
       photo: "",
     },
   });
@@ -144,7 +101,6 @@ export default function LawyerRegistrationPage() {
 
   if (!user) {
     console.log("User is not Authenticated!");
-    // alert("Please login to continue!");
     redirect("/"); //FIX this!
     return null;
   }
@@ -198,15 +154,11 @@ export default function LawyerRegistrationPage() {
   return (
     <div className="space-y-8">
       <h1>Register Form</h1>
-      {/* <NameFieldInput />
-      <barIdFieldInput /> */}
 
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
           className="space-y-6">
-          
-
           <PhotoUpload control={form.control} />
 
           <LiquidCard>

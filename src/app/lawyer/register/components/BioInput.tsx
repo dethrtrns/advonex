@@ -8,7 +8,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { Control } from "react-hook-form";
 import * as z from "zod";
-import { formSchema } from "../page";
+import { formSchema } from "../page.old";
 
 interface BioInputProps {
   control: Control<z.infer<typeof formSchema>>;

@@ -8,7 +8,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Control } from "react-hook-form";
 import * as z from "zod";
-import { formSchema } from "../page";
+import { formSchema } from "../page.old";
 
 interface PrimaryCourtInputProps {
   control: Control<z.infer<typeof formSchema>>;
@@ -23,7 +23,10 @@ export function PrimaryCourtInput({ control }: PrimaryCourtInputProps) {
         <FormItem>
           <FormLabel>Primary Court</FormLabel>
           <FormControl>
-            <Input placeholder="e.g., Family Court" {...field} />
+            <Input
+              placeholder="e.g., Family Court"
+              {...field}
+            />
           </FormControl>
           <FormMessage />
         </FormItem>

@@ -15,15 +15,20 @@ import {
 } from "@/components/ui/select";
 import { Control } from "react-hook-form";
 import * as z from "zod";
-import { formSchema } from "../page";
+import { formSchema } from "../page.old";
 import { useEffect, useState } from "react";
-import { bringPracticeAreas, practiceArea } from "@/data/pacticeAreas/pacticeAreas";
+import {
+  bringPracticeAreas,
+  practiceArea,
+} from "@/data/pacticeAreas/pacticeAreas";
 
 interface ProfessionalInfoInputsProps {
   control: Control<z.infer<typeof formSchema>>;
 }
 
-export function ProfessionalInfoInputs({ control }: ProfessionalInfoInputsProps) {
+export function ProfessionalInfoInputs({
+  control,
+}: ProfessionalInfoInputsProps) {
   const [practiceAreasList, setPracticeAreasList] = useState<practiceArea[]>(
     []
   );
@@ -51,7 +56,10 @@ export function ProfessionalInfoInputs({ control }: ProfessionalInfoInputsProps)
           <FormItem>
             <FormLabel>Bar Number</FormLabel>
             <FormControl>
-              <Input placeholder="Enter your bar number" {...field} />
+              <Input
+                placeholder="Enter your bar number"
+                {...field}
+              />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -63,7 +71,9 @@ export function ProfessionalInfoInputs({ control }: ProfessionalInfoInputsProps)
         render={({ field }) => (
           <FormItem>
             <FormLabel>Primary Practice Area</FormLabel>
-            <Select onValueChange={field.onChange} value={field.value}>
+            <Select
+              onValueChange={field.onChange}
+              value={field.value}>
               <FormControl>
                 <SelectTrigger>
                   <SelectValue placeholder="Select your primary practice area" />
@@ -71,7 +81,9 @@ export function ProfessionalInfoInputs({ control }: ProfessionalInfoInputsProps)
               </FormControl>
               <SelectContent>
                 {practiceAreasList.map((area) => (
-                  <SelectItem key={area.id} value={area.id}>
+                  <SelectItem
+                    key={area.id}
+                    value={area.id}>
                     {area.name}
                   </SelectItem>
                 ))}

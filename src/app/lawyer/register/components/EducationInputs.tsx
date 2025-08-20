@@ -8,7 +8,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Control } from "react-hook-form";
 import * as z from "zod";
-import { formSchema } from "../page";
+import { formSchema } from "../page.old";
 
 interface EducationInputsProps {
   control: Control<z.infer<typeof formSchema>>;
@@ -24,7 +24,10 @@ export function EducationInputs({ control }: EducationInputsProps) {
           <FormItem>
             <FormLabel>Law School</FormLabel>
             <FormControl>
-              <Input placeholder="Enter your law school name" {...field} />
+              <Input
+                placeholder="Enter your law school name"
+                {...field}
+              />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -38,7 +41,10 @@ export function EducationInputs({ control }: EducationInputsProps) {
             <FormItem>
               <FormLabel>Degree</FormLabel>
               <FormControl>
-                <Input placeholder="e.g., Juris Doctor (J.D.)" {...field} />
+                <Input
+                  placeholder="e.g., Juris Doctor (J.D.)"
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>

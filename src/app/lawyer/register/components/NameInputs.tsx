@@ -8,7 +8,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Control } from "react-hook-form";
 import * as z from "zod";
-import { formSchema } from "../page";
+import { formSchema } from "../page.old";
 
 interface NameInputsProps {
   control: Control<z.infer<typeof formSchema>>;
@@ -24,7 +24,10 @@ export function NameInputs({ control }: NameInputsProps) {
           <FormItem>
             <FormLabel>First Name</FormLabel>
             <FormControl>
-              <Input placeholder="Enter your first name" {...field} />
+              <Input
+                placeholder="Enter your first name"
+                {...field}
+              />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -37,7 +40,10 @@ export function NameInputs({ control }: NameInputsProps) {
           <FormItem>
             <FormLabel>Last Name</FormLabel>
             <FormControl>
-              <Input placeholder="Enter your last name" {...field} />
+              <Input
+                placeholder="Enter your last name"
+                {...field}
+              />
             </FormControl>
             <FormMessage />
           </FormItem>

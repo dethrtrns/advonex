@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/select";
 import { Control } from "react-hook-form";
 import * as z from "zod";
-import { formSchema } from "../page";
+import { formSchema } from "../page.old";
 import { indianLocations } from "@/data/indianLocations/locations";
 import { useFormContext } from "react-hook-form";
 
@@ -34,19 +34,25 @@ export function LocationInputs({ control }: LocationInputsProps) {
         render={({ field }) => (
           <FormItem>
             <FormLabel>State</FormLabel>
-            <Select onValueChange={field.onChange} value={field.value}>
+            <Select
+              onValueChange={field.onChange}
+              value={field.value}>
               <FormControl>
                 <SelectTrigger>
                   <SelectValue
                     placeholder={
-                      field.value === "" ? "Select your state" : "select your state"
+                      field.value === ""
+                        ? "Select your state"
+                        : "select your state"
                     }
                   />
                 </SelectTrigger>
               </FormControl>
               <SelectContent>
                 {Object.keys(indianLocations).map((state) => (
-                  <SelectItem key={state} value={state}>
+                  <SelectItem
+                    key={state}
+                    value={state}>
                     {state}
                   </SelectItem>
                 ))}
@@ -65,19 +71,24 @@ export function LocationInputs({ control }: LocationInputsProps) {
             <Select
               onValueChange={field.onChange}
               value={field.value}
-              disabled={!selectedState}
-            >
+              disabled={!selectedState}>
               <FormControl>
                 <SelectTrigger>
                   <SelectValue
-                    placeholder={selectedState ? "Select your city" : "Select a state first"}
+                    placeholder={
+                      selectedState
+                        ? "Select your city"
+                        : "Select a state first"
+                    }
                   />
                 </SelectTrigger>
               </FormControl>
               <SelectContent>
                 {selectedState &&
                   indianLocations[selectedState].map((city) => (
-                    <SelectItem key={city} value={city}>
+                    <SelectItem
+                      key={city}
+                      value={city}>
                       {city}
                     </SelectItem>
                   ))}

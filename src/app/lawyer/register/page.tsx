@@ -31,12 +31,17 @@ import {
 import { Loader } from "lucide-react";
 import { toast } from "sonner";
 import { indianLocations } from "@/data/indianLocations/locations";
-import { practiceAreas } from "@/data/pacticeAreas/pacticeAreas";
+// import { practiceAreas } from "@/data/pacticeAreas/pacticeAreas";
 import { ImageUpload } from "@/components/ui/image-upload";
 import { useAuth } from "@/contexts/AuthContext";
 import { redirect, useRouter } from "next/navigation";
 import FileUpload from "@/components/kokonutui/file-upload";
 import { LiquidCard } from "@/components/liquid-glass-card";
+import Areas from "@/app/client/areas/page";
+import {
+  bringPracticeAreas,
+  practiceArea,
+} from "@/data/pacticeAreas/pacticeAreas";
 
 // INFO: all number fields should be limited to max 32-bit signed integer limit, e.i. 2,147,483,647 as that's default in backend db
 const formSchema = z.object({
@@ -71,9 +76,26 @@ const formSchema = z.object({
 export default function LawyerRegistrationPage() {
   // const [isLoading, setIsLoading] = useState(false); // check if can be used else remove
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [practiceAreasList, setPracticeAreasList] = useState<practiceArea[]>(
+    []
+  );
   const { user, isAuthenticated } = useAuth();
   const router = useRouter();
   const profileId = user?.profileIds.lawyerId as string | null;
+
+  useEffect(() => {
+    const fetchAndSetPracticeAreas = async () => {
+      try {
+        const areas = await bringPracticeAreas();
+        setPracticeAreasList(areas);
+        console.log("Practice areas fetched:", areas);
+      } catch (error) {
+        console.error("Error fetching practice areas:", error);
+      }
+    };
+
+    fetchAndSetPracticeAreas();
+  }, []);
 
   // TODO: get this value from profile for now or in jwt(lawyerRegistrationPending) after backend production sync.
   //  if(!lawyerRegistrationPending) {
@@ -168,6 +190,9 @@ export default function LawyerRegistrationPage() {
   return (
     <div className="space-y-8">
       <h1>Register Form</h1>
+      {/* <NameFieldInput />
+      <barIdFieldInput /> */}
+
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
@@ -354,11 +379,11 @@ export default function LawyerRegistrationPage() {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {practiceAreas.map((area) => (
+                        {practiceAreasList.map((area) => (
                           <SelectItem
-                            key={area}
-                            value={area.toLowerCase().replace(/ /g, "-")}>
-                            {area}
+                            key={area.id}
+                            value={area.id}>
+                            {area.name}
                           </SelectItem>
                         ))}
                       </SelectContent>

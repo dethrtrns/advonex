@@ -35,9 +35,11 @@ export default function Areas() {
     const fetchPracticeAreas = async () => {
       try {
         //fetch real areas from ezzy API here
-        const response = await fetch("/api/practice-areas");
+        const response = await fetch(
+          "https://advonex-api.ai-fied.com/static-data/practice-areas"
+        );
         const data = await response.json();
-        setPracticeAreas(data);
+        setPracticeAreas(data.data);
       } catch (error) {
         console.error("Error fetching practice areas:", error);
       } finally {
@@ -55,7 +57,7 @@ export default function Areas() {
         {practiceAreas.map((area) => (
           <LiquidCard key={area.name}>
             <CardContent className="flex flex-col items-center text-center p-6">
-              <area.icon className="h-12 w-12 mb-4 text-primary" />
+              {/* <area.icon className="h-12 w-12 mb-4 text-primary" /> */}
               <h3 className="font-semibold mb-2">{area.name}</h3>
               <p className="text-sm text-muted-foreground">
                 {area.description}

@@ -63,7 +63,14 @@ export function EducationInputs({ control }: EducationInputsProps) {
                   max={new Date().getFullYear()}
                   placeholder="Enter graduation year"
                   {...field}
-                  onChange={(e) => field.onChange(Number(e.target.value))}
+                  // Use an empty string for the input's value if the form state is null
+                  value={field.value ?? ""}
+                  // When changing, update the form state to null if input is empty
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    // Use null for empty state, otherwise parse to an integer
+                    field.onChange(value === "" ? null : parseInt(value, 10));
+                  }}
                 />
               </FormControl>
               <FormMessage />

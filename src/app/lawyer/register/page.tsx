@@ -102,7 +102,7 @@ export default function LawyerRegistrationPage() {
       // Transform form data to match API structure (UpdateLawyer interface: Different from lawyer interface)
       const transformedData = {
         name: `${values.firstName} ${values.lastName}`,
-        location: `${values.city}, ${values.state}`,
+        locationId: values.city, // ✅ cityId from dropdown
         barId: values.barNumber,
         experience: values.experience,
         bio: values.bio,

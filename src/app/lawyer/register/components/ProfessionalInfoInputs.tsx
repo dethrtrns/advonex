@@ -1,3 +1,5 @@
+"use client";
+
 import {
   FormControl,
   FormField,
@@ -17,38 +19,48 @@ import { Control } from "react-hook-form";
 import * as z from "zod";
 import { formSchema } from "../page.old";
 import { useEffect, useState } from "react";
-import {
-  bringPracticeAreas,
-  practiceArea,
-} from "@/data/pacticeAreas/pacticeAreas";
 
 interface ProfessionalInfoInputsProps {
   control: Control<z.infer<typeof formSchema>>;
 }
 
+interface PracticeArea {
+  id: string;
+  name: string;
+  description?: string;
+}
+
 export function ProfessionalInfoInputs({
   control,
 }: ProfessionalInfoInputsProps) {
-  const [practiceAreasList, setPracticeAreasList] = useState<practiceArea[]>(
+  const [practiceAreasList, setPracticeAreasList] = useState<PracticeArea[]>(
     []
   );
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    const fetchAndSetPracticeAreas = async () => {
+    const fetchPracticeAreas = async () => {
+      setLoading(true);
       try {
-        const areas = await bringPracticeAreas();
-        setPracticeAreasList(areas);
-        console.log("Practice areas fetched:", areas);
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_BASE_BACKEND_URL}/static-data/practice-areas`
+        );
+        const json = await res.json();
+        setPracticeAreasList(json.data || []);
       } catch (error) {
         console.error("Error fetching practice areas:", error);
+        setPracticeAreasList([]);
+      } finally {
+        setLoading(false);
       }
     };
 
-    fetchAndSetPracticeAreas();
+    fetchPracticeAreas();
   }, []);
 
   return (
     <>
+      {/* Bar Number */}
       <FormField
         control={control}
         name="barNumber"
@@ -65,6 +77,8 @@ export function ProfessionalInfoInputs({
           </FormItem>
         )}
       />
+
+      {/* Practice Area */}
       <FormField
         control={control}
         name="practiceArea"
@@ -73,10 +87,16 @@ export function ProfessionalInfoInputs({
             <FormLabel>Primary Practice Area</FormLabel>
             <Select
               onValueChange={field.onChange}
-              value={field.value}>
+              value={field.value || ""}>
               <FormControl>
                 <SelectTrigger>
-                  <SelectValue placeholder="Select your primary practice area" />
+                  <SelectValue
+                    placeholder={
+                      loading
+                        ? "Loading practice areas..."
+                        : "Select your primary practice area"
+                    }
+                  />
                 </SelectTrigger>
               </FormControl>
               <SelectContent>
@@ -93,6 +113,8 @@ export function ProfessionalInfoInputs({
           </FormItem>
         )}
       />
+
+      {/* Years of Experience */}
       <FormField
         control={control}
         name="experience"
@@ -112,6 +134,8 @@ export function ProfessionalInfoInputs({
           </FormItem>
         )}
       />
+
+      {/* Consultation Fee */}
       <FormField
         control={control}
         name="consultFee"

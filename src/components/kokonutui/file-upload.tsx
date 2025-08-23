@@ -29,7 +29,7 @@ interface FileError {
 }
 
 interface FileUploadProps {
-    onUploadSuccess?: (file: File) => void;
+    onUploadSuccess?: (fileUrl: string) => void;
     onUploadError?: (error: FileError) => void;
     acceptedFileTypes?: string[];
     maxFileSize?: number;
@@ -413,7 +413,7 @@ export default function FileUpload({
                     setProgress(0);
                     setStatus("idle");
                     setFile(null);
-                    onUploadSuccess?.(uploadingFile);
+                    onUploadSuccess?.(`https://example.com/${uploadingFile.name}`);
                 } else {
                     setStatus((prevStatus) => {
                         if (prevStatus === "uploading") {

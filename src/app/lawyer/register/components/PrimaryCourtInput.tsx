@@ -8,16 +8,10 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Control } from "react-hook-form";
 import * as z from "zod";
 import { formSchema } from "../page.old";
+import MultipleSelector, { Option } from "@/components/ui/multiselect";
 
 interface PrimaryCourtInputProps {
   control: Control<z.infer<typeof formSchema>>;
@@ -29,7 +23,7 @@ interface Court {
 }
 
 export function PrimaryCourtInput({ control }: PrimaryCourtInputProps) {
-  const [courts, setCourts] = useState<Court[]>([]);
+  const [courtOptions, setCourtOptions] = useState<Option[]>([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -40,10 +34,14 @@ export function PrimaryCourtInput({ control }: PrimaryCourtInputProps) {
           `${process.env.NEXT_PUBLIC_BASE_BACKEND_URL}/static-data/courts`
         );
         const json = await res.json();
-        setCourts(json.data || []);
+        const options: Option[] = (json.data || []).map((court: Court) => ({
+          label: court.name,
+          value: court.id,
+        }));
+        setCourtOptions(options);
       } catch (err) {
         console.error("Error fetching courts:", err);
-        setCourts([]);
+        setCourtOptions([]);
       } finally {
         setLoading(false);
       }
@@ -59,28 +57,39 @@ export function PrimaryCourtInput({ control }: PrimaryCourtInputProps) {
       render={({ field }) => (
         <FormItem>
           <FormLabel>Primary Court</FormLabel>
-          <Select
-            onValueChange={field.onChange}
-            value={field.value || ""}>
-            <FormControl>
-              <SelectTrigger>
-                <SelectValue
-                  placeholder={
-                    loading ? "Loading courts..." : "Select your primary court"
-                  }
-                />
-              </SelectTrigger>
-            </FormControl>
-            <SelectContent>
-              {courts.map((court) => (
-                <SelectItem
-                  key={court.id}
-                  value={court.id}>
-                  {court.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <FormControl>
+            <MultipleSelector
+              options={courtOptions} // 👈 add this
+              defaultOptions={courtOptions}
+              value={
+                field.value
+                  ? courtOptions.filter((c) => c.value === field.value)
+                  : []
+              }
+              onChange={(selected) => {
+                // MultipleSelector gives array of Option objects
+                field.onChange(selected.length > 0 ? selected[0].value : "");
+              }}
+              placeholder={
+                loading ? "Loading courts..." : "Select your primary court"
+              }
+              emptyIndicator={
+                <p className="text-center text-sm">No courts found</p>
+              }
+              maxSelected={1} // single select
+              // onSearchSync={(inputValue) =>
+              //   courtOptions.filter((c) =>
+              //     c.label.toLowerCase().includes(inputValue.toLowerCase())
+              //   )
+              // }
+              onSearchSync={(inputValue) => {
+                if (!inputValue) return courtOptions;
+                return courtOptions.filter((c) =>
+                  c.label.toLowerCase().includes(inputValue.toLowerCase())
+                );
+              }}
+            />
+          </FormControl>
           <FormMessage />
         </FormItem>
       )}

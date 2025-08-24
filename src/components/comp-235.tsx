@@ -1,5 +1,5 @@
-import { Label } from "@/components/ui/label"
-import MultipleSelector, { Option } from "@/components/ui/multiselect"
+import { Label } from "@/components/ui/label";
+import MultipleSelector, { Option } from "@/components/ui/multiselect";
 
 const frameworks: Option[] = [
   {
@@ -66,9 +66,9 @@ const frameworks: Option[] = [
     value: "lit",
     label: "Lit",
   },
-]
+];
 
-export default function Component() {
+export default function DemoMultiselectWithPlaceholderAndClear() {
   return (
     <div className="*:not-first:mt-2">
       <Label>Multiselect with placeholder and clear</Label>
@@ -83,18 +83,16 @@ export default function Component() {
       <p
         className="text-muted-foreground mt-2 text-xs"
         role="region"
-        aria-live="polite"
-      >
+        aria-live="polite">
         Inspired by{" "}
         <a
           className="hover:text-foreground underline"
           href="https://shadcnui-expansions.typeart.cc/docs/multiple-selector"
           target="_blank"
-          rel="noopener nofollow"
-        >
+          rel="noopener nofollow">
           shadcn/ui expansions
         </a>
       </p>
     </div>
-  )
+  );
 }

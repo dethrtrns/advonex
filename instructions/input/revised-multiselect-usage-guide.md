@@ -38,13 +38,12 @@ interface Option {
 }
 
 
-Usage Examples
-1. Simple Single Select (with search)
-Use case: when you need to select one item from a moderate list.
+### Usage Examples
 
-tsx
-Copy
-Edit
+#### 1. Simple Single Select (with search)
+*Use case: when you need to select one item from a moderate list.*
+
+```tsx
 <MultipleSelector
   options={[
     { label: "High Court", value: "high" },
@@ -56,18 +55,18 @@ Edit
   maxSelected={1}
   placeholder="Select a court..."
 />
-👉 Explanation:
+```
 
-maxSelected={1} ensures only one option can be picked.
+> **👉 Explanation:**
+> - `maxSelected={1}` ensures only one option can be picked.
+> - Since `value` is always an array, we map `[selected]` when something is picked.
 
-Since value is always an array, we map [selected] when something is picked.
+---
 
-2. Multi Select (tags style)
-Use case: selecting multiple categories, tags, or skills.
+#### 2. Multi Select (tags style)
+*Use case: selecting multiple categories, tags, or skills.*
 
-tsx
-Copy
-Edit
+```tsx
 <MultipleSelector
   options={[
     { label: "Civil", value: "civil" },
@@ -78,42 +77,42 @@ Edit
   onChange={setSelectedOptions}
   placeholder="Choose categories..."
 />
-👉 Explanation:
+```
 
-Multiple options can be chosen.
+> **👉 Explanation:**
+> - Multiple options can be chosen.
+> - `value` is simply the array of chosen `Options`.
 
-value is simply the array of chosen Options.
+---
 
-3. Async Search (server-side filtering)
-Use case: searching thousands of records efficiently (delegated to backend).
+#### 3. Async Search (server-side filtering)
+*Use case: searching thousands of records efficiently (delegated to backend).*
 
-tsx
-Copy
-Edit
+```tsx
 <MultipleSelector
   options={[]}
   defaultOptions={[]}
   value={selected}
   onChange={setSelected}
   onSearch={async (query) => {
-    const res = await fetch(`/api/courts?search=${query}`)
-    const data = await res.json()
-    return data.map((c: any) => ({ label: c.name, value: c.id }))
+    const res = await fetch(`/api/courts?search=${query}`);
+    const data = await res.json();
+    return data.map((c: any) => ({ label: c.name, value: c.id }));
   }}
   placeholder="Type to search courts..."
 />
-👉 Explanation:
+```
 
-No preloaded options.
+> **👉 Explanation:**
+> - No preloaded `options`.
+> - Each keystroke triggers a backend search.
 
-Each keystroke triggers backend search.
+---
 
-4. Sync Search (client-side filtering)
-Use case: filtering from a preloaded dataset (like 200 courts).
+#### 4. Sync Search (client-side filtering)
+*Use case: filtering from a preloaded dataset (like 200 courts).*
 
-tsx
-Copy
-Edit
+```tsx
 <MultipleSelector
   options={allCourts}
   defaultOptions={allCourts}
@@ -126,18 +125,18 @@ Edit
   }
   placeholder="Search courts..."
 />
-👉 Explanation:
+```
 
-Filters results locally in the browser.
+> **👉 Explanation:**
+> - Filters results locally in the browser.
+> - Best for up to a few hundred items.
 
-Best for up to a few hundred items.
+---
 
-5. Disabled Options
-Use case: prevent certain items from being selectable.
+#### 5. Disabled Options
+*Use case: prevent certain items from being selectable.*
 
-tsx
-Copy
-Edit
+```tsx
 <MultipleSelector
   options={[
     { label: "Civil", value: "civil" },
@@ -146,15 +145,18 @@ Edit
   value={selected}
   onChange={setSelected}
 />
-👉 Explanation:
+```
 
-disable: true prevents interaction with the "Criminal" option.
+> **👉 Explanation:**
+> - `disable: true` prevents interaction with the "Criminal" option.
 
-Integration with React Hook Form (RHF)
-Single Select (RHF controlled)
-tsx
-Copy
-Edit
+---
+
+### Integration with React Hook Form (RHF)
+
+#### Single Select (RHF controlled)
+
+```tsx
 <FormField
   control={control}
   name="primaryCourt"
@@ -183,16 +185,17 @@ Edit
     </FormItem>
   )}
 />
-👉 Explanation:
+```
 
-We map field.value (string from RHF) into an array of matching Option.
+> **👉 Explanation:**
+> - We map `field.value` (a string from RHF) into an array of matching `Option`.
+> - On change, we set RHF’s value back to just the selected `.value`.
 
-On change, we set RHF’s value back to just the selected .value.
+---
 
-When to Use
-✅ Use MultipleSelector for large datasets with search (courts, cities, laws, practice areas).
+### When to Use
 
-✅ Works well for both single and multiple select.
-
-❌ Avoid it for very small option sets (2–5 items) → use a simpler Select instead.
+- ✅ Use `MultipleSelector` for large datasets with search (courts, cities, laws, practice areas).
+- ✅ Works well for both single and multiple select.
+- ❌ Avoid it for very small option sets (2–5 items) → use a simpler `Select` instead.
 ```

@@ -21,6 +21,7 @@ import { ProfessionalInfoInputs } from "./components/ProfessionalInfoInputs";
 import { PrimaryCourtInput } from "./components/PrimaryCourtInput";
 import { BioInput } from "./components/BioInput";
 import { EducationInputs } from "./components/EducationInputs";
+import { SecondaryCourtsInput } from "./components/SecondaryCourtsInput";
 
 // INFO: all number fields should be limited to max 32-bit signed integer limit, e.i. 2,147,483,647 as that's default in backend db
 export const formSchema = z.object({
@@ -45,6 +46,7 @@ export const formSchema = z.object({
     .min(1900, "Invalid graduation year")
     .max(new Date().getFullYear(), "Graduation year cannot be in the future"),
   primaryCourt: z.string().min(1, "At least one practice court is required"),
+  secondaryCourts: z.array(z.string()).optional(),
   consultFee: z
     .number()
     .min(50, "Consultation fee must be 50 or greater")
@@ -76,6 +78,7 @@ export default function LawyerRegistrationPage() {
       bio: "",
       consultFee: 0,
       primaryCourt: "",
+      secondaryCourts: [],
       lawSchool: "",
       degree: "",
       graduationYear: undefined,
@@ -108,7 +111,10 @@ export default function LawyerRegistrationPage() {
         bio: values.bio,
         consultFee: values.consultFee,
         specialization: values.practiceArea,
-        primaryCourt: values.primaryCourt,
+        primaryCourt: values.primaryCourt, // temp fix input to send name string here, current backend doesn't support id
+        practiceCourts: values.secondaryCourts?.map((court) => ({
+          name: court,
+        })), // update backend to accept array of {id:'...uuid...'} then update this and input component to set option.value instead of option.label
         registrationPending: false,
         education: {
           institution: values.lawSchool,
@@ -121,7 +127,7 @@ export default function LawyerRegistrationPage() {
       console.log("Updating profile with:", transformedData);
 
       // Call the service function
-      const updatedProfile = await updateLawyerProfile(transformedData);
+      const updatedProfile = await updateLawyerProfile(transformedData); // Fix ts interface for this
       console.log("Profile updated:", updatedProfile);
       toast.success("Profile updated successfully");
       router.push("/lawyer/dashboard");
@@ -169,6 +175,7 @@ export default function LawyerRegistrationPage() {
             <CardContent className="space-y-4">
               <ProfessionalInfoInputs control={form.control} />
               <PrimaryCourtInput control={form.control} />
+              <SecondaryCourtsInput control={form.control} />
               <BioInput control={form.control} />
             </CardContent>
           </LiquidCard>

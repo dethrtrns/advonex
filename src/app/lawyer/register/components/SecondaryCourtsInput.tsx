@@ -10,10 +10,10 @@ import {
 } from "@/components/ui/form";
 import { Control } from "react-hook-form";
 import * as z from "zod";
-import { formSchema } from "../page.old";
+import { formSchema } from "../page"; // adjust if schema moved
 import MultipleSelector, { Option } from "@/components/ui/multiselect";
 
-interface PrimaryCourtInputProps {
+interface SecondaryCourtsInputProps {
   control: Control<z.infer<typeof formSchema>>;
 }
 
@@ -22,7 +22,7 @@ interface Court {
   name: string;
 }
 
-export function PrimaryCourtInput({ control }: PrimaryCourtInputProps) {
+export function SecondaryCourtsInput({ control }: SecondaryCourtsInputProps) {
   const [courtOptions, setCourtOptions] = useState<Option[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -53,43 +53,31 @@ export function PrimaryCourtInput({ control }: PrimaryCourtInputProps) {
   return (
     <FormField
       control={control}
-      name="primaryCourt"
+      name="secondaryCourts"
       render={({ field }) => (
         <FormItem>
-          <FormLabel>Primary Court</FormLabel>
+          <FormLabel>Secondary Courts</FormLabel>
           <FormControl>
             <MultipleSelector
-              options={courtOptions} // 👈 add this
+              options={courtOptions}
               defaultOptions={courtOptions}
-              value={
-                field.value
-                  ? courtOptions.filter((c) => c.value === field.value)
-                  : []
+              value={courtOptions.filter((c) =>
+                (field.value ?? []).includes(c.value)
+              )}
+              onChange={(selected) =>
+                field.onChange(selected.map((s) => s.value))
               }
-              onChange={(selected) => {
-                // MultipleSelector gives array of Option objects
-                field.onChange(selected.length > 0 ? selected[0].value : "");
-              }}
               placeholder={
-                loading ? "Loading courts..." : "Select your primary court"
+                loading ? "Loading courts..." : "Select secondary courts"
               }
               emptyIndicator={
-                <p className="text-center text-red-400 text-sm">
-                  No courts found
-                </p>
+                <p className="text-center text-sm">No courts found</p>
               }
-              maxSelected={1} // single select
-              // onSearchSync={(inputValue) =>
-              //   courtOptions.filter((c) =>
-              //     c.label.toLowerCase().includes(inputValue.toLowerCase())
-              //   )
-              // }
-              // onSearchSync={(inputValue) => {
-              //   if (!inputValue) return courtOptions;
-              //   return courtOptions.filter((c) =>
-              //     c.label.toLowerCase().includes(inputValue.toLowerCase())
-              //   );
-              // }}
+              onSearchSync={(query) =>
+                courtOptions.filter((c) =>
+                  c.label.toLowerCase().includes(query.toLowerCase())
+                )
+              }
             />
           </FormControl>
           <FormMessage />

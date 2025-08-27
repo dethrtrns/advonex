@@ -22,6 +22,7 @@ import { PrimaryCourtInput } from "./components/PrimaryCourtInput";
 import { BioInput } from "./components/BioInput";
 import { EducationInputs } from "./components/EducationInputs";
 import { SecondaryCourtsInput } from "./components/SecondaryCourtsInput";
+import { SecondaryPracticeAreasInput } from "./components/SecondaryPracticeAreasInput";
 
 // INFO: all number fields should be limited to max 32-bit signed integer limit, e.i. 2,147,483,647 as that's default in backend db
 export const formSchema = z.object({
@@ -47,6 +48,11 @@ export const formSchema = z.object({
     .max(new Date().getFullYear(), "Graduation year cannot be in the future"),
   primaryCourt: z.string().min(1, "At least one practice court is required"),
   secondaryCourts: z.array(z.string()).optional(),
+  secondaryPracticeAreas: z
+    .array(
+      z.object({ id: z.string(), name: z.string(), description: z.string() })
+    )
+    .optional(),
   consultFee: z
     .number()
     .min(50, "Consultation fee must be 50 or greater")
@@ -79,6 +85,7 @@ export default function LawyerRegistrationPage() {
       consultFee: 0,
       primaryCourt: "",
       secondaryCourts: [],
+      secondaryPracticeAreas: [],
       lawSchool: "",
       degree: "",
       graduationYear: undefined,
@@ -115,6 +122,10 @@ export default function LawyerRegistrationPage() {
         practiceCourts: values.secondaryCourts?.map((court) => ({
           name: court,
         })), // update backend to accept array of {id:'...uuid...'} then update this and input component to set option.value instead of option.label
+        practiceAreas: values.secondaryPracticeAreas?.map((a) => ({
+          name: a.name,
+          description: a.description,
+        })),
         registrationPending: false,
         education: {
           institution: values.lawSchool,
@@ -174,6 +185,7 @@ export default function LawyerRegistrationPage() {
             </CardHeader>
             <CardContent className="space-y-4">
               <ProfessionalInfoInputs control={form.control} />
+              <SecondaryPracticeAreasInput control={form.control} />
               <PrimaryCourtInput control={form.control} />
               <SecondaryCourtsInput control={form.control} />
               <BioInput control={form.control} />

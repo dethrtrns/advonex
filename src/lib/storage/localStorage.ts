@@ -1,3 +1,4 @@
+import { get } from "http";
 import { isJwtexpired, refreshTokens } from "../backend/auth";
 
 // Function(async await) to get access token from local storage or refresh it if jwt is expired
@@ -8,10 +9,12 @@ export async function getAccessToken() {
       return null;
     }   
     
-    let accessToken = localStorage.getItem('accessToken');
-  
+  let accessToken = localStorage.getItem('accessToken');
+  let lawyerAccessToken = localStorage.getItem('lawyerAccessToken');
+  let clientAccessToken = localStorage.getItem('clientAccessToken');
+  let refreshToken = getRefreshToken();
 
-    if (!accessToken || isJwtexpired(accessToken)) {
+    if (refreshToken && (!accessToken || isJwtexpired(accessToken))) {
         try {
           const responseFromRefreshService = await refreshTokens();
           if(responseFromRefreshService) {
@@ -24,8 +27,10 @@ export async function getAccessToken() {
         } catch (error) {
           console.error('Failed to refresh token:', error);
         }
-      }
-    return accessToken;
+    }
+
+  return {accessToken, lawyerAccessToken, clientAccessToken};
+
 }
 
 

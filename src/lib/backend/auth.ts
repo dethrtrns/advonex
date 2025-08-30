@@ -1,4 +1,4 @@
-import { handleApiError } from "../common/commonUtils";
+import { getUserFromToken, handleApiError } from "../common/commonUtils";
 import { toast } from "sonner";
 import { getAccessToken, getRefreshToken } from "../storage/localStorage";
 import {
@@ -41,7 +41,7 @@ export async function requestOtpOnEmail(
   }
 }
 
-// Function to verify Email OTP and get tokens
+// Function to verify Email OTP and get tokens & stores them in local storage
 export async function verifyEmailOtp(
   params: VerifyEmailOtpParams
 ): Promise<VerifyOtpEmailResponse> {
@@ -74,16 +74,29 @@ export async function verifyEmailOtp(
       otpVerifyResponse.data
     );
 
-    // Store access token in memory
-    // accessToken = otpVerifyResponse.data.accessToken;
+    const user = getUserFromToken(otpVerifyResponse.data.accessToken);
+     // Store access token in memory, Based on user role from access token
+    if (user?.roles.includes("LAWYER")) {
+      localStorage.setItem("lawyerAccessToken", otpVerifyResponse.data.accessToken);
+      console.log("Access token stored as lawyerAccessToken in localStorage");
+    }
 
-    // Store refresh token securely
+    if (user?.roles.includes("CLIENT")) {
+      localStorage.setItem("clientAccessToken", otpVerifyResponse.data.accessToken);
+      console.log("Access token stored as clientAccessToken in localStorage");
+    }
+    // else {
+    //   localStorage.setItem("accessToken", otpVerifyResponse.data.accessToken);
+    //   console.log("Access token stored in localStorage without specific role");
+    // }
+
+    // Store refresh token securely: TO-DO: implement http only cookie from backend
 
     localStorage.setItem("refreshToken", otpVerifyResponse.data.refreshToken);
 
     // Store access token in memory
 
-    localStorage.setItem("accessToken", otpVerifyResponse.data.accessToken);
+    // localStorage.setItem("accessToken", otpVerifyResponse.data.accessToken);
 
     toast.success("Authentication successful!");
     return otpVerifyResponse;
@@ -157,15 +170,23 @@ export async function refreshTokens(): Promise<RefreshResponse | null> {
     localStorage.removeItem("refreshToken");
     localStorage.removeItem("accessToken");
 
-    // Store new tokens from response.data
-    if (responseData.data && responseData.data.accessToken) {
-      localStorage.setItem("accessToken", responseData.data.accessToken);
+    // Store new tokens from response.data 
+    // Check Api res structure(data {}, message or just {data})
+   const user = getUserFromToken(responseData.data.accessToken);
+     // Store access token in memory, Based on user role from response data (Not access token decode; Although it should be the same)
+    if (user?.roles.includes("LAWYER")) {
+      localStorage.setItem("lawyerAccessToken", responseData.data.accessToken);
+      console.log("Access token stored as lawyerAccessToken in localStorage");
     }
 
-    if (responseData.data && responseData.data.refreshToken) {
-      localStorage.setItem("refreshToken", responseData.data.refreshToken);
+    if (user?.roles.includes("CLIENT")) {
+      localStorage.setItem("clientAccessToken", responseData.data.accessToken);
+      console.log("Access token stored as clientAccessToken in localStorage");
     }
-
+    // else {
+    //   localStorage.setItem("accessToken", responseData.data.accessToken);
+    //   console.log("Access token stored in localStorage without specific role");
+    // }
     return responseData;
   } catch (error) {
     handleApiError(error, "Error refreshing tokens");

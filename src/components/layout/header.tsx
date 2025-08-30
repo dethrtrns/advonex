@@ -16,7 +16,7 @@ import { Menu, TypeOutline, User } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
 // import { RegisterDialog } from "@/components/auth/register-dialog";
 import Link from "next/link";
-import { isLawyerRoute } from "@/lib/checkLawyerRoute";
+// import { isLawyerRoute } from "@/lib/checkLawyerRoute";
 import { useAuth } from "@/contexts/AuthContext";
 import { useState } from "react";
 import { redirect } from "next/navigation";
@@ -81,7 +81,8 @@ export function Header() {
       >
         <div className="flex items-center px-4 gap-6">
           <Link
-            href={`/${activeAppSide.toLocaleLowerCase()}`}
+            href={`/${activeAppSide.toLocaleLowerCase()}`} //fix
+            // href={`/${activeAppSide === "LAWYER" ? "lawyer" : "client"}`} 
             className="text-2xl px-4 font-serif font- tracking-tight md:text-4xl md:px-12">
             Advonex
             <sub className="text-foreground text-xs space-x-1.5 tracking-wide text-amber-500">{`${activeAppSide.toLocaleLowerCase()}s`}</sub>
@@ -111,7 +112,7 @@ export function Header() {
           <div className="flex items-center gap-4">
             <ThemeToggle />
             {
-              user ? (
+              isAuthenticated ? (
                 <div>
                   {" "}
                   <LiquidButton
@@ -203,7 +204,7 @@ export function Header() {
                   welcome {user ? user?.email : "Guest"}
                 </span>
                 <SheetClose asChild>
-                  {user ? (
+                  {isAuthenticated ? (
                     <div>
                       {" "}
                       <LiquidButton

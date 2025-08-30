@@ -13,15 +13,30 @@ import {
   UserIcon,
 } from "lucide-react";
 import { redirect } from "next/navigation";
+import { useEffect } from "react";
+import { toast, Toaster } from "sonner";
+
+
 
 export default function LawyerDashboardPage() {
-  const { user, isAuthenticated } = useAuth();
-
-  // if(!isAuthenticated) {
-  //   redirect('/lawyer');
+  // if (isAuthenticating) {
+  //   return <div>Loading...</div>;
   // }
+  // console.log("Is Authenticated:", isAuthenticated);
+ const { user, isAuthenticated, isAuthenticating } = useAuth();
 
-  return (
+
+  if (isAuthenticated === false && isAuthenticating === false) {
+  
+    console.log("Please login as a lawyer to continue");
+    // redirect('/lawyer');
+  }
+ 
+  
+  
+
+
+  return (isAuthenticated) ? (
     <div>
       {/* <h1>Dashboard</h1>
       <h2>Welcome {user?.email || 'Guest'}</h2> */}
@@ -82,6 +97,12 @@ export default function LawyerDashboardPage() {
           </TabsContent>
         </Tabs>
       </div>
+    </div>
+  ) : (
+    <div>
+      <h1>Access Denied</h1>
+        <p>You must be logged in as a lawyer to view this page.</p>
+        <button onClick={() => redirect('/lawyer')}>Back to home </button>
     </div>
   );
 }

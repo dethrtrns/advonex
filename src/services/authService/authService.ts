@@ -190,10 +190,20 @@ export async function verifyEmailOtp(
 
     localStorage.setItem("refreshToken", otpVerifyResponse.data.refreshToken);
 
-    // Store access token in memory
+    // Store access token in memory, Based on user role from response data (Not access token decode; Although it should be the same)
+    if (otpVerifyResponse.data.user.roles.includes("LAWYER")) {
+      localStorage.setItem("lawyerAccessToken", otpVerifyResponse.data.accessToken);
+      console.log("Access token stored as lawyerAccessToken in localStorage");
+    }
 
-    localStorage.setItem("accessToken", otpVerifyResponse.data.accessToken);
-
+    if (otpVerifyResponse.data.user.roles.includes("CLIENT")) {
+      localStorage.setItem("clientAccessToken", otpVerifyResponse.data.accessToken);
+      console.log("Access token stored as clientAccessToken in localStorage");
+    }
+    else {
+      localStorage.setItem("accessToken", otpVerifyResponse.data.accessToken);
+      console.log("Access token stored in localStorage without specific role");
+    }
     toast.success("Authentication successful!");
     return otpVerifyResponse;
   } catch (error) {

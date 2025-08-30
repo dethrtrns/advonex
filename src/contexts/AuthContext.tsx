@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState, useEffect, act } from "react";
 import { getCurrentUserFromToken } from "@/services/authService/authService";
 import { getAccessToken } from "@/lib/storage/localStorage";
 import { isJwtexpired } from "@/lib/backend/auth";
@@ -10,6 +10,8 @@ import {
 } from "@/lib/common/commonUtils";
 import { UserDataFromJwtPayload } from "@/lib/types/types";
 import { usePathname } from "next/navigation";
+import { set } from "react-hook-form";
+import { toast } from "sonner";
 
 // Define the auth context type
 // This context manages the global authentication state
@@ -41,7 +43,7 @@ const AuthContext = createContext<AuthContextType>({
   user: null,
   isAuthenticating: false,
   isAuthenticated: false,
-  activeAppSide: "CLIENT",
+  activeAppSide: "CLIENT" ,
   logout: () => {},
   login: () => {},
   setActiveAppSide: () => {},
@@ -56,10 +58,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<UserDataFromJwtPayload | null>(null);
   const [isAuthenticating, setisAuthenticating] = useState(false);
   const [isAuthenticated, setisAuthenticated] = useState(false);
-  const [activeAppSide, setActiveAppSide] = useState<"LAWYER" | "CLIENT">(
-    "CLIENT"
-  );
   const pathname = usePathname();
+  const [activeAppSide, setActiveAppSide] = useState<"LAWYER" | "CLIENT">( (pathname.startsWith("/lawyer")) ? "LAWYER" : "CLIENT"
+  );
 
   // temp logout, just app state not localstorage.
   const resetAppLoginState = () => {
@@ -68,14 +69,53 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // setActiveAppSide("CLIENT");
   };
 
+// Function to set the active AppSide state by checking the current url path for /lawyer or /client and set the active AppSide accordingly only if that AppSide is present in user.AppSides array.
+  const setActiveAppSideByUrl = () => {
+    if (pathname) {
+      //check if pathname contains /lawyer or /client
+      if (pathname.startsWith("/lawyer")) {
+        setActiveAppSide("LAWYER");
+        console.log(`pathname: ${pathname}`);
+      } else if (pathname.startsWith("/client")) {
+        setActiveAppSide("CLIENT");
+      }
+    } else {
+      console.error("pathname is null");
+      return;
+    }
+  };
+  
   const login = async (token: string) => {
     try {
       setisAuthenticating(true);
       const userInfo = getUserFromToken(token);
-      setUser(userInfo);
-      setisAuthenticated(true);
-      // Set active AppSide based on URL
-      setActiveAppSideByUrl();
+      console.log("User roles from token:", userInfo?.roles);
+      console.log("Active AppSide:", activeAppSide);
+      // Role based login
+      // if((userInfo?.roles.includes("LAWYER") && activeAppSide==="LAWYER")) {
+      //   setisAuthenticated(true);
+
+      //   // Set active AppSide based on URL
+      //   setActiveAppSideByUrl();
+      // }
+      // if ((pathname.startsWith("/lawyer")) && !userInfo?.roles.includes("LAWYER")) {
+      //   setisAuthenticated(false);
+      //   setUser(null);
+      //   console.log("User does not have a lawyer role but is trying to access lawyer resources.");
+      //   return;
+      // } else
+      //   if ((pathname.startsWith("/client")) && !userInfo?.roles.includes("CLIENT")) {
+      //   setisAuthenticated(false);
+      //   setUser(null);
+      //     console.log("User does not have a client role but is trying to access client resources.");
+      //     return;
+      // } 
+        setisAuthenticated(true);
+        setUser(userInfo);
+        // Set active AppSide based on URL
+        setActiveAppSideByUrl();
+      
+
     } catch (error) {
       console.error("Error during login:", error);
       setisAuthenticated(false);
@@ -84,21 +124,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  // Function to set the active AppSide state by checking the current url path for /lawyer or /client and set the active AppSide accordingly only if that AppSide is present in user.AppSides array.
-  const setActiveAppSideByUrl = () => {
-    if (pathname) {
-      //check if pathname contains /lawyer or /client
-      if (pathname.includes("/lawyer")) {
-        setActiveAppSide("LAWYER");
-        console.log(`pathname: ${pathname}`);
-      } else if (pathname.includes("/client")) {
-        setActiveAppSide("CLIENT");
-      }
-    } else {
-      console.error("pathname is null");
-      return;
-    }
-  };
+  
 
   // Handle logout
   const logout = async () => {
@@ -121,14 +147,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const authInit = async () => {
       try {
         setisAuthenticating(true);
+        console.log("Authentication initializing...");
         setActiveAppSideByUrl();
 
         // Try to get current access token
-        const token = await getAccessToken(); // this will also check for expired token or null token and try to refresh.
-
-        if (token) {
+        let token = await getAccessToken() ; // this will also check for expired token or null token and try to refresh.
+        // Role based login
+        console.log("Active app side:", activeAppSide);
+        console.log("Tokens from localStorage:", token);
+        // We can use this type of code logic for improved DX
+        // if (activeAppSide === "LAWYER") {
+        //   token = token?.lawyerAccessToken;
+        // }
+        if ((token?.clientAccessToken && activeAppSide === "CLIENT") || (token?.lawyerAccessToken && activeAppSide === "LAWYER")) {
+          
+          let lawyerOrClientToken = activeAppSide === "CLIENT" ? token?.clientAccessToken : token?.lawyerAccessToken;
+          if(!lawyerOrClientToken) {
+            console.error(`No ${activeAppSide} access token found in localStorage`);
+            setisAuthenticated(false);
+            setUser(null);
+            return;
+          }
           // if token is valid then Log in user
-          login(token);
+          login(lawyerOrClientToken);
           console.log(`logged in successfully via authInit`);
 
           // Set authentication state
@@ -174,6 +215,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         console.error("Auth initialization error:", error);
       } finally {
         setisAuthenticating(false);
+          console.log("Authentication successfully completed");
         // console.info(`activeAppSide: ${activeAppSide} from authInit`);
       }
     };

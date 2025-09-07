@@ -47,9 +47,9 @@ export default function ClientLandingPage() {
           Connect with qualified legal professionals <br /> across various
           practice areas
         </p>
-        <LiquidButton>
-          <Link href="/client/lawyers">Find Lawyers</Link>
-        </LiquidButton>
+        <Link href="/client/lawyers">
+          <LiquidButton>Find Lawyers</LiquidButton>
+        </Link>
       </section>
 
       <section className="relative w-full max-w-6xl mx-auto px-4  overflow-hidden">

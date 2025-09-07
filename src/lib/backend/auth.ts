@@ -130,6 +130,7 @@ export async function refreshTokens(): Promise<RefreshResponse | null> {
     const refreshToken = getRefreshToken();
 
     if (!refreshToken) {
+      // Remove throw error and add maybe console.warn or something because it's Not a breaking error
       throw new Error(
         "No refresh token available in localStorage.Session expired. Please login again via OTP verification."
       );

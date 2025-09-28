@@ -1,5 +1,7 @@
+// "use client";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { Inspector } from "react-dev-inspector";
 import { Header } from "@/components/layout/header";
 import { BottomNav } from "@/components/layout/bottom-nav";
 import { ThemeProvider } from "@/components/theme-provider";
@@ -9,6 +11,7 @@ import { LoginProvider } from "@/contexts/LoginContext";
 import { LoginModal } from "@/hooks/login/login-modal";
 import { Toaster } from "@/components/ui/sonner";
 import { GlassFilter } from "@/components/ui/liquid-glass";
+import { Fragment } from "react";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,12 +34,15 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const Wrapper = process.env.NODE_ENV === "development" ? Inspector : Fragment;
+
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <AuthProvider>
           <LoginProvider>
             <ThemeProvider defaultTheme="dark">
+              {/* <Wrapper> */}
               <Header />
               <main className="container mx-auto px-4 py-16 md:py-20">
                 {children}
@@ -45,6 +51,7 @@ export default function RootLayout({
               <LoginModal />
               <Toaster />
               <GlassFilter />
+              {/* </Wrapper> */}
             </ThemeProvider>
           </LoginProvider>
         </AuthProvider>

@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
+    "ezzydev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
@@ -55,6 +56,7 @@
     "eslint": "^9",
     "eslint-config-next": "15.2.1",
     "prisma": "^6.5.0",
+    "react-dev-inspector": "1.8.1",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

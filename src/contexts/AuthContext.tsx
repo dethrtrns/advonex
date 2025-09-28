@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { getCurrentUserFromToken } from "@/services/authService/authService";
-import { getAccessToken } from "@/lib/storage/localStorage";
+import { getAccessToken, getRefreshToken } from "@/lib/storage/localStorage";
 import { isJwtexpired } from "@/lib/backend/auth";
 import {
   extractPayloadFromJwt,
@@ -10,10 +10,24 @@ import {
 } from "@/lib/common/commonUtils";
 import { UserDataFromJwtPayload } from "@/lib/types/types";
 import { usePathname } from "next/navigation";
+import { toast } from "sonner";
+import {
+  deleteRefreshCookie,
+  getRefreshTokenFromCookie,
+  getRefreshTokenFromCookieByBackend,
+  setRefreshCookieByNext,
+} from "@/lib/storage/cookieStorage";
+
+import { cookies } from "next/headers";
 
 // Define the auth context type
 // This context manages the global authentication state
 // It handles token storage, user information, and automatic token refresh
+// Currently the hook renders on Page refresh and activeAppSide (determined by pathname)
+// To implement(maybe):
+//  activeAppSide only set by the "Go to lawyer/client" btn
+// isAuthenticating  true => Loader div; Which can MAYBE cause problem in server side components (Hydration error)
+// sol)we can try: Either make all the pages "use client" or we can use the loader div inside our components by using the isAuthenticating
 
 // Key features:
 // 1. Stores user information (id, AppSide)
@@ -54,12 +68,13 @@ export const useAuth = () => useContext(AuthContext);
 // Provider component
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<UserDataFromJwtPayload | null>(null);
-  const [isAuthenticating, setisAuthenticating] = useState(false);
+  const [isAuthenticating, setisAuthenticating] = useState(true);
   const [isAuthenticated, setisAuthenticated] = useState(false);
-  const [activeAppSide, setActiveAppSide] = useState<"LAWYER" | "CLIENT">(
-    "CLIENT"
-  );
   const pathname = usePathname();
+
+  const [activeAppSide, setActiveAppSide] = useState<"LAWYER" | "CLIENT">(
+    pathname.startsWith("/client") ? "CLIENT" : "LAWYER"
+  );
 
   // temp logout, just app state not localstorage.
   const resetAppLoginState = () => {
@@ -72,10 +87,44 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       setisAuthenticating(true);
       const userInfo = getUserFromToken(token);
-      setUser(userInfo);
-      setisAuthenticated(true);
+      if (activeAppSide === "LAWYER" && userInfo?.roles.includes("LAWYER")) {
+        setUser(userInfo);
+        setisAuthenticated(true);
+        console.log(
+          `logged in with role ${userInfo?.roles} on ${activeAppSide} side of the app(Lawyer)`
+        );
+        return;
+      } else if (
+        activeAppSide === "CLIENT" &&
+        userInfo?.roles.includes("CLIENT")
+      ) {
+        setUser(userInfo);
+        setisAuthenticated(true);
+        console.log(
+          `logged in with role ${userInfo?.roles} on ${activeAppSide} side of the app(client)`
+        );
+        return;
+      }
+
+      setUser(null);
+      setisAuthenticated(false);
+      console.warn(
+        "User with role " +
+          userInfo?.roles +
+          ": Can NOT login " +
+          activeAppSide +
+          " side of the app. Please login with correct role."
+      );
+      toast.warning(
+        "User with role " +
+          userInfo?.roles +
+          ": Can NOT login " +
+          activeAppSide +
+          " side of the app. Please login with correct role."
+      );
+
       // Set active AppSide based on URL
-      setActiveAppSideByUrl();
+      // setActiveAppSideByUrl();
     } catch (error) {
       console.error("Error during login:", error);
       setisAuthenticated(false);
@@ -85,28 +134,31 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   // Function to set the active AppSide state by checking the current url path for /lawyer or /client and set the active AppSide accordingly only if that AppSide is present in user.AppSides array.
-  const setActiveAppSideByUrl = () => {
-    if (pathname) {
-      //check if pathname contains /lawyer or /client
-      if (pathname.includes("/lawyer")) {
-        setActiveAppSide("LAWYER");
-        console.log(`pathname: ${pathname}`);
-      } else if (pathname.includes("/client")) {
-        setActiveAppSide("CLIENT");
-      }
-    } else {
-      console.error("pathname is null");
-      return;
-    }
-  };
+  // const setActiveAppSideByUrl = () => {
+  //   if (pathname) {
+  //     //check if pathname contains /lawyer or /client
+  //     if (pathname.startsWith("/lawyer")) {
+  //       setActiveAppSide("LAWYER");
+  //       console.log(`pathname: ${pathname}`);
+  //     } else if (pathname.startsWith("/client")) {
+  //       setActiveAppSide("CLIENT");
+  //     }
+  //   } else {
+  //     console.error("pathname is null");
+  //     return;
+  //   }
+  // };
 
   // Handle logout
   const logout = async () => {
     try {
       // Clear user state and local storage
       setUser(null);
+      // LOGOUT ENDPOINT bkend
       localStorage.removeItem("accessToken");
-      localStorage.removeItem("refreshToken");
+      // localStorage.removeItem("refreshToken");
+      // deleteRefreshCookie();
+
       setisAuthenticated(false);
     } catch (error) {
       console.error("Error during logout:", error);
@@ -120,16 +172,38 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // Function to initialize authentication state
     const authInit = async () => {
       try {
+        console.log("authInit starts now...");
         setisAuthenticating(true);
-        setActiveAppSideByUrl();
+        // REMOVED setActiveAppSideByUrl: The setActiveAppSideByUrl logic is provided in the useState(...logic) default state;
+        //to solve: The ActiveAppSide was delaying running the authContext in our pages OR authContext Ran twice: 1st with default ActiveAppSide ...then few secs later with the updated state by setActiveAppSideByUrl()
+        // setActiveAppSideByUrl();
 
         // Try to get current access token
         const token = await getAccessToken(); // this will also check for expired token or null token and try to refresh.
-
         if (token) {
           // if token is valid then Log in user
           login(token);
-          console.log(`logged in successfully via authInit`);
+          console.log(`loginByRole function completed`);
+          // Set cookie testing
+          const freshToken = await getRefreshTokenFromCookieByBackend();
+          // if (freshToken) {
+          //   console.log(
+          //     "Found cookie set by backend; Now setting it by frontend(next)"
+          //   );
+          //   setRefreshCookieByNext(freshToken);
+          // }
+
+          console.log(
+            "Found cookie set by backend; here's the cookie?(by authContext) ",
+            freshToken
+          );
+
+          const httpToken = await getRefreshTokenFromCookie();
+
+          console.log(
+            "Found http token in NextCookie(by authContext): ",
+            httpToken
+          );
 
           // Set authentication state
 
@@ -179,7 +253,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
 
     authInit();
-  }, []);
+  }, [activeAppSide]); // Currently the authInit hook runs only when activeAppSide changes or On initial mount(prolly...)
 
   const value = {
     user,

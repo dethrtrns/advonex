@@ -23,7 +23,10 @@ import { Button } from "@/components/ui/button";
 import { updateLawyerProfile } from "@/services/lawyerService";
 import { toast } from "sonner";
 import { useEffect, useState } from "react";
-import { bringPracticeAreas, practiceArea } from "@/data/pacticeAreas/pacticeAreas";
+import {
+  bringPracticeAreas,
+  practiceArea,
+} from "@/data/pacticeAreas/pacticeAreas";
 
 const schema = z.object({
   barNumber: z.string().min(1, "Bar number is required"),
@@ -56,7 +59,9 @@ export function ProfessionalInfoInputs({
     defaultValues: initialValues,
   });
 
-  const [practiceAreasList, setPracticeAreasList] = useState<practiceArea[]>([]);
+  const [practiceAreasList, setPracticeAreasList] = useState<practiceArea[]>(
+    []
+  );
 
   useEffect(() => {
     const fetchAndSetPracticeAreas = async () => {
@@ -78,7 +83,7 @@ export function ProfessionalInfoInputs({
           barId: values.barNumber,
           experience: values.experience,
           consultFee: values.consultFee,
-          specialization: values.practiceArea,
+          specialization: { id: values.practiceArea },
         });
         toast.success("Professional info updated");
       } catch {
@@ -91,7 +96,9 @@ export function ProfessionalInfoInputs({
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+      <form
+        onSubmit={form.handleSubmit(handleSubmit)}
+        className="space-y-4">
         <FormField
           control={form.control}
           name="barNumber"
@@ -99,7 +106,10 @@ export function ProfessionalInfoInputs({
             <FormItem>
               <FormLabel>Bar Number</FormLabel>
               <FormControl>
-                <Input placeholder="Enter your bar number" {...field} />
+                <Input
+                  placeholder="Enter your bar number"
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -111,7 +121,9 @@ export function ProfessionalInfoInputs({
           render={({ field }) => (
             <FormItem>
               <FormLabel>Primary Practice Area</FormLabel>
-              <Select onValueChange={field.onChange} value={field.value}>
+              <Select
+                onValueChange={field.onChange}
+                value={field.value}>
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder="Select your primary practice area" />
@@ -119,7 +131,9 @@ export function ProfessionalInfoInputs({
                 </FormControl>
                 <SelectContent>
                   {practiceAreasList.map((area) => (
-                    <SelectItem key={area.id} value={area.id}>
+                    <SelectItem
+                      key={area.id}
+                      value={area.id}>
                       {area.name}
                     </SelectItem>
                   ))}
@@ -167,9 +181,7 @@ export function ProfessionalInfoInputs({
             </FormItem>
           )}
         />
-        {submitMode === "internal" && (
-          <Button type="submit">Save</Button>
-        )}
+        {submitMode === "internal" && <Button type="submit">Save</Button>}
       </form>
     </Form>
   );

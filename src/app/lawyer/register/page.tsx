@@ -48,11 +48,7 @@ export const formSchema = z.object({
     .max(new Date().getFullYear(), "Graduation year cannot be in the future"),
   primaryCourt: z.string().min(1, "At least one practice court is required"),
   secondaryCourts: z.array(z.string()).optional(),
-  secondaryPracticeAreas: z
-    .array(
-      z.object({ id: z.string(), name: z.string(), description: z.string() })
-    )
-    .optional(),
+  secondaryPracticeAreas: z.array(z.string()).optional(),
   consultFee: z
     .number()
     .min(50, "Consultation fee must be 50 or greater")
@@ -67,10 +63,14 @@ export default function LawyerRegistrationPage() {
   const profileId = user?.profileIds.lawyerId as string | null;
 
   // TODO: get this value from profile for now or in jwt(lawyerRegistrationPending) after backend production sync.
-  //  if(!lawyerRegistrationPending) {
-  //   redirect('/lawyer/dashboard');
-  //  }
+  if (!user?.lawyerRegistrationPending) {
+    redirect("/lawyer/dashboard");
+  }
 
+  if (!isAuthenticated) {
+    console.warn("user Not authenticated; Please login to continue");
+    // Add toast or Login modal here
+  }
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -112,19 +112,19 @@ export default function LawyerRegistrationPage() {
       // Transform form data to match API structure (UpdateLawyer interface: Different from lawyer interface)
       const transformedData = {
         name: `${values.firstName} ${values.lastName}`,
-        locationId: values.city, // ✅ cityId from dropdown
+        // locationId: values.city, // ✅ cityId from dropdown
+        location: { city: { id: values.city } },
         barId: values.barNumber,
         experience: values.experience,
         bio: values.bio,
         consultFee: values.consultFee,
-        specialization: values.practiceArea,
-        primaryCourt: values.primaryCourt, // temp fix input to send name string here, current backend doesn't support id
-        practiceCourts: values.secondaryCourts?.map((court) => ({
-          name: court,
+        specialization: { id: values.practiceArea },
+        primaryCourt: { id: values.primaryCourt }, // temp fix input to send name string here, current backend doesn't support id
+        practiceCourts: values.secondaryCourts?.map((courtId) => ({
+          id: courtId,
         })), // update backend to accept array of {id:'...uuid...'} then update this and input component to set option.value instead of option.label
-        practiceAreas: values.secondaryPracticeAreas?.map((a) => ({
-          name: a.name,
-          description: a.description,
+        practiceAreas: values.secondaryPracticeAreas?.map((areaId) => ({
+          id: areaId,
         })),
         registrationPending: false,
         education: {

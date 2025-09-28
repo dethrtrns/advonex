@@ -36,7 +36,7 @@ export function PrimaryCourtInput({ control }: PrimaryCourtInputProps) {
         const json = await res.json();
         const options: Option[] = (json.data || []).map((court: Court) => ({
           label: court.name,
-          value: court.name, // temp changed id to name till backend fixed to support id
+          value: court.id, // temp changed id to name till backend fixed to support id
         }));
         setCourtOptions(options);
       } catch (err) {

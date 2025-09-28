@@ -44,7 +44,7 @@ export function SecondaryPracticeAreasInput({
         const options: Option[] = (json.data || []).map(
           (area: PracticeArea) => ({
             label: area.name,
-            value: area,
+            value: area.id,
           })
         );
         setPracticeAreaOptions(options);

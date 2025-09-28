@@ -111,7 +111,8 @@ export function Header() {
           <div className="flex items-center gap-4">
             <ThemeToggle />
             {
-              user ? (
+              // Changes from User to isAuthenticated based condition
+              isAuthenticated ? (
                 <div>
                   {" "}
                   <LiquidButton

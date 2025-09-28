@@ -10,6 +10,10 @@ import {
   VerifyEmailOtpParams,
   VerifyOtpEmailResponse,
 } from "../types/types";
+import {
+  getRefreshTokenFromCookie,
+  setRefreshCookieByNext,
+} from "../storage/cookieStorage";
 
 // Function to request Email OTP
 export async function requestOtpOnEmail(
@@ -58,6 +62,7 @@ export async function verifyEmailOtp(
           otp: params.otp,
           role: params.role.toUpperCase(),
         }),
+        // credentials: "include",
       }
     );
 
@@ -67,18 +72,34 @@ export async function verifyEmailOtp(
       console.log(response);
       throw new Error(errorData.message || "Failed to verify OTP");
     }
+    // YT/Ideal implementation: Backend should set thecookie and front to "include: credentials" for the refresh API req. or frontend should extract token from cookie-set-by-bkend & store it again as cookie
+    // const setCookieHeader = response.headers.get("Set-Cookie");
+
+    // if (setCookieHeader) {
+    //   const refreshToken = setCookieHeader.split(";")[0].split("=")[1];
+    //   setRefreshCookieByNext(refreshToken);
+    // }
 
     const otpVerifyResponse = await response.json();
     console.log(
       "OTP verification successful(from API)",
-      otpVerifyResponse.data
+      otpVerifyResponse.data.accessToken
     );
 
-    // Store access token in memory
-    // accessToken = otpVerifyResponse.data.accessToken;
+    // Clear old tokens first
+    console.log("Clearing previous tokens");
+    localStorage.removeItem("refreshToken");
+    localStorage.removeItem("accessToken");
 
     // Store refresh token securely
 
+    // Temp. implementation: Get token from res data & store it in next cookie
+    const refreshToken = await otpVerifyResponse.data.refreshToken;
+    if (refreshToken) {
+      console.log("Found http cookie set by backend", refreshToken);
+      setRefreshCookieByNext(refreshToken);
+    }
+    // Remove this when cookie setup works
     localStorage.setItem("refreshToken", otpVerifyResponse.data.refreshToken);
 
     // Store access token in memory
@@ -127,13 +148,17 @@ export async function getFullUserDataFromAuthMeViaAccessToken(): Promise<UserDat
 // Function to refresh tokens
 export async function refreshTokens(): Promise<RefreshResponse | null> {
   try {
-    const refreshToken = getRefreshToken();
-
+    const refreshToken = await getRefreshTokenFromCookie();
+    // const refreshToken = await getRefreshToken();
+    console.log("Found toekn in cookieByNext: ", refreshToken);
+    //Currently working with only local storage token
     if (!refreshToken) {
       // Remove throw error and add maybe console.warn or something because it's Not a breaking error
-      throw new Error(
-        "No refresh token available in localStorage.Session expired. Please login again via OTP verification."
+      console.warn(
+        "No refresh token available in HTTP cookie.Session expired. Please login again via OTP verification."
       );
+      //Clear any remaining tokens...
+      return null;
     }
 
     const response = await fetch(
@@ -155,6 +180,7 @@ export async function refreshTokens(): Promise<RefreshResponse | null> {
       ); //show the api response message in this case.
     }
     // Clear old tokens first
+    console.log("Clearing old Access and refresh tokens");
     localStorage.removeItem("refreshToken");
     localStorage.removeItem("accessToken");
 

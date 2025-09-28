@@ -1,4 +1,7 @@
+"use client";
+
 import { isJwtexpired, refreshTokens } from "../backend/auth";
+import { getRefreshTokenFromCookie } from "./cookieStorage";
 
 // Function(async await) to get access token from local storage or refresh it if jwt is expired
 
@@ -9,20 +12,26 @@ export async function getAccessToken() {
   }
 
   let accessToken = localStorage.getItem("accessToken");
+  const refreshToken = await getRefreshTokenFromCookie();
 
-  if (!accessToken || isJwtexpired(accessToken)) {
+  if (!accessToken || (isJwtexpired(accessToken) && refreshToken)) {
     try {
+      console.log("No or Expired access token found; Attempting to refresh");
       const responseFromRefreshService = await refreshTokens();
       if (responseFromRefreshService) {
         accessToken = responseFromRefreshService.data.accessToken;
         console.info("Access token retrieved via refresh token service.");
       } else {
-        console.error("Failed to refresh token: No authData received.");
+        console.warn("Failed to refresh token: No authData received.");
         return null;
       }
     } catch (error) {
-      console.error("Failed to refresh token:", error);
+      console.warn("Failed to refresh token:", error);
     }
+  }
+
+  if (!accessToken && !refreshToken) {
+    console.warn("Neither access nor Refresh token found; Please login ");
   }
   return accessToken;
 }

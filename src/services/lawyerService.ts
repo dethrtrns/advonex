@@ -20,50 +20,76 @@ export interface Education {
   lawyerProfileId?: string;
 }
 
-export interface PracticeCourts {
-  practiceCourt: {
-    id?: string;
-    name: string;
-    location?: string;
-  };
+export interface PracticeCourt {
+  id?: string;
+  name?: string;
+  location?: Location;
 }
-export interface practiceAreas {
-  practiceArea: {
+export interface practiceCourtsFromRes {
+  practiceCourt: PracticeCourt;
+}
+export interface practiceArea {
+  id?: string;
+  name?: string;
+  description?: string;
+}
+
+export interface practiceAreasFromRes {
+  practiceArea: practiceArea;
+}
+
+export interface Location {
+  id?: string;
+  address?: string;
+  latitude?: number;
+  longitude?: number;
+  city: {
     id?: string;
-    name: string;
-    description?: string;
+    name?: string;
+    state?: {
+      id?: string;
+      name?: string;
+      country?: {
+        id: string;
+        name: string;
+      };
+    };
   };
 }
 
 export interface UpdateLawyer {
-  name: string;
-  photo: string;
-  location: string;
-  experience: number;
-  bio: string;
-  consultFee: number;
-  barId: string;
-  specialization: string;
-
-  primaryCourt: string;
-  education?: Education;
-  services: Service[];
-}
-
-export interface Lawyer {
   id: string;
   name: string;
   photo: string;
-  location: string;
+  location: Location;
   experience: number;
   bio: string;
   consultFee: number;
   barId?: string;
   isVerified: boolean;
   specialization?: NamedEntity;
-  practiceAreas: practiceAreas[];
+  practiceAreas?: practiceArea[];
   primaryCourt: NamedEntity;
-  practiceCourts: PracticeCourts[];
+  practiceCourts?: PracticeCourt[];
+  education?: Education;
+  services?: Service[];
+}
+
+export interface Lawyer {
+  id: string;
+  name: string;
+  photo: string;
+  location: Location;
+  experience: number;
+  bio: string;
+  consultFee: number;
+  barId?: string;
+  isVerified: boolean;
+  registrationPending: boolean;
+  specialization?: NamedEntity;
+  practiceAreas: practiceAreasFromRes[];
+  primaryCourt: NamedEntity;
+  practiceCourts: practiceCourtsFromRes[];
   education?: Education;
   services: Service[];
   createdAt: string;

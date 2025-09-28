@@ -1,13 +1,14 @@
 "use client";
 import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+// import { Button } from "@/components/ui/button";
+// import { Input } from "@/components/ui/input";
 import { Search, MapPin, Filter, Briefcase, Loader } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { getLawyersList, type Lawyer } from "@/services/lawyerService"; // Update import to use service types
 
 import { LiquidCard } from "@/components/liquid-glass-card";
+import Image from "next/image";
 export default function LawyersDirectory() {
   const [lawyers, setLawyers] = useState<Lawyer[]>([]);
   const [isLoading, setIsLoading] = useState(true); // Add loading state
@@ -17,8 +18,10 @@ export default function LawyersDirectory() {
       try {
         setIsLoading(true); // Set loading state before fetch
         const lawyersData = await getLawyersList();
-
-        setLawyers(lawyersData);
+        const registeredLawyers = lawyersData.filter(
+          (lawyer) => lawyer.registrationPending === false,
+        );
+        setLawyers(registeredLawyers);
       } catch (error) {
         console.error("Error fetching lawyers:", error);
         setLawyers([]);
@@ -30,6 +33,10 @@ export default function LawyersDirectory() {
     fetchLawyers();
   }, []);
 
+  // Filtered lawyers by reg pending
+  // const registeredLawyers = lawyers.map(
+  //   (lawyer) => lawyer.registrationPending === false
+  // );
   // Add loading state check
   if (isLoading) {
     return (
@@ -100,7 +107,7 @@ export default function LawyersDirectory() {
                     <h3 className="font-semibold text-lg">{lawyer.name}</h3>
                     <div className="flex items-center gap-1 text-sm text-muted-foreground">
                       <MapPin className="h-4 w-4" />
-                      {lawyer.location}
+                      {lawyer.location?.city.name}
                     </div>
                     {/* Practice Court Section */}
                     {lawyer.primaryCourt && (
@@ -109,7 +116,6 @@ export default function LawyersDirectory() {
                         {lawyer.primaryCourt.name}
                       </div>
                     )}
-
                     <div className="flex flex-wrap gap-2">
                       {/* ++++++++++++++Watchout for the API res structure+++++++++++++++++++++ */}
                       {lawyer.practiceAreas.slice(0, 1).map((area) => (
@@ -120,7 +126,6 @@ export default function LawyersDirectory() {
                         </span>
                       ))}
                     </div>
-
                     <div className="flex items-center justify-between pt-2">
                       <span className="text-sm text-muted-foreground">
                         {lawyer.experience} years exp.

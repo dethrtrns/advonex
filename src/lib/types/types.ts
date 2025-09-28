@@ -1,18 +1,18 @@
 // Type for user data object returned from token generation API endpoints like auth/refresh, auth/verify-otp-email
 export type UserData = {
-      id: string;
-      email: string;
-      phoneNumber: string | null;
-      roles: string[];
-      profileId: string;
-      isNewUser: boolean;
-}
+  id: string;
+  email: string;
+  phoneNumber: string | null;
+  roles: string[];
+  profileId: string;
+  isNewUser: boolean;
+};
 
 // Type for data returned from auth/me API endpoint
 export type UserAuthData = {
-    accessToken: string;
-    refreshToken: string;
-    user: UserData;
+  accessToken: string;
+  refreshToken: string;
+  user: UserData;
 };
 
 // generic type for API response with data of type T
@@ -20,18 +20,17 @@ export type ApiResponse<T> = {
   success: boolean;
   message: string;
   data: T;
-}
+};
 
 export type AuthResponse = ApiResponse<UserAuthData>; // TODO: check if this is used anywhere, if not, remove it
 
 export type TokensData = {
-    accessToken: string;
-    refreshToken: string;
-}
+  accessToken: string;
+  refreshToken: string;
+};
 
 // type for response returned from auth/refresh API endpoint
 export type RefreshResponse = ApiResponse<TokensData>;
-
 
 // type for response returned from auth/verify-otp-email API endpoint
 export type VerifyOtpEmailResponse = ApiResponse<UserAuthData>;
@@ -109,7 +108,7 @@ export type ClientProfile = {
   createdAt: string;
   updatedAt: string;
   userId: string;
-}
+};
 
 export type LawyerProfile = {
   id: string;
@@ -127,7 +126,7 @@ export type LawyerProfile = {
   userId: string;
   specializationId: string | null;
   primaryCourtId: string | null;
-}
+};
 
 export type UserRole = {
   id: string;
@@ -136,7 +135,7 @@ export type UserRole = {
   createdAt: string;
   updatedAt: string;
   userId: string;
-}
+};
 
 export type UserDataWithAllProfilesAndRoles = {
   id: string;
@@ -149,15 +148,13 @@ export type UserDataWithAllProfilesAndRoles = {
   clientProfile: ClientProfile;
   lawyerProfile: LawyerProfile;
   userRoles: UserRole[];
-}
+};
 // response type for auth/me API endpoint
 export type AuthMeResponse = ApiResponse<UserDataWithAllProfilesAndRoles>;
-
 
 export type ClientProfileResponse = ApiResponse<ClientProfile>;
 
 export type LawyerProfileResponse = ApiResponse<LawyerProfile>;
-
 
 // jwt payload dto
 export type JwtPayloadDto = {
@@ -171,7 +168,7 @@ export type JwtPayloadDto = {
   };
   iat: number;
   exp: number;
-}
+};
 
 export type UserDataFromJwtPayload = {
   id: string;
@@ -182,17 +179,17 @@ export type UserDataFromJwtPayload = {
     lawyerId?: string;
     clientId?: string;
   };
-}
-
+  lawyerRegistrationPending: boolean;
+};
 
 // Types for email authentication
 export type RequestEmailOtpParams = {
   email: string;
-  role?: 'LAWYER' | 'CLIENT';
+  role?: "LAWYER" | "CLIENT";
 };
 
 export type VerifyEmailOtpParams = {
   email: string;
   otp: string;
-  role: 'LAWYER' | 'CLIENT';
+  role: "LAWYER" | "CLIENT";
 };

@@ -1,0 +1,6 @@
+instruction incomplete, do not read, ignore this.
+here's what i want the app side switching('client' & 'lawyer' sides) to look like:
+1. A warning modal that can be triggered from anywhere in the codebase and warns the user, something like: "you're about to leave advonex clients portal and go to advonex lawyers portal. Click contine only if you are a lawyer." and vice versa.
+2. currently we store 
+3. clicking continue should swicth the app side accordingly and also reset and retrigger auth to check for required tokens in the local storage and open login flow if not found.
+4.

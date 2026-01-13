@@ -30,5 +30,5 @@ export const indianCourts = [
   "Labour Courts",
   "Income Tax Appellate Tribunal",
   "National Company Law Tribunal",
-  "National Green Tribunal"
+  "National Green Tribunal",
 ];

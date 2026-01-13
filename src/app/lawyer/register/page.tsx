@@ -1,569 +1,219 @@
-"use client"
+"use client";
 
 import { Button } from "@/components/ui/button";
-import { toast } from "sonner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-// import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Form } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
-import { ImageUpload } from "@/components/ui/image-upload";
+import { useState } from "react";
+import { updateLawyerProfile } from "@/services/lawyerService";
+import { Loader } from "lucide-react";
+import { toast } from "sonner";
+import { useAuth } from "@/contexts/AuthContext";
+import { redirect, useRouter } from "next/navigation";
+import { LiquidCard } from "@/components/liquid-glass-card";
 
-const formSchema = z.object({
+import { PhotoUpload } from "./components/PhotoUpload";
+import { NameInputs } from "./components/NameInputs";
+import { LocationInputs } from "./components/LocationInputs";
+import { ProfessionalInfoInputs } from "./components/ProfessionalInfoInputs";
+import { PrimaryCourtInput } from "./components/PrimaryCourtInput";
+import { BioInput } from "./components/BioInput";
+import { EducationInputs } from "./components/EducationInputs";
+import { SecondaryCourtsInput } from "./components/SecondaryCourtsInput";
+import { SecondaryPracticeAreasInput } from "./components/SecondaryPracticeAreasInput";
+
+// INFO: all number fields should be limited to max 32-bit signed integer limit, e.i. 2,147,483,647 as that's default in backend db
+export const formSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
   lastName: z.string().min(1, "Last name is required"),
-  email: z.string().email("Invalid email address"),
-  imageUrl: z.string(),
-  phone: z.string().min(10, "Phone number must be at least 10 digits"),
   state: z.string().min(1, "State is required"),
   city: z.string().min(1, "City is required"),
   barNumber: z.string().min(1, "Bar number is required"),
   practiceArea: z.string().min(1, "Practice area is required"),
-  experience: z.number().min(0, "Years of experience must be 0 or greater"),
-  bio: z.string().min(50, "Bio must be at least 50 characters"),
+  experience: z
+    .number()
+    .min(1, "Years of experience must be 1 or greater")
+    .max(100, "Years of experience cannot be greater than 100"),
+  bio: z
+    .string()
+    .min(50, "Bio must be at least 50 characters")
+    .max(1000, "Bio cannot be more than 1000 characters"),
   lawSchool: z.string().min(1, "Law school is required"),
   degree: z.string().min(1, "Degree is required"),
-  graduationYear: z.number()
+  graduationYear: z
+    .number()
     .min(1900, "Invalid graduation year")
     .max(new Date().getFullYear(), "Graduation year cannot be in the future"),
-  practiceCourt1: z.string().min(1, "At least one practice court is required"),
-  practiceCourt2: z.string().optional(),
-  consultFee: z.number().min(0, "Consultation fee must be 0 or greater"),
+  primaryCourt: z.string().min(1, "At least one practice court is required"),
+  secondaryCourts: z.array(z.string()).optional(),
+  secondaryPracticeAreas: z.array(z.string()).optional(),
+  consultFee: z
+    .number()
+    .min(50, "Consultation fee must be 50 or greater")
+    .max(10000, "Consultation fee cannot be greater than 10000"), // cause of backend: FIXIT in backend
+  photo: z.string().min(1, "Photo is required"),
 });
 
-// Indian states and cities data
-const indianLocations = {
-  "Andhra Pradesh": ["Visakhapatnam", "Vijayawada", "Guntur", "Nellore", "Kurnool"],
-  "Arunachal Pradesh": ["Itanagar", "Naharlagun", "Pasighat", "Tawang", "Ziro"],
-  "Assam": ["Guwahati", "Silchar", "Dibrugarh", "Jorhat", "Nagaon"],
-  "Bihar": ["Patna", "Gaya", "Muzaffarpur", "Bhagalpur", "Darbhanga"],
-  "Chhattisgarh": ["Raipur", "Bhilai", "Bilaspur", "Korba", "Durg"],
-  "Goa": ["Panaji", "Margao", "Vasco da Gama", "Mapusa", "Ponda"],
-  "Gujarat": ["Ahmedabad", "Surat", "Vadodara", "Rajkot", "Gandhinagar"],
-  "Haryana": ["Faridabad", "Gurgaon", "Panipat", "Ambala", "Karnal"],
-  "Himachal Pradesh": ["Shimla", "Dharamshala", "Mandi", "Solan", "Kullu"],
-  "Jharkhand": ["Ranchi", "Jamshedpur", "Dhanbad", "Bokaro", "Hazaribagh"],
-  "Karnataka": ["Bangalore", "Mysore", "Hubli", "Mangalore", "Belgaum"],
-  "Kerala": ["Thiruvananthapuram", "Kochi", "Kozhikode", "Thrissur", "Kollam"],
-  "Madhya Pradesh": ["Indore", "Bhopal", "Jabalpur", "Gwalior", "Ujjain"],
-  "Maharashtra": ["Mumbai", "Pune", "Nagpur", "Thane", "Nashik"],
-  "Manipur": ["Imphal", "Thoubal", "Bishnupur", "Churachandpur", "Ukhrul"],
-  "Meghalaya": ["Shillong", "Tura", "Jowai", "Nongpoh", "Williamnagar"],
-  "Mizoram": ["Aizawl", "Lunglei", "Champhai", "Serchhip", "Kolasib"],
-  "Nagaland": ["Kohima", "Dimapur", "Mokokchung", "Tuensang", "Wokha"],
-  "Odisha": ["Bhubaneswar", "Cuttack", "Rourkela", "Berhampur", "Sambalpur"],
-  "Punjab": ["Ludhiana", "Amritsar", "Jalandhar", "Patiala", "Bathinda"],
-  "Rajasthan": ["Jaipur", "Jodhpur", "Udaipur", "Kota", "Ajmer"],
-  "Sikkim": ["Gangtok", "Namchi", "Mangan", "Gyalshing", "Ravangla"],
-  "Tamil Nadu": ["Chennai", "Coimbatore", "Madurai", "Tiruchirappalli", "Salem"],
-  "Telangana": ["Hyderabad", "Warangal", "Nizamabad", "Karimnagar", "Khammam"],
-  "Tripura": ["Agartala", "Udaipur", "Dharmanagar", "Kailashahar", "Belonia"],
-  "Uttar Pradesh": ["Lucknow", "Kanpur", "Agra", "Varanasi", "Allahabad"],
-  "Uttarakhand": ["Dehradun", "Haridwar", "Roorkee", "Haldwani", "Rudrapur"],
-  "West Bengal": ["Kolkata", "Howrah", "Durgapur", "Asansol", "Siliguri"],
-  "Delhi": ["New Delhi", "Delhi", "Noida", "Gurgaon", "Faridabad"],
-};
-
-export default function LawyerRegistration() {
-  const router = useRouter();
+export default function LawyerRegistrationPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [cities, setCities] = useState<string[]>([]);
+  const { user, isAuthenticated } = useAuth();
+  const router = useRouter();
+  const profileId = user?.profileIds.lawyerId as string | null;
 
-  const form = useForm<z.infer<typeof formSchema>>({    
+  // TODO: get this value from profile for now or in jwt(lawyerRegistrationPending) after backend production sync.
+  if (!user?.lawyerRegistrationPending) {
+    redirect("/lawyer/dashboard");
+  }
+
+  if (!isAuthenticated) {
+    console.warn("user Not authenticated; Please login to continue");
+    // Add toast or Login modal here
+  }
+  const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: (() => {
-      if (typeof window !== "undefined") {
-        const savedData = localStorage.getItem("lawyerRegistration");
-        if (savedData) {
-          const { name, email } = JSON.parse(savedData);
-          const [firstName, ...lastNameParts] = name.split(" ");
-          return {
-            firstName,
-            lastName: lastNameParts.join(" "),
-            email,
-            phone: "",
-            state: "",
-            city: "",
-            barNumber: "",
-            practiceArea: "",
-            experience: 0,
-            bio: "",
-            lawSchool: "",
-            degree: "",
-            graduationYear: new Date().getFullYear(),
-            practiceCourt1: "", 
-            practiceCourt2: "",
-          };
-        }
-      }
-      return {
-        firstName: "",
-        lastName: "",
-        email: "",
-        imageUrl: "",
-        phone: "",
-        state: "",
-        city: "",
-        barNumber: "",
-        practiceArea: "",
-        experience: 0,
-        bio: "",
-        lawSchool: "",
-        degree: "",
-        graduationYear: new Date().getFullYear(),
-        consultFee: 0,
-        practiceCourt1: "",
-        practiceCourt2: "",
-      };
-    })()
+    defaultValues: {
+      firstName: "",
+      lastName: "",
+      state: "",
+      city: "",
+      barNumber: "",
+      practiceArea: "",
+      experience: 0,
+      bio: "",
+      consultFee: 0,
+      primaryCourt: "",
+      secondaryCourts: [],
+      secondaryPracticeAreas: [],
+      lawSchool: "",
+      degree: "",
+      graduationYear: undefined,
+      photo: "",
+    },
   });
 
-  // Update cities when state changes
-  const selectedState = form.watch("state");
-  useEffect(() => {
-    if (selectedState) {
-      setCities(indianLocations[selectedState as keyof typeof indianLocations] || []);
-      form.setValue("city", ""); // Reset city when state changes
-    }
-  }, [selectedState, form]);
+  if (user && !profileId) {
+    console.log("User does not have lawyer profile ID!");
+    alert("User not authorised!");
+    redirect("/"); //FIX: remove this??
+    return null;
+  }
 
-  const practiceAreas = [
-    "Civil Law",
-    "Criminal Law",
-    "Corporate Law",
-    "Family Law",
-    "Immigration Law",
-    "Tax Law",
-    "Employment Law",
-    "Real Estate Law",
-    "Intellectual Property"
-  ];
+  if (!user) {
+    console.log("User is not Authenticated!");
+    redirect("/"); //FIX this!
+    return null;
+  }
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    setIsSubmitting(true); // Set submitting state
     try {
-      setIsSubmitting(true);
-      
+      // Transform form data to match API structure (UpdateLawyer interface: Different from lawyer interface)
       const transformedData = {
         name: `${values.firstName} ${values.lastName}`,
-        email: values.email,
-        phone: values.phone,
-        location: `${values.city}, ${values.state}`,
+        // locationId: values.city, // ✅ cityId from dropdown
+        location: { city: { id: values.city } },
         barId: values.barNumber,
-        practiceAreas: [values.practiceArea],
         experience: values.experience,
         bio: values.bio,
         consultFee: values.consultFee,
-        practiceCourt: {
-          primary: values.practiceCourt1,
-          secondary: values.practiceCourt2 || null
-        },
+        specialization: { id: values.practiceArea },
+        primaryCourt: { id: values.primaryCourt }, // temp fix input to send name string here, current backend doesn't support id
+        practiceCourts: values.secondaryCourts?.map((courtId) => ({
+          id: courtId,
+        })), // update backend to accept array of {id:'...uuid...'} then update this and input component to set option.value instead of option.label
+        practiceAreas: values.secondaryPracticeAreas?.map((areaId) => ({
+          id: areaId,
+        })),
+        registrationPending: false,
         education: {
           institution: values.lawSchool,
           degree: values.degree,
-          year: String(values.graduationYear)
-        }
+          year: Number(values.graduationYear), // Changed from String to Number to match the interface
+        },
+        photo: values.photo ? values.photo : "",
       };
 
-      console.log("Submitting data:", transformedData);
+      console.log("Updating profile with:", transformedData);
 
-      // Use environment variable for the API URL
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_BACKEND_URL}/api/lawyers`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(transformedData)
-      });
-
-      const responseData = await response.text();
-      console.log("Response status:", response.status);
-      console.log("Response data:", responseData);
-
-      if (!response.ok) {
-        let errorMessage = 'Failed to register';
-        try {
-          const errorData = JSON.parse(responseData);
-          errorMessage = errorData.message || errorMessage;
-        } catch (e) {
-          // If response is not JSON, use the text response or status
-          console.error('Error parsing response:', e);
-          errorMessage = responseData || `Server error: ${response.status}`;
-        }
-        throw new Error(errorMessage);
-      }
-
-      // Clear registration data from localStorage
-      localStorage.removeItem('lawyerRegistration');
-      
-      // Show success message
-      toast.success('Profile created successfully!');
-      
-      // Redirect to Listing Page
-      router.push('/client/lawyers');
+      // Call the service function
+      const updatedProfile = await updateLawyerProfile(transformedData); // Fix ts interface for this
+      console.log("Profile updated:", updatedProfile);
+      toast.success("Profile updated successfully");
+      router.push("/lawyer/dashboard");
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'Failed to create profile. Please try again.');
-      console.error('Error submitting form:', error);
+      // Error toast is handled in the service function
+      console.error("Failed to update profile:", error);
+      toast.error(`Failed to update profile, retry!`);
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false); // Reset submitting state
     }
   }
 
-  return (
-    <div className="max-w-3xl mx-auto space-y-8">
-      <div className="text-center">
-        <h1 className="text-3xl font-bold mb-2">Join Our Legal Network</h1>
-        <p className="text-muted-foreground">Create your professional profile and start connecting with clients</p>
+  if (isSubmitting) {
+    return (
+      <div className="flex justify-center items-center min-h-[50vh]">
+        <Loader className="h-8 w-8 animate-spin text-primary" />
       </div>
-    
-      {/* <div>
-      <ImageUpload 
-  onUploadComplete={(imageUrl) => console.log(imageUrl)} 
-  buttonText="Upload Profile Picture"
-/>
-      </div> */}
-     
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+    );
+  }
 
-          <Card>
+  return (
+    <div className="space-y-8">
+      <h1>Register Form</h1>
+
+      <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="space-y-6">
+          <PhotoUpload control={form.control} />
+
+          <LiquidCard>
             <CardHeader>
               <CardTitle>Personal Information</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-
-                {/* Image Upload section */}
-              <FormField
-  control={form.control}
-  name="imageUrl"
-  render={({ field }) => (
-    <FormItem>
-      <FormLabel>Profile Picture</FormLabel>
-      <FormControl>
-        <div className="flex">
-          <input type="hidden" {...field} />
-          <ImageUpload 
-            buttonText="Upload Profile Picture"
-            onUploadComplete={(imageUrl) => {
-              field.onChange(imageUrl);
-              console.log("Image URL updated:", imageUrl);
-            }}
-            name={`${form.watch("firstName")} ${form.watch("lastName")} `}
-          />
-        </div>
-      </FormControl>
-      <FormMessage />
-    </FormItem>
-  )}
-/>
-                <FormField
-                  control={form.control}
-                  name="firstName"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>First Name</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Enter your first name" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="lastName"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Last Name</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Enter your last name" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email Address</FormLabel>
-                    <FormControl>
-                      <Input type="email" placeholder="Enter your email address" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="phone"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Phone Number</FormLabel>
-                    <FormControl>
-                      <Input type="tel" placeholder="Enter your phone number" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              {/* Location Fields - State and City */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <FormField
-                  control={form.control}
-                  name="state"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>State</FormLabel>
-                      <Select onValueChange={field.onChange} value={field.value}>
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select your state" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {Object.keys(indianLocations).map((state) => (
-                            <SelectItem key={state} value={state}>
-                              {state}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="city"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>City</FormLabel>
-                      <Select 
-                        onValueChange={field.onChange} 
-                        value={field.value}
-                        disabled={!selectedState}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder={selectedState ? "Select your city" : "Select a state first"} />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {cities.map((city) => (
-                            <SelectItem key={city} value={city}>
-                              {city}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
+              <NameInputs control={form.control} />
+              <LocationInputs control={form.control} />
             </CardContent>
-          </Card>
+          </LiquidCard>
 
-          <Card>
+          <LiquidCard>
             <CardHeader>
               <CardTitle>Professional Information</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <FormField
-                control={form.control}
-                name="barNumber"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Bar Number</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Enter your bar number" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="practiceArea"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Primary Practice Area</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select your primary practice area" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {practiceAreas.map((area) => (
-                          <SelectItem key={area} value={area.toLowerCase().replace(/ /g, "-")}>
-                            {area}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="experience"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Years of Experience</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="number"
-                        min="0"
-                        placeholder="Enter years of experience"
-                        {...field}
-                        onChange={(e) => field.onChange(Number(e.target.value))}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="consultFee"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Consultation Fee ($/hr)</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="number"
-                        min="0"
-                        placeholder="Enter your hourly consultation fee"
-                        {...field}
-                        onChange={(e) => field.onChange(Number(e.target.value))}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="practiceCourt1"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Primary Court</FormLabel>
-                    <FormControl>
-                      <Input placeholder="e.g., Family Court" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="practiceCourt2"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Secondary Court (Optional)</FormLabel>
-                    <FormControl>
-                      <Input placeholder="e.g., Civil Court" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="bio"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Professional Bio</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        placeholder="Write a brief description of your professional background and expertise"
-                        className="h-32"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              <ProfessionalInfoInputs control={form.control} />
+              <SecondaryPracticeAreasInput control={form.control} />
+              <PrimaryCourtInput control={form.control} />
+              <SecondaryCourtsInput control={form.control} />
+              <BioInput control={form.control} />
             </CardContent>
-          </Card>
+          </LiquidCard>
 
-          <Card>
+          <LiquidCard>
             <CardHeader>
               <CardTitle>Education</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <FormField
-                control={form.control}
-                name="lawSchool"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Law School</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Enter your law school name" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <FormField
-                  control={form.control}
-                  name="degree"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Degree</FormLabel>
-                      <FormControl>
-                        <Input placeholder="e.g., Juris Doctor" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="graduationYear"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Graduation Year</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="number"
-                          min="1900"
-                          placeholder="Enter graduation year"
-                          {...field}
-                          onChange={(e) => field.onChange(Number(e.target.value))}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
+              <EducationInputs control={form.control} />
             </CardContent>
-          </Card>
+          </LiquidCard>
 
-          <div className="flex justify-end gap-4">
+          <div className="flex justify-end space-x-4">
             <Button
-              variant="outline"
-              type="button"
-              onClick={() => router.back()}
+              type="submit"
               disabled={isSubmitting}
-            >
-              Cancel
-            </Button>
-            <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? "Creating Profile..." : "Create Profile"}
+              className="w-full md:w-auto">
+              {isSubmitting ? (
+                <>
+                  <Loader className="mr-2 h-4 w-4 animate-spin" />
+                  Saving...
+                </>
+              ) : (
+                "Save Changes"
+              )}
             </Button>
           </div>
         </form>

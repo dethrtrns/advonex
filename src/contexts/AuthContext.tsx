@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from "react";
 import { getCurrentUserFromToken } from "@/services/authService/authService";
 import { getAccessToken, getRefreshToken } from "@/lib/storage/localStorage";
 import { isJwtexpired } from "@/lib/backend/auth";
@@ -17,8 +17,6 @@ import {
   getRefreshTokenFromCookieByBackend,
   setRefreshCookieByNext,
 } from "@/lib/storage/cookieStorage";
-
-import { cookies } from "next/headers";
 
 // Define the auth context type
 // This context manages the global authentication state
@@ -77,13 +75,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   );
 
   // temp logout, just app state not localstorage.
-  const resetAppLoginState = () => {
+  const resetAppLoginState = useCallback(() => {
     setUser(null);
     setisAuthenticated(false);
     // setActiveAppSide("CLIENT");
-  };
+  }, []);
 
-  const login = async (token: string) => {
+  const login = useCallback(async (token: string) => {
     try {
       setisAuthenticating(true);
       const userInfo = getUserFromToken(token);
@@ -131,7 +129,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } finally {
       setisAuthenticating(false);
     }
-  };
+  }, [activeAppSide]);
 
   // Function to set the active AppSide state by checking the current url path for /lawyer or /client and set the active AppSide accordingly only if that AppSide is present in user.AppSides array.
   // const setActiveAppSideByUrl = () => {
@@ -150,7 +148,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // };
 
   // Handle logout
-  const logout = async () => {
+  const logout = useCallback(async () => {
     try {
       // Clear user state and local storage
       setUser(null);
@@ -163,7 +161,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } catch (error) {
       console.error("Error during logout:", error);
     }
-  };
+  }, []);
 
   // Setup token refresh interval
   useEffect(() => {
@@ -182,7 +180,42 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const token = await getAccessToken(); // this will also check for expired token or null token and try to refresh.
         if (token) {
           // if token is valid then Log in user
-          login(token);
+          // Inline login logic to avoid dependency issues
+          const userInfo = getUserFromToken(token);
+          if (activeAppSide === "LAWYER" && userInfo?.roles.includes("LAWYER")) {
+            setUser(userInfo);
+            setisAuthenticated(true);
+            console.log(
+              `logged in with role ${userInfo?.roles} on ${activeAppSide} side of the app(Lawyer)`
+            );
+          } else if (
+            activeAppSide === "CLIENT" &&
+            userInfo?.roles.includes("CLIENT")
+          ) {
+            setUser(userInfo);
+            setisAuthenticated(true);
+            console.log(
+              `logged in with role ${userInfo?.roles} on ${activeAppSide} side of the app(client)`
+            );
+          } else {
+            setUser(null);
+            setisAuthenticated(false);
+            console.warn(
+              "User with role " +
+                userInfo?.roles +
+                ": Can NOT login " +
+                activeAppSide +
+                " side of the app. Please login with correct role."
+            );
+            toast.warning(
+              "User with role " +
+                userInfo?.roles +
+                ": Can NOT login " +
+                activeAppSide +
+                " side of the app. Please login with correct role."
+            );
+          }
+          
           console.log(`loginByRole function completed`);
           // Set cookie testing
           const freshToken = await getRefreshTokenFromCookieByBackend();
@@ -255,7 +288,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     authInit();
   }, [activeAppSide]); // Currently the authInit hook runs only when activeAppSide changes or On initial mount(prolly...)
 
-  const value = {
+  const value = useMemo(() => ({
     user,
     isAuthenticating,
     isAuthenticated,
@@ -264,7 +297,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     login,
     setActiveAppSide,
     resetAppLoginState,
-  };
+  }), [user, isAuthenticating, isAuthenticated, activeAppSide, logout, login, resetAppLoginState]);
 
   return (
     <AuthContext.Provider value={value}>

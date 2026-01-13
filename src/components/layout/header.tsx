@@ -44,7 +44,7 @@ export function Header() {
   console.log(
     `User with role(s):  ${
       user ? user?.email : "Guest"
-    } to Advonex ${activeAppSide} portal.`
+    } to Advonex ${activeAppSide} portal.`,
   );
 
   const checkLawyer = activeAppSide === "LAWYER" ? true : false;
@@ -72,7 +72,7 @@ export function Header() {
       <div
         className={cn(
           // liquidGlassClasses,
-          "fixed top-0 left-0 right-0 z-50 h-18 px-1 rounded-none border-b-1 flex items-center justify-between"
+          "fixed top-0 left-0 right-0 z-50 h-18 px-1 rounded-none border-b-1 flex items-center justify-between",
           //removed liquidGlassClasses to remove shadow-box effect. `border-none` removes simple line border when w-2/3
         )}
         // 2. Apply the style object for the backdrop-filter which gives the main liquid glass effect.
@@ -173,7 +173,7 @@ export function Header() {
             <SheetContent
               className={cn(
                 // liquidGlassClasses,
-                "w-full flex items-center bg-transparent"
+                "w-full flex items-center bg-transparent",
                 //removed liquidGlassClasses, added bg-transparent to remove shadow-box effect. `border-none` removes simple line border when w-2/3
               )}
               // 2. Apply the style object for the backdrop-filter which gives the main liquid glass effect.
